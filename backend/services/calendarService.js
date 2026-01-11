@@ -72,7 +72,6 @@ async function createGoogleCalendarEvent(options) {
 }
 
 // Get available slots for a date
-// Get available slots for a date
 async function getAvailableSlots(dateInput) {
   try {
     // Parse date string "2026-01-12" and create query range in Bogota time
@@ -99,6 +98,12 @@ async function getAvailableSlots(dateInput) {
     console.log(`\n🔍 Checking availability for ${dateStr}`);
     console.log(`📅 Query range (Bogota): ${dayStart.toLocaleString('es-CO')} to ${dayEnd.toLocaleString('es-CO')}`);
     console.log(`⏰ Query range (UTC): ${dayStart.toISOString()} to ${dayEnd.toISOString()}`);
+
+    // Return default slots if Google Calendar is not configured
+    if (!process.env.GOOGLE_CALENDAR_ID || process.env.GOOGLE_CALENDAR_ID === 'your_google_calendar_id') {
+      console.log('⚠️  Google Calendar not configured, returning default slots');
+      return calculateAvailableSlots([]);
+    }
 
     const response = await calendar.events.list({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
