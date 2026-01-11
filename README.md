@@ -2,6 +2,10 @@
 
 Plataforma completa de asesorías de marketing con sistema de gestión de clientes, seguimiento de ventas y análisis de métricas.
 
+## 📸 Vista Previa
+
+![Admin Dashboard - Gestión de Clientes](./docs/screenshots/admin-dashboard.svg)
+
 ## 🎯 Características
 
 ### Landing Page

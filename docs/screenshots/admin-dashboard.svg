@@ -1,0 +1,80 @@
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f9fafb"/>
+  
+  <!-- Header -->
+  <rect width="1200" height="80" fill="#1a1a2e"/>
+  <text x="50" y="50" font-size="32" font-weight="bold" fill="#fbbf24">Stiven Ads</text>
+  <text x="1000" y="50" font-size="14" fill="#e5e7eb" text-anchor="end">Admin Dashboard | Help | Logout</text>
+  
+  <!-- Sidebar -->
+  <rect width="250" height="720" y="80" fill="#0f1419"/>
+  <text x="30" y="130" font-size="18" font-weight="bold" fill="#fbbf24">Menu</text>
+  <text x="30" y="180" font-size="14" fill="#10b981">📋 Clientes Potenciales</text>
+  <text x="30" y="220" font-size="14" fill="#e5e7eb">💰 Clientes (Vendidos)</text>
+  <text x="30" y="260" font-size="14" fill="#e5e7eb">📈 Estadísticas</text>
+  
+  <!-- Main Content Area -->
+  <rect x="250" y="80" width="950" height="720" fill="#ffffff"/>
+  
+  <!-- Content Header -->
+  <text x="280" y="130" font-size="28" font-weight="bold" fill="#1a1a2e">Clientes Potenciales</text>
+  <rect x="280" y="140" width="900" height="2" fill="#e5e7eb"/>
+  
+  <!-- Buttons -->
+  <rect x="280" y="160" width="100" height="35" fill="#f59e0b" rx="4"/>
+  <text x="330" y="185" font-size="13" fill="#000" text-anchor="middle" font-weight="600">Exportar</text>
+  
+  <!-- Table Header -->
+  <rect x="280" y="220" width="900" height="40" fill="#1a1a2e" rx="4"/>
+  <text x="290" y="250" font-size="12" fill="#fbbf24" font-weight="bold">Cliente</text>
+  <text x="450" y="250" font-size="12" fill="#fbbf24" font-weight="bold">Email</text>
+  <text x="650" y="250" font-size="12" fill="#fbbf24" font-weight="bold">Empresa</text>
+  <text x="850" y="250" font-size="12" fill="#fbbf24" font-weight="bold">Estado</text>
+  <text x="1050" y="250" font-size="12" fill="#fbbf24" font-weight="bold">Acciones</text>
+  
+  <!-- Table Rows -->
+  <rect x="280" y="270" width="900" height="40" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="290" y="300" font-size="12" fill="#1a1a2e" font-weight="600">Juan Pérez</text>
+  <text x="450" y="300" font-size="12" fill="#6b7280">juan@example.com</text>
+  <text x="650" y="300" font-size="12" fill="#6b7280">Tech Corp</text>
+  <text x="850" y="300" font-size="12" fill="#10b981">Confirmado</text>
+  <text x="1050" y="300" font-size="12" fill="#3b82f6">📅 💰 ❌ 🗑️</text>
+  
+  <rect x="280" y="320" width="900" height="40" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="290" y="350" font-size="12" fill="#1a1a2e" font-weight="600">María García</text>
+  <text x="450" y="350" font-size="12" fill="#6b7280">maria@example.com</text>
+  <text x="650" y="350" font-size="12" fill="#6b7280">Marketing Plus</text>
+  <text x="850" y="350" font-size="12" fill="#f59e0b">Reunión Finalizada</text>
+  <text x="1050" y="350" font-size="12" fill="#3b82f6">📅 💰 ❌ 🗑️</text>
+  
+  <rect x="280" y="370" width="900" height="40" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="290" y="400" font-size="12" fill="#1a1a2e" font-weight="600">Carlos López</text>
+  <text x="450" y="400" font-size="12" fill="#6b7280">carlos@example.com</text>
+  <text x="650" y="400" font-size="12" fill="#6b7280">Digital Solutions</text>
+  <text x="850" y="400" font-size="12" fill="#6b7280">No Confirmado</text>
+  <text x="1050" y="400" font-size="12" fill="#3b82f6">📅 💰 ❌ 🗑️</text>
+  
+  <!-- Stats Section -->
+  <text x="280" y="470" font-size="16" font-weight="bold" fill="#1a1a2e">Estadísticas Rápidas</text>
+  
+  <rect x="280" y="490" width="200" height="80" fill="#f0f9ff" stroke="#3b82f6" stroke-width="1" rx="4"/>
+  <text x="290" y="510" font-size="12" fill="#6b7280">Total de Clientes</text>
+  <text x="290" y="540" font-size="28" font-weight="bold" fill="#3b82f6">24</text>
+  
+  <rect x="510" y="490" width="200" height="80" fill="#f0fdf4" stroke="#10b981" stroke-width="1" rx="4"/>
+  <text x="520" y="510" font-size="12" fill="#6b7280">Ventas Realizadas</text>
+  <text x="520" y="540" font-size="28" font-weight="bold" fill="#10b981">8</text>
+  
+  <rect x="740" y="490" width="200" height="80" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" rx="4"/>
+  <text x="750" y="510" font-size="12" fill="#6b7280">Tasa Conversión</text>
+  <text x="750" y="540" font-size="28" font-weight="bold" fill="#f59e0b">33%</text>
+  
+  <rect x="970" y="490" width="160" height="80" fill="#fdf2f8" stroke="#ec4899" stroke-width="1" rx="4"/>
+  <text x="980" y="510" font-size="12" fill="#6b7280">Ingreso Total</text>
+  <text x="980" y="540" font-size="20" font-weight="bold" fill="#ec4899">$48.5K</text>
+  
+  <!-- Footer -->
+  <rect width="1200" y="750" height="50" fill="#f3f4f6"/>
+  <text x="50" y="780" font-size="12" fill="#6b7280">© 2026 Stiven Ads. MongoDB • Express • React • Node.js</text>
+</svg>
