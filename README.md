@@ -4,7 +4,7 @@ Plataforma completa de asesorías de marketing con sistema de gestión de client
 
 ## 📸 Vista Previa
 
-![Admin Dashboard - Gestión de Clientes](./docs/screenshots/admin-dashboard.svg)
+![Admin Dashboard - Gestión de Clientes](./docs/screenshots/admin-dashboard.png)
 
 ## 🎯 Características
 
