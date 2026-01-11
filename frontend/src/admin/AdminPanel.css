@@ -1,0 +1,243 @@
+.admin-panel {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  background: #0a0e27;
+  color: #f1f5f9;
+  margin-top: 80px;
+}
+
+.admin-sidebar {
+  width: 240px;
+  background: #0a0e27;
+  padding: 2.5rem 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: static;
+  height: auto;
+  overflow-y: visible;
+}
+
+.admin-sidebar h2 {
+  color: #fbbf24;
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.admin-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-sidebar button {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.admin-sidebar button:hover {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.admin-sidebar button.active {
+  background: #fbbf24;
+  color: #0a0e27;
+  font-weight: 600;
+}
+
+.admin-content {
+  margin-left: 0;
+  flex: 1;
+  padding: 3rem;
+  overflow-y: auto;
+  background: #0f172a;
+}
+
+.admin-section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 3rem;
+}
+
+.admin-section h2 {
+  color: #f1f5f9;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: #1e293b;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.clients-table th {
+  background: #16213e;
+  color: #94a3b8;
+  padding: 1rem 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clients-table td {
+  padding: 1rem 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  word-break: break-word;
+}
+
+.clients-table tr:hover {
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.clients-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge.confirmado {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.badge.rechazado {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.badge.pendiente {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.badge.no-confirmado {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.stat-card h3 {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #f1f5f9;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .admin-panel {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.5rem;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .admin-section {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    padding: 1rem;
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .admin-section h2 {
+    font-size: 1.2rem;
+  }
+
+  .clients-table {
+    font-size: 0.75rem;
+  }
+
+  .clients-table th,
+  .clients-table td {
+    padding: 0.7rem 6px;
+  }
+
+  .stat-card {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

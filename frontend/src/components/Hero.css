@@ -1,0 +1,315 @@
+.hero {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 70px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(244, 196, 48, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(45, 62, 127, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  bottom: 50px;
+  left: -50px;
+  pointer-events: none;
+}
+
+.hero-content {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  line-height: 1.3;
+  margin: 0;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.hero-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+  margin: 0;
+  border: none;
+  width: fit-content;
+  align-self: center;
+}
+
+.hero-cta:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+  transform: scale(1.05);
+}
+
+.hero-cta:active {
+  transform: scale(0.95);
+}
+
+.hero-calendar-section {
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 12px;
+  padding: 30px;
+  margin: 30px 0;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-calendar-section .calendar {
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.hero-calendar-section .calendar-header h3 {
+  color: #f1f5f9;
+}
+
+.hero-calendar-section .calendar-weekday {
+  color: #cbd5e1;
+}
+
+.hero-calendar-section .calendar-day {
+  background: rgba(45, 62, 127, 0.4);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  color: #f1f5f9;
+}
+
+.hero-calendar-section .calendar-day:not(.disabled):hover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.3);
+}
+
+.hero-calendar-section .calendar-day.selected {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-color: #fbbf24;
+  color: #000;
+}
+
+.hero-calendar-section .calendar-day.today {
+  border-color: #fbbf24;
+}
+
+.hero-calendar-section .calendar-hint {
+  background: rgba(93, 76, 255, 0.15);
+  color: #cbd5e1;
+}
+
+.hero-calendar-section .calendar-day.selected {
+  background: #5d4cff;
+  border-color: #5d4cff;
+  color: var(--color-text);
+}
+
+.hero-footer-text {
+  margin-top: 3rem;
+}
+
+.footer-question {
+  font-size: 1.2rem;
+  color: var(--color-text-light);
+  margin-bottom: 1.5rem;
+}
+
+.hero-footer-btn {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+}
+
+.hero-footer-btn:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+  box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+}
+
+.hero-footer-btn:active {
+  transform: scale(0.95);
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fbbf24;
+  cursor: pointer;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-calendar-section {
+    padding: 2rem 1rem;
+    min-height: 250px;
+  }
+
+  .footer-question {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2rem 1rem 5rem 1rem;
+    min-height: auto;
+  }
+
+  .hero::before,
+  .hero::after {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-cta {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-calendar-section {
+    padding: 1.5rem 1rem;
+    min-height: 220px;
+    margin: 2rem 0;
+  }
+
+  .hero-footer-btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    gap: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-question {
+    font-size: 0.9rem;
+  }
+
+  .hero-scroll-hint {
+    position: relative;
+    transform: none;
+    left: auto;
+    bottom: auto;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .hero {
+    padding: 1.5rem 0.75rem 4rem 0.75rem;
+  }
+
+  .hero h1 {
+    font-size: 1.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-cta {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-calendar-section {
+    padding: 1rem 0.75rem;
+    min-height: 200px;
+  }
+
+  .hero-footer-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
+
+  .footer-question {
+    font-size: 0.8rem;
+  }
+
+  .hero-scroll-hint {
+    margin-top: 15px;
+  }
+}

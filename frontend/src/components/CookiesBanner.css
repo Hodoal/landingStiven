@@ -1,0 +1,42 @@
+.cookies-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background: rgba(30, 41, 59, 0.98);
+  color: #fff;
+  padding: 20px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2000;
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.15);
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cookies-banner p {
+  flex: 1;
+  min-width: 300px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.cookies-banner .main-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cookies-banner .main-cta:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+}
