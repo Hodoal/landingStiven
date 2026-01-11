@@ -1,6 +1,21 @@
 const { google } = require('googleapis');
 const { OAuth2 } = google.auth;
 
+// Helper function to check if Google Calendar is properly configured
+function isGoogleCalendarConfigured() {
+  const hasAllRequired = 
+    process.env.GOOGLE_CLIENT_ID &&
+    process.env.GOOGLE_CLIENT_ID !== 'your_google_client_id' &&
+    process.env.GOOGLE_CLIENT_SECRET &&
+    process.env.GOOGLE_CLIENT_SECRET !== 'your_google_client_secret' &&
+    process.env.GOOGLE_CALENDAR_ID &&
+    process.env.GOOGLE_CALENDAR_ID !== 'your_google_calendar_id' &&
+    process.env.GOOGLE_REFRESH_TOKEN &&
+    process.env.GOOGLE_REFRESH_TOKEN !== 'your_google_refresh_token';
+  
+  return hasAllRequired;
+}
+
 const oauth2Client = new OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -8,7 +23,7 @@ const oauth2Client = new OAuth2(
 );
 
 // Set credentials if refresh token is available
-if (process.env.GOOGLE_REFRESH_TOKEN) {
+if (process.env.GOOGLE_REFRESH_TOKEN && process.env.GOOGLE_REFRESH_TOKEN !== 'your_google_refresh_token') {
   oauth2Client.setCredentials({
     refresh_token: process.env.GOOGLE_REFRESH_TOKEN
   });
@@ -19,6 +34,15 @@ const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 // Create Google Calendar event
 async function createGoogleCalendarEvent(options) {
   const { title, description, startTime, attendeeEmail } = options;
+
+  // Check if Google Calendar is configured
+  if (!isGoogleCalendarConfigured()) {
+    console.log('⚠️  Google Calendar not fully configured, skipping event creation');
+    return {
+      eventId: 'mock-' + Date.now(),
+      meetLink: 'https://meet.google.com/placeholder'
+    };
+  }
 
   // Calculate end time (1 hour after start)
   const endTime = new Date(startTime);
@@ -100,8 +124,8 @@ async function getAvailableSlots(dateInput) {
     console.log(`⏰ Query range (UTC): ${dayStart.toISOString()} to ${dayEnd.toISOString()}`);
 
     // Return default slots if Google Calendar is not configured
-    if (!process.env.GOOGLE_CALENDAR_ID || process.env.GOOGLE_CALENDAR_ID === 'your_google_calendar_id') {
-      console.log('⚠️  Google Calendar not configured, returning default slots');
+    if (!isGoogleCalendarConfigured()) {
+      console.log('⚠️  Google Calendar not fully configured, returning default slots');
       return calculateAvailableSlots([]);
     }
 
