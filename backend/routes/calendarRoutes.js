@@ -47,6 +47,38 @@ router.get('/auth-url', (req, res) => {
   }
 });
 
+// GET auth - Redirect to OAuth URL directly
+router.get('/auth', async (req, res) => {
+  try {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_REDIRECT_URI
+    );
+
+    const scopes = [
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events'
+    ];
+
+    const authUrl = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: scopes,
+      prompt: 'consent'
+    });
+
+    // Redirect directly to Google OAuth
+    res.redirect(authUrl);
+  } catch (error) {
+    console.error('Error during auth redirect:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error during authentication',
+      error: error.message 
+    });
+  }
+});
+
 // GET callback from Google OAuth
 router.get('/auth/callback', async (req, res) => {
   try {
