@@ -28,7 +28,7 @@ function Header({ onBookClick }) {
         <Logo />
         <button className="header-btn" onClick={onBookClick}>
           <FiCalendar size={18} />
-          <span>Agendar</span>
+          <span>Aplicar a la prueba piloto</span>
         </button>
       </div>
     </motion.header>

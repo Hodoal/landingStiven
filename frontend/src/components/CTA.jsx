@@ -38,7 +38,7 @@ function CTA({ onBookClick }) {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          Agendar Ahora
+          Aplicar a la prueba piloto
         </motion.button>
       </motion.div>
     </section>
