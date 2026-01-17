@@ -289,4 +289,34 @@ router.post('/track-event', async (req, res) => {
   }
 });
 
+// PUT: Actualizar schedule para un lead
+router.put('/update-schedule/:id', async (req, res) => {
+  try {
+    const { scheduled_date, scheduled_time } = req.body;
+    
+    const updatedLead = await Lead.findByIdAndUpdate(
+      req.params.id,
+      {
+        scheduled_date,
+        scheduled_time,
+        status: 'scheduled',
+        updatedAt: new Date()
+      },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      data: updatedLead,
+      message: 'Cita agendada exitosamente'
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;
