@@ -1,6 +1,5 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FiArrowDown } from 'react-icons/fi'
 import './Hero.css'
 
 function Hero({ onBookClick }) {
@@ -51,14 +50,6 @@ function Hero({ onBookClick }) {
         >
           Aplicar al piloto de 30 días
         </motion.button>
-      </motion.div>
-
-      <motion.div 
-        className="hero-scroll-hint"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <FiArrowDown size={24} />
       </motion.div>
     </section>
   )
