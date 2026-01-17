@@ -24,8 +24,8 @@
 }
 
 .steps-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 25px;
   width: 100%;
 }
@@ -40,6 +40,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   box-sizing: border-box;
+  min-height: 100%;
 }
 
 .step-card:hover {
@@ -133,6 +134,11 @@
     font-size: 1.8rem;
   }
 
+  .steps-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
   .step-card {
     padding: 20px;
   }
@@ -152,10 +158,6 @@
   .step-conditions {
     grid-template-columns: 1fr;
   }
-
-  .steps-container {
-    gap: 20px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -165,6 +167,11 @@
 
   .how-title {
     font-size: 1.5rem;
+  }
+
+  .steps-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
 
   .step-card {
