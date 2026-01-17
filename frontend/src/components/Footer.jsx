@@ -14,16 +14,6 @@ function Footer() {
         </div>
 
         <div className="footer-section">
-          <h4>Enlaces</h4>
-          <ul>
-            <li><a href="#problemas">Problema</a></li>
-            <li><a href="#solucion">Solución</a></li>
-            <li><a href="#beneficios">Beneficios</a></li>
-            <li><a href="#proceso">Proceso</a></li>
-          </ul>
-        </div>
-
-        <div className="footer-section">
           <h4>Legal</h4>
           <ul>
             <li><Privacy /></li>

@@ -71,7 +71,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header onBookClick={() => setShowModal(true)} onAdminClick={navigateToAdmin} />
+      <Header onBookClick={() => setShowModal(true)} />
       <Hero onBookClick={() => setShowModal(true)} />
       <SystemQualification onBookClick={() => setShowModal(true)} />
       <RealProblem />
