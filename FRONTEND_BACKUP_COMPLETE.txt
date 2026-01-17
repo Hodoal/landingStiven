@@ -1,0 +1,6355 @@
+========== admin/AdminPanel.css ==========
+.admin-panel {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  background: #0a0e27;
+  color: #f1f5f9;
+  margin-top: 80px;
+}
+
+.admin-sidebar {
+  width: 240px;
+  background: #0a0e27;
+  padding: 2.5rem 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: static;
+  height: auto;
+  overflow-y: visible;
+}
+
+.admin-sidebar h2 {
+  color: #fbbf24;
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.admin-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-sidebar button {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.admin-sidebar button:hover {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.admin-sidebar button.active {
+  background: #fbbf24;
+  color: #0a0e27;
+  font-weight: 600;
+}
+
+.admin-content {
+  margin-left: 0;
+  flex: 1;
+  padding: 3rem;
+  overflow-y: auto;
+  background: #0f172a;
+}
+
+.admin-section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 3rem;
+}
+
+.admin-section h2 {
+  color: #f1f5f9;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: #1e293b;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.clients-table th {
+  background: #16213e;
+  color: #94a3b8;
+  padding: 1rem 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clients-table td {
+  padding: 1rem 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  word-break: break-word;
+}
+
+.clients-table tr:hover {
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.clients-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge.confirmado {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.badge.rechazado {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.badge.pendiente {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.badge.no-confirmado {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.stat-card h3 {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #f1f5f9;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .admin-panel {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.5rem;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .admin-section {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    padding: 1rem;
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .admin-section h2 {
+    font-size: 1.2rem;
+  }
+
+  .clients-table {
+    font-size: 0.75rem;
+  }
+
+  .clients-table th,
+  .clients-table td {
+    padding: 0.7rem 6px;
+  }
+
+  .stat-card {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+========== admin/AdminPanel.jsx ==========
+import React, { useState } from 'react';
+import './AdminPanel.css';
+import ClientsList from './ClientsList';
+import SoldClientsList from './SoldClientsList';
+import Estadisticas from './Estadisticas';
+
+export default function AdminPanel() {
+  const [activeTab, setActiveTab] = useState('potenciales');
+
+  return (
+    <div className="admin-panel">
+      <div className="admin-sidebar">
+        <h2>Stivenads Admin</h2>
+        <nav>
+          <button
+            className={activeTab === 'potenciales' ? 'active' : ''}
+            onClick={() => setActiveTab('potenciales')}
+          >
+            Clientes Potenciales
+          </button>
+          <button
+            className={activeTab === 'vendidos' ? 'active' : ''}
+            onClick={() => setActiveTab('vendidos')}
+          >
+            Clientes
+          </button>
+          <button
+            className={activeTab === 'estadisticas' ? 'active' : ''}
+            onClick={() => setActiveTab('estadisticas')}
+          >
+            Estadísticas
+          </button>
+        </nav>
+      </div>
+
+      <div className="admin-content">
+        {activeTab === 'potenciales' && <ClientsList />}
+        {activeTab === 'vendidos' && <SoldClientsList />}
+        {activeTab === 'estadisticas' && <Estadisticas />}
+      </div>
+    </div>
+  );
+}
+
+========== admin/ClientsList.css ==========
+/* Admin Clients Table Styles */
+
+.admin-section {
+  padding: 20px;
+  color: #e5e7eb;
+}
+
+.admin-section h2 {
+  color: #fbbf24;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.clientes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0f1419;
+}
+
+.clientes-table thead {
+  background-color: #1a1a2e;
+  border-bottom: 2px solid #fbbf24;
+}
+
+.clientes-table th {
+  text-align: left;
+  padding: 12px;
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.clientes-table tbody tr {
+  border-bottom: 1px solid #444;
+  transition: background-color 0.2s;
+}
+
+.clientes-table tbody tr:hover {
+  background-color: #1a1a2e;
+}
+
+.clientes-table td {
+  padding: 12px;
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0f1419;
+  min-width: 1300px;
+}
+
+.clients-table thead {
+  background-color: #1a1a2e;
+  border-bottom: 2px solid #fbbf24;
+}
+
+.clients-table th {
+  text-align: left;
+  padding: 12px;
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.clients-table tbody tr {
+  border-bottom: 1px solid #444;
+  transition: background-color 0.2s;
+}
+
+.clients-table tbody tr:hover {
+  background-color: #1a1a2e;
+}
+
+.clients-table td {
+  padding: 12px;
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #1a1a2e;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+}
+
+.modal-content h3 {
+  color: #fbbf24;
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  color: #d1d5db;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  color: #fbbf24;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #0f1419;
+  border: 1px solid #444;
+  color: #e5e7eb;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.1);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.btn-primary {
+  background-color: #fbbf24;
+  color: #000;
+}
+
+.btn-primary:hover {
+  background-color: #f59e0b;
+}
+
+.btn-secondary {
+  background-color: #444;
+  color: #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background-color: #555;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.success-message {
+  color: #10b981;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+========== admin/ClientsList.jsx ==========
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FiX, FiTrash2, FiDownload, FiEdit2, FiCalendar, FiCheckCircle, FiDollarSign } from 'react-icons/fi';
+import * as XLSX from 'xlsx';
+
+export default function ClientsList() {
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [showSaleModal, setShowSaleModal] = useState(false);
+  const [selectedCliente, setSelectedCliente] = useState(null);
+  const [newDate, setNewDate] = useState('');
+  const [newTime, setNewTime] = useState('');
+  const [rescheduleError, setRescheduleError] = useState('');
+  const [saleAmount, setSaleAmount] = useState('');
+  const [saleError, setSaleError] = useState('');
+
+  useEffect(() => {
+    fetchClientes();
+  }, []);
+
+  const handleCancel = async (id) => {
+    if (window.confirm('¿Cambiar este cliente a "No Confirmado"?')) {
+      try {
+        console.log(`Cancelling booking with ID: ${id}`);
+        const response = await axios.put(`/api/booking/${id}/cancel`);
+        if (response.data.success) {
+          fetchClientes();
+        }
+      } catch (err) {
+        console.error('Error cancelling booking:', err);
+        alert('Error al cancelar el agendamiento: ' + (err.response?.data?.message || err.message));
+      }
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Eliminar este cliente permanentemente? Esta acción no se puede deshacer.')) {
+      try {
+        console.log(`Deleting booking with ID: ${id}`);
+        const response = await axios.delete(`/api/booking/${id}`);
+        if (response.data.success) {
+          fetchClientes();
+        }
+      } catch (err) {
+        console.error('Error deleting booking:', err);
+        alert('Error al eliminar el cliente: ' + (err.response?.data?.message || err.message));
+      }
+    }
+  };
+
+  const handleExportToExcel = () => {
+    if (clientes.length === 0) {
+      alert('No hay clientes para exportar');
+      return;
+    }
+
+    // Preparar datos para Excel
+    const dataToExport = clientes.map((cliente, index) => ({
+      'Nº': index + 1,
+      'Nombre': cliente.nombre,
+      'Email': cliente.email,
+      'Teléfono': cliente.telefono,
+      'Empresa': cliente.empresa,
+      'Fecha': cliente.fechaAgendamiento,
+      'Hora': cliente.horaAgendamiento,
+      'Estado': cliente.estado
+    }));
+
+    // Crear workbook
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+
+    // Ajustar ancho de columnas
+    const colWidths = [
+      { wch: 5 },   // Nº
+      { wch: 20 },  // Nombre
+      { wch: 25 },  // Email
+      { wch: 18 },  // Teléfono
+      { wch: 20 },  // Empresa
+      { wch: 15 },  // Fecha
+      { wch: 10 },  // Hora
+      { wch: 15 }   // Estado
+    ];
+    ws['!cols'] = colWidths;
+
+    // Descargar archivo
+    const timestamp = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, `Clientes_Stivenads_${timestamp}.xlsx`);
+  };
+
+  const handleReschedule = (cliente) => {
+    setSelectedCliente(cliente);
+    setNewDate(cliente.fechaAgendamiento);
+    setNewTime(cliente.horaAgendamiento);
+    setRescheduleError('');
+    setShowRescheduleModal(true);
+  };
+
+  const handleSaveReschedule = async () => {
+    if (!newDate || !newTime) {
+      setRescheduleError('Por favor completa la fecha y hora');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`/api/booking/${selectedCliente.id}/reschedule`, {
+        date: newDate,
+        time: newTime
+      });
+
+      if (response.data.success) {
+        setShowRescheduleModal(false);
+        setRescheduleError('');
+        fetchClientes();
+        alert('Reunión reprogramada exitosamente');
+      }
+    } catch (err) {
+      console.error('Error rescheduling booking:', err);
+      const errorMessage = err.response?.data?.message || err.message;
+      setRescheduleError(errorMessage);
+    }
+  };
+
+  const handleSaleClick = (cliente) => {
+    setSelectedCliente(cliente);
+    setSaleAmount('');
+    setSaleError('');
+    setShowSaleModal(true);
+  };
+
+  const handleConfirmSale = async () => {
+    if (!saleAmount || parseFloat(saleAmount) <= 0) {
+      setSaleError('Por favor ingresa un monto válido');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`/api/booking/${selectedCliente.id}/confirm-sale`, {
+        monto_venta: parseFloat(saleAmount)
+      });
+
+      if (response.data.success) {
+        setShowSaleModal(false);
+        setSaleError('');
+        fetchClientes();
+        alert('Venta registrada exitosamente');
+      }
+    } catch (err) {
+      console.error('Error confirming sale:', err);
+      const errorMessage = err.response?.data?.message || err.message;
+      setSaleError(errorMessage);
+    }
+  };
+
+  const fetchClientes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/booking/list');
+      
+      if (response.data.success && response.data.bookings) {
+        // Filter only potential clients (not sold)
+        const potentialClients = response.data.bookings.filter(b => b.status !== 'sold');
+        
+        // Transform booking data to match table format
+        const clientesData = potentialClients.map((booking) => ({
+          id: booking.id || booking.confirmationToken,
+          nombre: booking.clientName || booking.nombre || 'N/A',
+          email: booking.email || 'N/A',
+          telefono: booking.phone || booking.telefono || 'N/A',
+          empresa: booking.company || booking.empresa || 'N/A',
+          fechaAgendamiento: booking.date || 'N/A',
+          horaAgendamiento: booking.time || 'N/A',
+          estado: booking.status === 'No Confirmado' ? 'No Confirmado' : 
+                  booking.status === 'meeting-completed' ? 'Reunión finalizada, en espera de confirmación' :
+                  'Confirmado',
+          status: booking.status
+        }));
+        
+        setClientes(clientesData);
+        setError(null);
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+      setError('Error al cargar clientes. Intenta de nuevo.');
+      setClientes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  if (loading) return <p style={{ textAlign: 'center', padding: '20px' }}>Cargando clientes...</p>;
+
+  if (error) return <p style={{ textAlign: 'center', padding: '20px', color: '#ef4444' }}>{error}</p>;
+
+  if (clientes.length === 0) {
+    return (
+      <div className="admin-section">
+        <h2>Clientes</h2>
+        <p style={{ textAlign: 'center', padding: '20px', color: '#999' }}>No hay clientes registrados aún.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="admin-section">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2>Clientes ({clientes.length})</h2>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={handleExportToExcel}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#10b981',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#10b981'}
+          >
+            <FiDownload size={18} />
+            Exportar Excel
+          </button>
+          <button 
+            onClick={fetchClientes}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#f59e0b',
+              color: '#000',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            Actualizar
+          </button>
+        </div>
+      </div>
+      <div style={{ overflowX: 'auto', width: '100%' }}>
+        <table className="clients-table" style={{ minWidth: '1300px', width: '100%' }}>
+          <thead>
+            <tr>
+              <th style={{ width: '15%' }}>Nombre</th>
+              <th style={{ width: '18%' }}>Email</th>
+              <th style={{ width: '12%' }}>Teléfono</th>
+              <th style={{ width: '15%' }}>Empresa</th>
+              <th style={{ width: '12%' }}>Fecha</th>
+              <th style={{ width: '10%' }}>Hora</th>
+              <th style={{ width: '12%' }}>Estado</th>
+              <th style={{ width: '6%' }}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {clientes.map(cliente => (
+              <tr key={cliente.id}>
+                <td style={{ width: '15%', padding: '12px' }}>{cliente.nombre}</td>
+                <td style={{ width: '18%', padding: '12px', fontSize: '13px' }}>{cliente.email}</td>
+                <td style={{ width: '12%', padding: '12px' }}>{cliente.telefono}</td>
+                <td style={{ width: '15%', padding: '12px' }}>{cliente.empresa}</td>
+                <td style={{ width: '12%', padding: '12px' }}>{cliente.fechaAgendamiento}</td>
+                <td style={{ width: '10%', padding: '12px' }}>{cliente.horaAgendamiento}</td>
+                <td style={{ width: '12%', padding: '12px' }}>
+                  <span 
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      display: 'inline-block',
+                      whiteSpace: 'nowrap',
+                      backgroundColor: cliente.estado === 'No Confirmado' ? '#fecaca' : '#d1fae5',
+                      color: cliente.estado === 'No Confirmado' ? '#991b1b' : '#065f46'
+                    }}
+                  >
+                    {cliente.estado}
+                  </span>
+                </td>
+                <td style={{ width: '6%', padding: '12px' }}>
+                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', alignItems: 'center' }}>
+                    <button
+                      onClick={() => handleReschedule(cliente)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        color: '#3b82f6',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#60a5fa'}
+                      onMouseLeave={(e) => e.target.style.color = '#3b82f6'}
+                      title="Cambiar fecha"
+                    >
+                      <FiCalendar size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleSaleClick(cliente)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        color: '#22c55e',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#4ade80'}
+                      onMouseLeave={(e) => e.target.style.color = '#22c55e'}
+                      title="Registrar venta"
+                    >
+                      <FiDollarSign size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleCancel(cliente.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        color: '#f59e0b',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#fbbf24'}
+                      onMouseLeave={(e) => e.target.style.color = '#f59e0b'}
+                      title="Cancelar agendamiento"
+                    >
+                      <FiX size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cliente.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        color: '#ef4444',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#f87171'}
+                      onMouseLeave={(e) => e.target.style.color = '#ef4444'}
+                      title="Eliminar permanentemente"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Modal de Reprogramación */}
+      {showRescheduleModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#1f2937',
+            borderRadius: '8px',
+            padding: '30px',
+            width: '90%',
+            maxWidth: '400px',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+            border: '1px solid #374151'
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#fff' }}>
+              Reprogramar Reunión
+            </h3>
+            <p style={{ color: '#d1d5db', marginBottom: '5px' }}>
+              <strong>Cliente:</strong> {selectedCliente?.nombre}
+            </p>
+            <p style={{ color: '#d1d5db', marginBottom: '20px' }}>
+              <strong>Fecha actual:</strong> {selectedCliente?.fechaAgendamiento} a las {selectedCliente?.horaAgendamiento}
+            </p>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: '#fff', fontWeight: '600' }}>
+                Nueva Fecha
+              </label>
+              <input
+                type="date"
+                value={newDate}
+                onChange={(e) => setNewDate(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #4b5563',
+                  backgroundColor: '#374151',
+                  color: '#fff',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: '#fff', fontWeight: '600' }}>
+                Nueva Hora
+              </label>
+              <input
+                type="time"
+                value={newTime}
+                onChange={(e) => setNewTime(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #4b5563',
+                  backgroundColor: '#374151',
+                  color: '#fff',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            {rescheduleError && (
+              <div style={{
+                marginBottom: '15px',
+                padding: '12px',
+                backgroundColor: '#fee2e2',
+                border: '1px solid #fecaca',
+                borderRadius: '4px',
+                color: '#991b1b',
+                fontSize: '14px'
+              }}>
+                {rescheduleError}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={handleSaveReschedule}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  backgroundColor: '#10b981',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#10b981'}
+              >
+                Guardar
+              </button>
+              <button
+                onClick={() => setShowRescheduleModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  backgroundColor: '#6b7280',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#4b5563'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#6b7280'}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Registro de Venta */}
+      {showSaleModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#1f2937',
+            borderRadius: '8px',
+            padding: '30px',
+            width: '90%',
+            maxWidth: '400px',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+            border: '1px solid #374151'
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#fff' }}>
+              Registrar Venta
+            </h3>
+            <p style={{ color: '#d1d5db', marginBottom: '5px' }}>
+              <strong>Cliente:</strong> {selectedCliente?.nombre}
+            </p>
+            <p style={{ color: '#d1d5db', marginBottom: '20px' }}>
+              <strong>Asesoría:</strong> {selectedCliente?.fechaAgendamiento} a las {selectedCliente?.horaAgendamiento}
+            </p>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: '#fff', fontWeight: '600' }}>
+                Monto de la Venta (COP)
+              </label>
+              <input
+                type="number"
+                value={saleAmount}
+                onChange={(e) => setSaleAmount(e.target.value)}
+                placeholder="Ej: 500000"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #4b5563',
+                  backgroundColor: '#374151',
+                  color: '#fff',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            {saleError && (
+              <div style={{
+                marginBottom: '15px',
+                padding: '12px',
+                backgroundColor: '#fee2e2',
+                border: '1px solid #fecaca',
+                borderRadius: '4px',
+                color: '#991b1b',
+                fontSize: '14px'
+              }}>
+                {saleError}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={handleConfirmSale}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  backgroundColor: '#22c55e',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#16a34a'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#22c55e'}
+              >
+                Confirmar Venta
+              </button>
+              <button
+                onClick={() => setShowSaleModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  backgroundColor: '#6b7280',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#4b5563'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#6b7280'}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+========== admin/CookiesManagement.jsx ==========
+import React, { useState, useEffect } from 'react';
+
+export default function CookiesManagement() {
+  const [cookiesData, setCookiesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Aquí irá la llamada a tu backend para obtener datos de cookies aceptadas
+    setCookiesData([
+      {
+        id: 1,
+        cliente: 'Juan Pérez',
+        email: 'juan@example.com',
+        cookiesAceptadas: true,
+        fechaAceptacion: '2024-01-15',
+        marketingConsentido: true
+      },
+      {
+        id: 2,
+        cliente: 'María García',
+        email: 'maria@example.com',
+        cookiesAceptadas: true,
+        fechaAceptacion: '2024-01-20',
+        marketingConsentido: false
+      }
+    ]);
+    setLoading(false);
+  }, []);
+
+  if (loading) return <p>Cargando...</p>;
+
+  return (
+    <div className="admin-section">
+      <h2>Gestión de Cookies y Consentimiento</h2>
+      <table className="clients-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Email</th>
+            <th>Cookies Aceptadas</th>
+            <th>Fecha de Aceptación</th>
+            <th>Consentimiento para Marketing</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cookiesData.map(data => (
+            <tr key={data.id}>
+              <td>{data.cliente}</td>
+              <td>{data.email}</td>
+              <td>
+                <span className={data.cookiesAceptadas ? 'badge confirmado' : 'badge rechazado'}>
+                  {data.cookiesAceptadas ? 'Sí' : 'No'}
+                </span>
+              </td>
+              <td>{data.fechaAceptacion}</td>
+              <td>
+                <span className={data.marketingConsentido ? 'badge confirmado' : 'badge rechazado'}>
+                  {data.marketingConsentido ? 'Sí' : 'No'}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+========== admin/Estadisticas.jsx ==========
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import {
+  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
+
+export default function Estadisticas() {
+  const [stats, setStats] = useState({
+    visitantes: 0,
+    consultasAgendadas: 0,
+    consultasConfirmadas: 0,
+    ventasRealizadas: 0,
+    tasaConversion: 0,
+    tasaCierre: 0,
+    ingresoTotal: 0,
+    valorPromedio: 0,
+    consultasEstasMes: 0,
+    ventasEstasMes: 0,
+    ingresosMes: 0
+  });
+  const [chartData, setChartData] = useState({
+    ingresoDiario: [],
+    embudo: [],
+    ingreso30dias: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/booking/list');
+      
+      if (response.data.success && response.data.bookings) {
+        const bookings = response.data.bookings;
+        
+        // Métricas de embudo de marketing
+        const totalVisitantes = bookings.length; // Total de bookings creados
+        const consultasAgendadas = bookings.filter(b => b.status !== 'cancelled').length; // No canceladas
+        const consultasConfirmadas = bookings.filter(b => ['confirmed', 'meeting-completed'].includes(b.status)).length; // Confirmadas o reunión completada
+        const ventasRealizadas = bookings.filter(b => b.venta_confirmada === true || b.status === 'sold').length; // Con venta cerrada
+        const totalIngresos = bookings.reduce((sum, b) => sum + (b.monto_venta || 0), 0);
+        
+        // Tasa de conversión = Consultadas / Agendadas
+        const tasaConversion = consultasAgendadas > 0 
+          ? ((consultasConfirmadas / consultasAgendadas) * 100).toFixed(1) 
+          : 0;
+        
+        // Tasa de cierre = Ventas / Consultadas
+        const tasaCierre = consultasConfirmadas > 0 
+          ? ((ventasRealizadas / consultasConfirmadas) * 100).toFixed(1) 
+          : 0;
+        
+        // Valor promedio por venta
+        const valorPromedio = ventasRealizadas > 0 
+          ? (totalIngresos / ventasRealizadas).toFixed(0) 
+          : 0;
+
+        // Datos del mes actual
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        const consultasEstasMes = bookings.filter(b => {
+          try {
+            const bookingDate = new Date(b.date);
+            return bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear;
+          } catch (e) {
+            return false;
+          }
+        }).length;
+
+        const ventasEstasMes = bookings.filter(b => {
+          try {
+            const bookingDate = new Date(b.date);
+            return (b.venta_confirmada === true || b.status === 'sold') && 
+                   bookingDate.getMonth() === currentMonth && 
+                   bookingDate.getFullYear() === currentYear;
+          } catch (e) {
+            return false;
+          }
+        }).length;
+
+        const ingresosMes = bookings.filter(b => {
+          try {
+            const bookingDate = new Date(b.date);
+            return bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear;
+          } catch (e) {
+            return false;
+          }
+        }).reduce((sum, b) => sum + (b.monto_venta || 0), 0);
+
+        setStats({
+          visitantes: totalVisitantes,
+          consultasAgendadas,
+          consultasConfirmadas,
+          ventasRealizadas,
+          tasaConversion,
+          tasaCierre,
+          ingresoTotal: totalIngresos,
+          valorPromedio,
+          consultasEstasMes,
+          ventasEstasMes,
+          ingresosMes
+        });
+
+        // Datos de ingreso diario últimos 30 días
+        const ingresoDiarioMap = {};
+        bookings.forEach(b => {
+          try {
+            const bookingDate = new Date(b.date);
+            const dayKey = bookingDate.toLocaleDateString('es-CO');
+            if (!ingresoDiarioMap[dayKey]) {
+              ingresoDiarioMap[dayKey] = { dia: dayKey, ingreso: 0, ventas: 0 };
+            }
+            if (b.venta_confirmada === true || b.status === 'sold') {
+              ingresoDiarioMap[dayKey].ingreso += b.monto_venta || 0;
+              ingresoDiarioMap[dayKey].ventas += 1;
+            }
+          } catch (e) {}
+        });
+
+        const ingreso30dias = Object.values(ingresoDiarioMap)
+          .sort((a, b) => new Date(a.dia) - new Date(b.dia))
+          .slice(-30);
+
+        // Embudo de conversión
+        const embudoData = [
+          { name: 'Visitantes', value: totalVisitantes, fill: '#3b82f6' },
+          { name: 'Consultadas', value: consultasConfirmadas, fill: '#10b981' },
+          { name: 'Ventas Cerradas', value: ventasRealizadas, fill: '#fbbf24' }
+        ];
+
+        setChartData({
+          ingreso30dias,
+          embudo: embudoData,
+          ingresoDiario: ingreso30dias
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  return (
+    <div className="admin-section">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h2>Métricas & Analytics</h2>
+        <button 
+          onClick={fetchStats}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#f59e0b',
+            color: '#000',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          Actualizar
+        </button>
+      </div>
+
+      {/* KPIs Principales - Embudo de Ventas */}
+      <div style={{ marginBottom: '3rem' }}>
+        <h3 style={{ color: '#f1f5f9', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: '600' }}>Embudo de Ventas (Funnel)</h3>
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          <div className="stat-card">
+            <h3>Visitantes / Consultas</h3>
+            <p className="stat-value">{loading ? '-' : stats.visitantes}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Total de personas interesadas</p>
+          </div>
+          <div className="stat-card">
+            <h3>Consultas Confirmadas</h3>
+            <p className="stat-value">{loading ? '-' : stats.consultasConfirmadas}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Completaron la asesoría</p>
+          </div>
+          <div className="stat-card">
+            <h3>Ventas Cerradas</h3>
+            <p className="stat-value" style={{ color: '#22c55e' }}>{loading ? '-' : stats.ventasRealizadas}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Clientes que compraron</p>
+          </div>
+          <div className="stat-card">
+            <h3>Ingresos Totales</h3>
+            <p className="stat-value" style={{ color: '#22c55e' }}>{loading ? '-' : formatCurrency(stats.ingresoTotal)}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Todas las ventas</p>
+          </div>
+        </div>
+      </div>
+
+      {/* KPIs de Tasas de Conversión */}
+      <div style={{ marginBottom: '3rem' }}>
+        <h3 style={{ color: '#f1f5f9', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: '600' }}>Tasas de Conversión</h3>
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          <div className="stat-card">
+            <h3>Tasa de Conversión</h3>
+            <p className="stat-value" style={{ color: '#3b82f6' }}>{loading ? '-' : `${stats.tasaConversion}%`}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Visita → Consulta</p>
+          </div>
+          <div className="stat-card">
+            <h3>Tasa de Cierre</h3>
+            <p className="stat-value" style={{ color: '#22c55e' }}>{loading ? '-' : `${stats.tasaCierre}%`}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Consulta → Venta</p>
+          </div>
+          <div className="stat-card">
+            <h3>Valor Promedio</h3>
+            <p className="stat-value" style={{ color: '#fbbf24' }}>{loading ? '-' : formatCurrency(stats.valorPromedio)}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Por venta cerrada</p>
+          </div>
+          <div className="stat-card">
+            <h3>ROI de Asesorías</h3>
+            <p className="stat-value" style={{ color: '#ec4899' }}>
+              {loading ? '-' : stats.consultasConfirmadas > 0 ? `${((stats.ventasRealizadas / stats.consultasConfirmadas) * 100).toFixed(0)}%` : '0%'}
+            </p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Asesorías convertidas</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mes Actual */}
+      <div style={{ marginBottom: '3rem' }}>
+        <h3 style={{ color: '#f1f5f9', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: '600' }}>Este Mes</h3>
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          <div className="stat-card">
+            <h3>Consultas Programadas</h3>
+            <p className="stat-value">{loading ? '-' : stats.consultasEstasMes}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Este mes</p>
+          </div>
+          <div className="stat-card">
+            <h3>Ventas Cerradas</h3>
+            <p className="stat-value" style={{ color: '#22c55e' }}>{loading ? '-' : stats.ventasEstasMes}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Este mes</p>
+          </div>
+          <div className="stat-card">
+            <h3>Ingresos del Mes</h3>
+            <p className="stat-value" style={{ color: '#22c55e' }}>{loading ? '-' : formatCurrency(stats.ingresosMes)}</p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Este mes</p>
+          </div>
+          <div className="stat-card">
+            <h3>Promedio Diario</h3>
+            <p className="stat-value" style={{ color: '#fbbf24' }}>
+              {loading ? '-' : formatCurrency(stats.consultasEstasMes > 0 ? stats.ingresosMes / stats.consultasEstasMes : 0)}
+            </p>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.5rem' }}>Por consulta</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Gráficos */}
+      {!loading && (
+        <>
+          {/* Gráfico de Ingresos - Últimos 30 días */}
+          {chartData.ingreso30dias.length > 0 && (
+            <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+              <h3 style={{ color: '#f1f5f9', marginBottom: '1rem', fontSize: '1.1rem', fontWeight: '600' }}>Ingresos Últimos 30 Días</h3>
+              <div style={{ background: '#1e293b', borderRadius: '6px', padding: '1.5rem', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={chartData.ingreso30dias}>
+                    <defs>
+                      <linearGradient id="colorIngreso" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.08)" />
+                    <XAxis dataKey="dia" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                    <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                    <Tooltip 
+                      contentStyle={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(34, 197, 94, 0.5)', borderRadius: '6px' }}
+                      formatter={(value) => [formatCurrency(value), 'Ingresos']}
+                    />
+                    <Area type="monotone" dataKey="ingreso" stroke="#22c55e" fillOpacity={1} fill="url(#colorIngreso)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+          {/* Embudo de Conversión */}
+          {chartData.embudo.length > 0 && (
+            <div style={{ marginTop: '2rem' }}>
+              <h3 style={{ color: '#f1f5f9', marginBottom: '1rem', fontSize: '1.1rem', fontWeight: '600' }}>Embudo de Conversión</h3>
+              <div style={{ background: '#1e293b', borderRadius: '6px', padding: '1.5rem', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartData.embudo} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.08)" />
+                    <XAxis type="number" stroke="#94a3b8" />
+                    <YAxis dataKey="name" type="category" stroke="#94a3b8" />
+                    <Tooltip 
+                      contentStyle={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '6px' }}
+                      cursor={{ fill: 'rgba(251, 191, 36, 0.1)' }}
+                    />
+                    <Bar dataKey="value" fill="#fbbf24" radius={[0, 8, 8, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {!loading && chartData.ingreso30dias.length === 0 && (
+        <div style={{ marginTop: '2rem', textAlign: 'center', color: '#94a3b8' }}>
+          <p>No hay datos de ventas disponibles. Comienza a registrar ventas para ver el análisis.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+========== admin/SoldClientsList.jsx ==========
+import React, { useState, useEffect } from 'react';
+import { FiX, FiTrash2, FiDownload } from 'react-icons/fi';
+import * as XLSX from 'xlsx';
+import './ClientsList.css';
+
+export default function SoldClientsList() {
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchClientes();
+  }, []);
+
+  const fetchClientes = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:3001/api/booking/list');
+      const data = await response.json();
+      
+      if (data.success) {
+        // Filter only sold clients
+        const vendidos = data.bookings.filter(b => b.status === 'sold');
+        setClientes(vendidos);
+        setError(null);
+      } else {
+        setError('Error al cargar clientes');
+      }
+    } catch (err) {
+      setError('Error de conexión: ' + err.message);
+      console.error('Error fetching clientes:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`¿Eliminar cliente ${name}?`)) {
+      try {
+        const response = await fetch(`http://localhost:3001/api/booking/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setClientes(clientes.filter(c => c.id !== id));
+        } else {
+          alert('Error al eliminar');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+  };
+
+  const handleExportToExcel = () => {
+    const dataToExport = clientes.map(cliente => ({
+      'Nombre': cliente.clientName,
+      'Email': cliente.email,
+      'Teléfono': cliente.phone,
+      'Empresa': cliente.company,
+      'Fecha': cliente.date,
+      'Hora': cliente.time,
+      'Monto Venta': `$${cliente.monto_venta?.toLocaleString('es-CO') || '0'}`,
+      'Fecha Venta': cliente.fecha_venta ? new Date(cliente.fecha_venta).toLocaleDateString('es-CO') : '',
+      'Estado': 'Vendido'
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Clientes Vendidos');
+    XLSX.writeFile(workbook, `Clientes_Vendidos_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  if (loading) {
+    return <div className="admin-section">Cargando clientes...</div>;
+  }
+
+  return (
+    <div className="admin-section">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2>Clientes Vendidos ({clientes.length})</h2>
+        {clientes.length > 0 && (
+          <button 
+            onClick={handleExportToExcel}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#10b981',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            <FiDownload size={16} /> Exportar Excel
+          </button>
+        )}
+      </div>
+
+      {clientes.length === 0 ? (
+        <div style={{ textAlign: 'center', color: '#999', padding: '40px' }}>
+          <p>No hay clientes vendidos</p>
+        </div>
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table className="clientes-table" style={{ width: '100%' }}>
+            <thead>
+              <tr style={{
+                backgroundColor: '#1a1a2e',
+                borderBottom: '2px solid #10b981'
+              }}>
+                <th style={{ textAlign: 'left', padding: '12px' }}>Cliente</th>
+                <th style={{ textAlign: 'left', padding: '12px' }}>Email</th>
+                <th style={{ textAlign: 'left', padding: '12px' }}>Teléfono</th>
+                <th style={{ textAlign: 'left', padding: '12px' }}>Empresa</th>
+                <th style={{ textAlign: 'left', padding: '12px' }}>Fecha Reunión</th>
+                <th style={{ textAlign: 'left', padding: '12px' }}>Monto Venta</th>
+                <th style={{ textAlign: 'center', padding: '12px' }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clientes.map((cliente) => (
+                <tr key={cliente.id} style={{
+                  borderBottom: '1px solid #444',
+                  backgroundColor: '#0f1419'
+                }}>
+                  <td style={{ padding: '12px', color: '#10b981', fontWeight: '600' }}>{cliente.clientName}</td>
+                  <td style={{ padding: '12px', fontSize: '12px', color: '#aaa' }}>{cliente.email}</td>
+                  <td style={{ padding: '12px', fontSize: '12px' }}>{cliente.phone}</td>
+                  <td style={{ padding: '12px', fontSize: '12px' }}>{cliente.company}</td>
+                  <td style={{ padding: '12px', fontSize: '12px' }}>
+                    {cliente.date} {cliente.time}
+                  </td>
+                  <td style={{ padding: '12px', color: '#10b981', fontWeight: 'bold' }}>
+                    ${cliente.monto_venta?.toLocaleString('es-CO') || '0'}
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'center' }}>
+                    <button
+                      onClick={() => handleDelete(cliente.id, cliente.clientName)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        padding: '4px 8px'
+                      }}
+                      title="Eliminar"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+========== App.jsx ==========
+import React, { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import Header from './components/Header'
+import Hero from './components/Hero'
+import SystemQualification from './components/SystemQualification'
+import RealProblem from './components/RealProblem'
+import Solution from './components/Solution'
+import HowItWorks from './components/HowItWorks'
+import Promise from './components/Promise'
+import Footer from './components/Footer'
+import CookiesBanner from './components/CookiesBanner'
+import FloatingButton from './components/FloatingButton'
+import BookingModal from './components/BookingModal'
+import AdminPage from './pages/AdminPage'
+import './index.css'
+
+function App() {
+  const [showModal, setShowModal] = useState(false)
+  const [showFloatingButton, setShowFloatingButton] = useState(false)
+  const [currentPage, setCurrentPage] = useState('home')
+
+  useEffect(() => {
+    // Check URL for admin page
+    if (window.location.pathname === '/admin') {
+      setCurrentPage('admin')
+    } else {
+      setCurrentPage('home')
+    }
+
+    // Listen for URL changes
+    const handlePopState = () => {
+      if (window.location.pathname === '/admin') {
+        setCurrentPage('admin')
+      } else {
+        setCurrentPage('home')
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
+  const navigateToAdmin = () => {
+    window.history.pushState(null, '', '/admin')
+    setCurrentPage('admin')
+  }
+
+  const navigateToHome = () => {
+    window.history.pushState(null, '', '/')
+    setCurrentPage('home')
+  }
+
+  // Resetear scroll al inicio
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [currentPage])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      setShowFloatingButton(scrollPosition > 500)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  if (currentPage === 'admin') {
+    return <AdminPage onExit={navigateToHome} />
+  }
+
+  return (
+    <div className="app">
+      <Header onBookClick={() => setShowModal(true)} onAdminClick={navigateToAdmin} />
+      <Hero onBookClick={() => setShowModal(true)} />
+      <SystemQualification onBookClick={() => setShowModal(true)} />
+      <RealProblem />
+      <Solution onBookClick={() => setShowModal(true)} />
+      <HowItWorks />
+      <Promise onBookClick={() => setShowModal(true)} />
+      <Footer />
+      <CookiesBanner />
+      
+      {showFloatingButton && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0 }}
+        >
+          <FloatingButton onClick={() => setShowModal(true)} />
+        </motion.div>
+      )}
+
+      {showModal && (
+        <BookingModal onClose={() => setShowModal(false)} />
+      )}
+    </div>
+  )
+}
+
+export default App
+
+
+========== components/BookingModal.css ==========
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 8, 23, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-dark) 100%);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .modal-step h2 {
+    font-size: 1.4rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    padding: 1.2rem;
+  }
+
+  .modal-close {
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.3rem;
+  }
+
+  .modal-step h2 {
+    font-size: 1.2rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  padding: 0.5rem;
+}
+
+.modal-close:hover {
+  color: var(--color-yellow);
+  transform: rotate(90deg);
+}
+
+.modal-step {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.modal-step h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.modal-step > p {
+  color: var(--color-text-light);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  background: rgba(45, 62, 127, 0.5);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  padding: 0.75rem;
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-yellow);
+  background: rgba(45, 62, 127, 0.7);
+  box-shadow: 0 0 10px rgba(244, 196, 48, 0.2);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.btn-primary,
+.btn-secondary,
+.main-cta {
+  padding: 14px 40px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary,
+.main-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  margin-top: 1rem;
+}
+
+.btn-primary:hover:not(:disabled),
+.main-cta:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+}
+
+.btn-primary:active:not(:disabled),
+.main-cta:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn-primary:disabled,
+.main-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: rgba(45, 62, 127, 0.6);
+  color: var(--color-text);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  margin-top: 1rem;
+}
+
+.btn-secondary:hover {
+  background: rgba(45, 62, 127, 0.8);
+  border-color: var(--color-yellow);
+  transform: scale(1.05);
+}
+
+.calendar-section {
+  background: rgba(31, 45, 92, 0.4);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(244, 196, 48, 0.1);
+  margin: 1.5rem 0;
+}
+
+.time-slots {
+  margin-top: 2rem;
+}
+
+.time-slots h3 {
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.time-slot {
+  background: rgba(45, 62, 127, 0.5);
+  border: 2px solid rgba(244, 196, 48, 0.2);
+  padding: 0.75rem;
+  border-radius: 8px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.time-slot:hover {
+  border-color: var(--color-yellow);
+  background: rgba(45, 62, 127, 0.7);
+}
+
+.time-slot.active {
+  background: var(--color-yellow);
+  border-color: var(--color-yellow);
+  color: var(--color-dark);
+}
+
+.no-availability {
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  padding: 2rem;
+  background: rgba(255, 59, 48, 0.1);
+  border-radius: 8px;
+  grid-column: 1 / -1;
+}
+
+.booked-info {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+  align-items: stretch;
+}
+
+.modal-actions button {
+  min-height: 48px;
+  height: auto;
+}
+
+.confirmation {
+  text-align: center;
+}
+
+.confirmation-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(244, 196, 48, 0.2);
+  border: 2px solid var(--color-yellow);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-yellow);
+  margin: 0 auto 1.5rem;
+}
+
+.confirmation-details {
+  background: rgba(45, 62, 127, 0.4);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.confirmation-details p {
+  color: var(--color-text-light);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.confirmation-details strong {
+  color: var(--color-yellow);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+
+  .modal-step h2 {
+    font-size: 1.5rem;
+  }
+
+  .modal-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.75rem;
+  }
+
+  .modal-content {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .modal-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1.3rem;
+  }
+
+  .modal-step h2 {
+    font-size: 1.3rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+  }
+
+  .slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .time-slot {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .confirmation-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .confirmation-details {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .modal-step h2 {
+    font-size: 1.1rem;
+  }
+
+  .modal-step > p {
+    font-size: 0.85rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .time-slot {
+    padding: 0.4rem;
+    font-size: 0.65rem;
+  }
+
+  .slots-grid {
+    gap: 0.5rem;
+  }
+}
+
+========== components/BookingModal.jsx ==========
+import React, { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FiX, FiArrowLeft, FiArrowRight, FiClock, FiCalendar } from 'react-icons/fi'
+import Calendar from './Calendar'
+import './BookingModal.css'
+import axios from 'axios'
+
+function BookingModal({ onClose }) {
+  const [step, setStep] = useState('form') // form, calendar, confirmation
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: ''
+  })
+  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedTime, setSelectedTime] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [availableTimes, setAvailableTimes] = useState([])
+  const [bookedSlots, setBookedSlots] = useState([])
+
+  useEffect(() => {
+    // Limpiar el textarea cuando se monta el componente
+    const textarea = document.querySelector('textarea[name="message"]')
+    if (textarea) {
+      textarea.value = ''
+    }
+  }, [])
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault()
+    if (formData.name && formData.email && formData.phone) {
+      setStep('calendar')
+    }
+  }
+
+  const handleDateSelect = async (date) => {
+    setSelectedDate(date)
+    setSelectedTime(null)
+    setLoading(true)
+    try {
+      // Llamar al backend para obtener horarios disponibles
+      const response = await axios.get(`/api/booking/available-times`, {
+        params: { date: date.toISOString().split('T')[0] }
+      })
+      setAvailableTimes(response.data.times || generateTimeSlots())
+      setBookedSlots(response.data.bookedSlots || [])
+      console.log('Available times:', response.data.times)
+      console.log('Booked slots:', response.data.bookedSlots)
+    } catch (error) {
+      console.error('Error fetching available times:', error)
+      setAvailableTimes(generateTimeSlots())
+      setBookedSlots([])
+    }
+    setLoading(false)
+  }
+
+  const generateTimeSlots = () => {
+    const slots = []
+    for (let i = 8; i < 18; i++) {
+      slots.push(`${String(i).padStart(2, '0')}:00`)
+      slots.push(`${String(i).padStart(2, '0')}:30`)
+    }
+    return slots
+  }
+
+  const handleTimeSelect = (time) => {
+    setSelectedTime(time)
+  }
+
+  const handleBooking = async () => {
+    if (!selectedDate || !selectedTime) return
+    
+    setLoading(true)
+    try {
+      const response = await axios.post('/api/booking/create', {
+        ...formData,
+        date: selectedDate.toISOString().split('T')[0],
+        time: selectedTime
+      })
+      
+      if (response.data.success) {
+        setStep('confirmation')
+      } else {
+        alert('Error: ' + (response.data.message || 'No se pudo agendar'))
+      }
+    } catch (error) {
+      console.error('Error creating booking:', error)
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
+      alert('Error al agendar: ' + errorMessage)
+    }
+    setLoading(false)
+  }
+
+  return (
+    <motion.div
+      className="modal-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="modal-content"
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button className="modal-close" onClick={onClose}>
+          <FiX size={24} />
+        </button>
+
+        <AnimatePresence mode="wait">
+          {step === 'form' && (
+            <motion.div
+              key="form"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              className="modal-step"
+            >
+              <h2>Cuéntanos sobre ti</h2>
+              <p>Completa tus datos para agendar tu asesoría</p>
+              
+              <form onSubmit={handleFormSubmit}>
+                <div className="form-group">
+                  <label>Nombre Completo</label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Tu nombre"
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="tu@email.com"
+                    value={formData.email}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Teléfono</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="+57 300 000 0000"
+                    value={formData.phone}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Empresa</label>
+                  <input
+                    type="text"
+                    name="company"
+                    placeholder="Nombre de tu empresa"
+                    value={formData.company}
+                    onChange={handleFormChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Cuéntanos tu situación (opcional)</label>
+                  <textarea
+                    name="message"
+                    placeholder="¿Cuál es tu principal desafío?"
+                    value={formData.message}
+                    onChange={handleFormChange}
+                    rows="3"
+                    autoComplete="off"
+                    form="nofill"
+                  />
+                </div>
+
+                <button type="submit" className="main-cta">
+                  Siguiente
+                </button>
+              </form>
+            </motion.div>
+          )}
+
+          {step === 'calendar' && (
+            <motion.div
+              key="calendar"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              className="modal-step"
+            >
+              <h2>Elige tu Fecha y Hora</h2>
+              <p>Selecciona el mejor momento para ti</p>
+
+              <div className="calendar-section">
+                <Calendar onDateSelect={handleDateSelect} selectedDate={selectedDate} />
+              </div>
+
+              {selectedDate && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="time-slots"
+                >
+                  <h3>Horarios disponibles: {selectedDate.toLocaleDateString('es-ES')}</h3>
+                  <div className="slots-grid">
+                    {availableTimes && availableTimes.length > 0 ? (
+                      availableTimes.map((time) => (
+                        <button
+                          key={time}
+                          className={`time-slot ${selectedTime === time ? 'active' : ''}`}
+                          onClick={() => handleTimeSelect(time)}
+                        >
+                          <FiClock size={16} />
+                          {time}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="no-availability">No hay horarios disponibles para esta fecha</p>
+                    )}
+                  </div>
+                  {bookedSlots.length > 0 && (
+                    <p className="booked-info">({generateTimeSlots().length - availableTimes.length} horarios ocupados)</p>
+                  )}
+                </motion.div>
+              )}
+
+              <div className="modal-actions">
+                <button className="btn-secondary" onClick={() => setStep('form')}>
+                  <FiArrowLeft /> Atrás
+                </button>
+                <button 
+                  className="btn-primary" 
+                  onClick={handleBooking}
+                  disabled={!selectedDate || !selectedTime || loading}
+                >
+                  {loading ? 'Agendando...' : 'Confirmar Agendamiento'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 'confirmation' && (
+            <motion.div
+              key="confirmation"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="modal-step confirmation"
+            >
+              <div className="confirmation-icon">
+                <FiCalendar size={48} />
+              </div>
+              <h2>¡Agendamiento Confirmado!</h2>
+              <p>Hemos enviado los detalles a tu email</p>
+              
+              <div className="confirmation-details">
+                <p><strong>Nombre:</strong> {formData.name}</p>
+                <p><strong>Fecha:</strong> {selectedDate?.toLocaleDateString('es-ES')}</p>
+                <p><strong>Hora:</strong> {selectedTime}</p>
+                <p><strong>Enlace de Google Meet:</strong> Se envió por correo</p>
+              </div>
+
+              <button className="btn-primary" onClick={onClose}>
+                Cerrar
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+export default BookingModal
+
+========== components/Calendar.css ==========
+.calendar {
+  background: rgba(31, 45, 92, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(244, 196, 48, 0.1);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-header h3 {
+  color: #f1f5f9;
+  font-size: 1.5rem;
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+.calendar-nav-btn {
+  background: none;
+  border: none;
+  color: var(--color-yellow);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-nav-btn:hover {
+  transform: scale(1.2);
+  color: #ffd700;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.weekday {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.5rem;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  background: rgba(45, 62, 127, 0.4);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  border-radius: 8px;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+}
+
+.calendar-day:not(.disabled):hover {
+  border-color: var(--color-yellow);
+  background: rgba(45, 62, 127, 0.6);
+}
+
+.calendar-day.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  color: var(--color-text-light);
+}
+
+.calendar-day.selected {
+  background: var(--color-yellow);
+  border-color: var(--color-yellow);
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+.calendar-day.today {
+  background: rgba(93, 76, 255, 0.3);
+  border: 2px solid #5d4cff;
+  position: relative;
+}
+
+.calendar-day.today::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(93, 76, 255, 0.1);
+  border-radius: 8px;
+  animation: none;
+}
+
+.today-label {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #5d4cff;
+  color: var(--color-text);
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.calendar-hint {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(93, 76, 255, 0.15);
+  border-left: 4px solid #5d4cff;
+  border-radius: 8px;
+  text-align: center;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  font-weight: 600;  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.calendar-hint-icon {
+  color: #5d4cff;
+  flex-shrink: 0;}
+
+.calendar-hint p {
+  margin: 0;
+  color: var(--color-text-light);
+}
+
+@media (max-width: 480px) {
+  .calendar {
+    padding: 1rem;
+  }
+
+  .calendar-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .calendar-day {
+    font-size: 0.8rem;
+    aspect-ratio: auto;
+    padding: 0.4rem;
+  }
+
+  .weekday {
+    font-size: 0.7rem;
+    padding: 0.3rem;
+  }
+
+  .today-label {
+    font-size: 0.5rem;
+    padding: 0.15rem 0.3rem;
+  }
+
+  .calendar-hint {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .calendar {
+    padding: 0.75rem;
+  }
+
+  .calendar-header h3 {
+    font-size: 0.85rem;
+  }
+
+  .calendar-nav-btn {
+    padding: 0.3rem;
+  }
+
+  .calendar-day {
+    font-size: 0.7rem;
+  }
+
+  .weekday {
+    font-size: 0.6rem;
+  }
+
+  .calendar-hint {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+}
+
+========== components/Calendar.jsx ==========
+import React, { useState, useMemo } from 'react'
+import { motion } from 'framer-motion'
+import { FiChevronLeft, FiChevronRight, FiCalendar } from 'react-icons/fi'
+import './Calendar.css'
+
+function Calendar({ onDateSelect, selectedDate }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+
+  const getDaysInMonth = (date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
+  }
+
+  const getFirstDayOfMonth = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
+  }
+
+  const getDayName = (dayIndex) => {
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab']
+    return days[dayIndex]
+  }
+
+  const generateCalendarDays = () => {
+    const daysInMonth = getDaysInMonth(currentMonth)
+    const firstDay = getFirstDayOfMonth(currentMonth)
+    const days = []
+
+    // Días vacíos del mes anterior
+    for (let i = 0; i < firstDay; i++) {
+      days.push(null)
+    }
+
+    // Días del mes actual
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i))
+    }
+
+    return days
+  }
+
+  const isDateDisabled = (date) => {
+    if (!date) return true
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return date < today
+  }
+
+  const isDateSelected = (date) => {
+    if (!date || !selectedDate) return false
+    return date.toDateString() === selectedDate.toDateString()
+  }
+
+  const isToday = (date) => {
+    if (!date) return false
+    const today = new Date()
+    return date.toDateString() === today.toDateString()
+  }
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
+  }
+
+  const handleNextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
+  }
+
+  const days = generateCalendarDays()
+  const monthName = currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+
+  const pulseVariants = {
+    pulse: {
+      scale: [1, 1.15, 1],
+      boxShadow: [
+        '0 0 0 0px rgba(93, 76, 255, 0.7)',
+        '0 0 0 15px rgba(93, 76, 255, 0)',
+      ],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        repeatType: 'loop',
+      },
+    },
+  }
+
+  return (
+    <div className="calendar">
+      <div className="calendar-header">
+        <button className="calendar-nav-btn" onClick={handlePrevMonth}>
+          <FiChevronLeft />
+        </button>
+        <h3>{monthName.charAt(0).toUpperCase() + monthName.slice(1)}</h3>
+        <button className="calendar-nav-btn" onClick={handleNextMonth}>
+          <FiChevronRight />
+        </button>
+      </div>
+
+      <div className="calendar-weekdays">
+        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab'].map((day) => (
+          <div key={day} className="weekday">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      <div className="calendar-days">
+        {days.map((date, index) => (
+          <motion.button
+            key={index}
+            className={`calendar-day ${isDateSelected(date) ? 'selected' : ''} ${isDateDisabled(date) ? 'disabled' : ''} ${isToday(date) ? 'today' : ''}`}
+            onClick={() => {
+              if (!isDateDisabled(date)) {
+                onDateSelect && onDateSelect(date)
+              }
+            }}
+            whileHover={!isDateDisabled(date) ? { scale: 1.1 } : {}}
+            whileTap={!isDateDisabled(date) ? { scale: 0.95 } : {}}
+            disabled={isDateDisabled(date)}
+            variants={isToday(date) && !isDateDisabled(date) ? pulseVariants : {}}
+            animate={isToday(date) && !isDateDisabled(date) ? 'pulse' : ''}
+          >
+            {date ? date.getDate() : ''}
+            {isToday(date) && <span className="today-label">HOY</span>}
+          </motion.button>
+        ))}
+      </div>
+
+      <div className="calendar-hint">
+        <FiCalendar className="calendar-hint-icon" size={20} />
+        <p>Agenda hoy y obtén tu consulta esta semana!</p>
+      </div>
+    </div>
+  )
+}
+
+export default Calendar
+
+========== components/Cookies.jsx ==========
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FiX } from 'react-icons/fi';
+import './LegalModal.css';
+
+export default function Cookies() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <>
+      <button 
+        className="legal-link"
+        onClick={() => setShowModal(true)}
+      >
+        Cookies
+      </button>
+
+      {showModal && (
+        <motion.div
+          className="legal-modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowModal(false)}
+        >
+          <motion.div
+            className="legal-modal-content"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="legal-close" onClick={() => setShowModal(false)}>
+              <FiX size={24} />
+            </button>
+            <h2>Política de Cookies</h2>
+            <p>Utilizamos cookies para mejorar tu experiencia de navegación y proporcionar un servicio personalizado.</p>
+            <p>Las cookies nos permiten recordar tus preferencias y analizar cómo utilizas nuestro sitio para seguir mejorando.</p>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+========== components/CookiesBanner.css ==========
+.cookies-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background: rgba(30, 41, 59, 0.98);
+  color: #fff;
+  padding: 20px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2000;
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.15);
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cookies-banner p {
+  flex: 1;
+  min-width: 300px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.cookies-banner .main-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cookies-banner .main-cta:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+}
+
+========== components/CookiesBanner.jsx ==========
+import React, { useState, useEffect } from 'react';
+import './CookiesBanner.css';
+
+export default function CookiesBanner() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (!localStorage.getItem('cookiesAccepted')) setShow(true);
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="cookies-banner">
+      <p>
+        Utilizamos cookies para mejorar tu experiencia de navegación, analizar el uso del sitio y personalizar el contenido. 
+        Al continuar navegando, aceptas el uso de cookies de acuerdo con nuestra Política de Privacidad.
+      </p>
+      <button className="main-cta" onClick={() => { localStorage.setItem('cookiesAccepted', 'true'); setShow(false); }}>
+        Aceptar
+      </button>
+    </div>
+  );
+}
+
+========== components/CTA.css ==========
+.cta {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, var(--color-yellow) 0%, #ffd700 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(10, 14, 39, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+
+.cta::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(10, 14, 39, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  bottom: -50px;
+  left: -50px;
+  pointer-events: none;
+}
+
+.cta-container {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.cta h2 {
+  font-size: 2.8rem;
+  color: var(--color-dark);
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.cta p {
+  font-size: 1.2rem;
+  color: var(--color-dark);
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.cta-button {
+  background: var(--color-dark);
+  color: var(--color-yellow);
+  padding: 1.2rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 2px solid var(--color-dark);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 10px 30px rgba(10, 14, 39, 0.3);
+}
+
+.cta-button:hover {
+  background: var(--color-yellow);
+  color: var(--color-dark);
+  border-color: var(--color-yellow);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(10, 14, 39, 0.4);
+}
+
+@media (max-width: 768px) {
+  .cta {
+    padding: 4rem 1.5rem;
+  }
+
+  .cta h2 {
+    font-size: 1.8rem;
+  }
+
+  .cta p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta {
+    padding: 3rem 1rem;
+  }
+
+  .cta::before,
+  .cta::after {
+    display: none;
+  }
+
+  .cta h2 {
+    font-size: 1.5rem;
+  }
+
+  .cta-button {
+    padding: 0.9rem 1.8rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .cta {
+    padding: 2rem 0.75rem;
+  }
+
+  .cta-container {
+    max-width: 100%;
+  }
+
+  .cta h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cta p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.85rem;
+  }
+}
+  }
+}
+
+========== components/CTA.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import './CTA.css'
+
+function CTA({ onBookClick }) {
+  return (
+    <section className="cta">
+      <motion.div
+        className="cta-container"
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+      >
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          ¿Listo para Transformar tu Negocio?
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+        >
+          Agenda tu asesoría gratuita hoy y comienza tu transformación digital
+        </motion.p>
+
+        <motion.button
+          className="cta-button"
+          onClick={onBookClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+        >
+          Agendar Ahora
+        </motion.button>
+      </motion.div>
+    </section>
+  )
+}
+
+export default CTA
+
+========== components/FloatingButton.css ==========
+.floating-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--color-yellow);
+  color: var(--color-dark);
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(244, 196, 48, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  z-index: 50;
+  font-size: 1rem;
+}
+
+.floating-button:hover {
+  background: #ffd700;
+  box-shadow: 0 12px 35px rgba(244, 196, 48, 0.5);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .floating-button {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-button {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.75rem;
+    border-radius: 50%;
+    font-size: 0.85rem;
+  }
+
+  .floating-button span {
+    display: none;
+  }
+}
+
+@media (max-width: 375px) {
+  .floating-button {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    padding: 0.65rem;
+  }
+}
+
+========== components/FloatingButton.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import { FiZap } from 'react-icons/fi'
+import './FloatingButton.css'
+
+function FloatingButton({ onClick }) {
+  return (
+    <motion.button
+      className="floating-button"
+      onClick={onClick}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0 }}
+    >
+      <FiZap size={24} />
+      <span>Agendar</span>
+    </motion.button>
+  )
+}
+
+export default FloatingButton
+
+========== components/Footer.css ==========
+.footer {
+  background: var(--color-darker);
+  border-top: 1px solid rgba(244, 196, 48, 0.1);
+  padding: 4rem 2rem 1.5rem;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+  color: var(--color-yellow);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.footer-section p {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section ul li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-section ul li a {
+  color: var(--color-text-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.footer-section ul li a:hover {
+  color: var(--color-yellow);
+  padding-left: 0.5rem;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(244, 196, 48, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-bottom p {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 2.5rem 1.5rem 1rem;
+  }
+
+  .footer-content {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 2rem 1rem 0.75rem;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .footer-section {
+    text-align: center;
+  }
+
+  .footer-section ul li a:hover {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 375px) {
+  .footer {
+    padding: 1.5rem 0.75rem 0.5rem;
+  }
+
+  .footer-section h4 {
+    font-size: 0.9rem;
+  }
+
+  .footer-section p {
+    font-size: 0.8rem;
+  }
+
+  .footer-section ul li a {
+    font-size: 0.8rem;
+  }
+
+  .footer-bottom p {
+    font-size: 0.75rem;
+  }
+}
+
+========== components/Footer.jsx ==========
+import React from 'react'
+import Privacy from './Privacy'
+import Terms from './Terms'
+import Cookies from './Cookies'
+import './Footer.css'
+
+function Footer() {
+  return (
+    <footer className="footer" id="faq">
+      <div className="footer-content">
+        <div className="footer-section">
+          <h4>Stivenads</h4>
+          <p>Asesorías de marketing para transformar tu negocio</p>
+        </div>
+
+        <div className="footer-section">
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="#problemas">Problema</a></li>
+            <li><a href="#solucion">Solución</a></li>
+            <li><a href="#beneficios">Beneficios</a></li>
+            <li><a href="#proceso">Proceso</a></li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><Privacy /></li>
+            <li><Terms /></li>
+            <li><Cookies /></li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
+          <h4>Contacto</h4>
+          <p>Email: stivenads25@gmail.com</p>
+          <p>Teléfono: +57 300 8729696</p>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <p>&copy; 2026 Stivenads. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+  )
+}
+
+export default Footer
+
+========== components/Header.css ==========
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(10, 14, 39, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(45, 62, 127, 0.2);
+  z-index: 1000;
+  padding: 1.5rem 0;
+  width: 100%;
+  transition: top 0.3s;
+}
+.header.hide {
+  top: -100px;
+}
+.header.show {
+  top: 0;
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  box-sizing: border-box;
+}
+
+.nav {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  flex: 1;
+}
+
+.nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav a:hover {
+  color: #fbbf24;
+}
+
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #fbbf24;
+  transition: all 0.3s ease;
+}
+
+.nav a:hover::after {
+  width: 100%;
+}
+
+.header-btn {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+}
+
+.header-btn:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+}
+
+.header-btn:active {
+  transform: scale(0.95);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  color: #f1f5f9;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 1.5rem;
+    gap: 1rem;
+  }
+
+  .nav {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(10, 14, 39, 0.99);
+    backdrop-filter: blur(10px);
+    padding: 2rem 1.5rem;
+    gap: 1.5rem;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    border-bottom: 1px solid rgba(45, 62, 127, 0.2);
+    width: 100vw;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+  }
+
+  .nav.active {
+    max-height: calc(100vh - 70px);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav a {
+    color: #cbd5e1;
+    font-size: 1rem;
+    padding: 0.75rem 0;
+  }
+
+  .nav a:hover {
+    color: #fbbf24;
+  }
+
+  .header-btn span {
+    display: none;
+  }
+
+  .header-btn {
+    padding: 12px;
+    min-width: 48px;
+    justify-content: center;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem 0;
+  }
+
+  .header-container {
+    padding: 0 1rem;
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  .header-btn {
+    padding: 10px;
+  }
+
+  .menu-toggle {
+    font-size: 1.3rem;
+  }
+
+  .nav {
+    top: 65px;
+  }
+}
+
+@media (max-width: 375px) {
+  .header-container {
+    padding: 0 0.75rem;
+  }
+
+  .logo {
+    font-size: 0.9rem;
+  }
+
+  .menu-toggle {
+    font-size: 1.2rem;
+  }
+
+  .header-btn {
+    padding: 8px;
+  }
+
+  .nav {
+    top: 60px;
+    padding: 1.5rem 1rem;
+  }
+
+  .nav a {
+    font-size: 0.9rem;
+  }
+}
+
+========== components/Header.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import './Header.css'
+import Logo from './Logo'
+import { FiMenu, FiX, FiCalendar } from 'react-icons/fi'
+import { useState, useEffect } from 'react'
+
+function Header({ onBookClick }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [show, setShow] = useState(true)
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      setShow(window.scrollY < 50 || window.scrollY < lastY);
+      lastY = window.scrollY;
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <motion.header 
+      className={`header${show ? ' show' : ' hide'}`}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="header-container">
+        <Logo />
+        <nav className={`nav ${menuOpen ? 'active' : ''}`}>
+          <a href="#problemas" onClick={() => setMenuOpen(false)}>Problema</a>
+          <a href="#solucion" onClick={() => setMenuOpen(false)}>Solución</a>
+          <a href="#beneficios" onClick={() => setMenuOpen(false)}>Beneficios</a>
+          <a href="#proceso" onClick={() => setMenuOpen(false)}>Proceso</a>
+          <a href="#resultados" onClick={() => setMenuOpen(false)}>Resultados</a>
+          <a href="#faq" onClick={() => setMenuOpen(false)}>Preguntas</a>
+        </nav>
+        <button className="header-btn" onClick={onBookClick}>
+          <FiCalendar size={18} />
+          <span>Agendar</span>
+        </button>
+        <button 
+          className="menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+      </div>
+    </motion.header>
+  )
+}
+
+export default Header
+
+========== components/Hero.css ==========
+.hero {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 70px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(244, 196, 48, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(45, 62, 127, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  bottom: 50px;
+  left: -50px;
+  pointer-events: none;
+}
+
+.hero-content {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  line-height: 1.3;
+  margin: 0;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.hero-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+  margin: 0;
+  border: none;
+  width: fit-content;
+  align-self: center;
+}
+
+.hero-cta:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+  transform: scale(1.05);
+}
+
+.hero-cta:active {
+  transform: scale(0.95);
+}
+
+.hero-calendar-section {
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 12px;
+  padding: 30px;
+  margin: 30px 0;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-calendar-section .calendar {
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.hero-calendar-section .calendar-header h3 {
+  color: #f1f5f9;
+}
+
+.hero-calendar-section .calendar-weekday {
+  color: #cbd5e1;
+}
+
+.hero-calendar-section .calendar-day {
+  background: rgba(45, 62, 127, 0.4);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  color: #f1f5f9;
+}
+
+.hero-calendar-section .calendar-day:not(.disabled):hover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.3);
+}
+
+.hero-calendar-section .calendar-day.selected {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-color: #fbbf24;
+  color: #000;
+}
+
+.hero-calendar-section .calendar-day.today {
+  border-color: #fbbf24;
+}
+
+.hero-calendar-section .calendar-hint {
+  background: rgba(93, 76, 255, 0.15);
+  color: #cbd5e1;
+}
+
+.hero-calendar-section .calendar-day.selected {
+  background: #5d4cff;
+  border-color: #5d4cff;
+  color: var(--color-text);
+}
+
+.hero-footer-text {
+  margin-top: 3rem;
+}
+
+.footer-question {
+  font-size: 1.2rem;
+  color: var(--color-text-light);
+  margin-bottom: 1.5rem;
+}
+
+.hero-footer-btn {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+}
+
+.hero-footer-btn:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+  box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+}
+
+.hero-footer-btn:active {
+  transform: scale(0.95);
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fbbf24;
+  cursor: pointer;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-calendar-section {
+    padding: 2rem 1rem;
+    min-height: 250px;
+  }
+
+  .footer-question {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2rem 1rem 5rem 1rem;
+    min-height: auto;
+  }
+
+  .hero::before,
+  .hero::after {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-cta {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-calendar-section {
+    padding: 1.5rem 1rem;
+    min-height: 220px;
+    margin: 2rem 0;
+  }
+
+  .hero-footer-btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    gap: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-question {
+    font-size: 0.9rem;
+  }
+
+  .hero-scroll-hint {
+    position: relative;
+    transform: none;
+    left: auto;
+    bottom: auto;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .hero {
+    padding: 1.5rem 0.75rem 4rem 0.75rem;
+  }
+
+  .hero h1 {
+    font-size: 1.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-cta {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-calendar-section {
+    padding: 1rem 0.75rem;
+    min-height: 200px;
+  }
+
+  .hero-footer-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
+
+  .footer-question {
+    font-size: 0.8rem;
+  }
+
+  .hero-scroll-hint {
+    margin-top: 15px;
+  }
+}
+
+========== components/Hero.jsx ==========
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { FiArrowDown, FiSmile } from 'react-icons/fi'
+import Calendar from './Calendar'
+import './Hero.css'
+
+function Hero({ onBookClick }) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  }
+
+  return (
+    <section className="hero">
+      <motion.div 
+        className="hero-content"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1 variants={itemVariants}>
+          Agendamos entre 15 y 20 evaluaciones de caso laboral al mes solo con personas que SÍ califican para una demanda rentable
+        </motion.h1>
+
+        <motion.p variants={itemVariants} className="hero-subtitle">
+          Sistema De Pre-Calificación Para Abogados Laborales En Colombia.
+          <br />
+          No Más Consultas Basura. No Más Pérdida De Tiempo.
+        </motion.p>
+
+        <motion.button 
+          variants={itemVariants}
+          className="hero-cta"
+          onClick={onBookClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Aplicar al piloto de 30 días
+        </motion.button>
+
+        <motion.div 
+          variants={itemVariants}
+          className="hero-calendar-section"
+        >
+          <Calendar onDateSelect={() => onBookClick()} />
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="hero-footer-text">
+          <p className="footer-question">¿Aún No Tienes Claro Lo Que Recibirás?</p>
+          <motion.button 
+            variants={itemVariants}
+            className="hero-footer-btn"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FiSmile size={20} />
+            Conoce más bajando
+            <FiSmile size={20} />
+          </motion.button>
+        </motion.div>
+      </motion.div>
+
+      <motion.div 
+        className="hero-scroll-hint"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <FiArrowDown size={24} />
+      </motion.div>
+    </section>
+  )
+}
+
+export default Hero
+
+========== components/HowItWorks.css ==========
+.how-it-works {
+  width: 100%;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.how-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.how-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: #f1f5f9;
+  margin: 0 0 30px 0;
+}
+
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+}
+
+.step-card {
+  width: 100%;
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 16px;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.step-card:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+  transform: translateY(-5px);
+}
+
+.step-header {
+  margin-bottom: 15px;
+}
+
+.step-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.step-description {
+  color: #e2e8f0;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 15px 0;
+  font-weight: 600;
+}
+
+.step-items {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.step-check-icon {
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+.step-subtitle {
+  color: #a78bfa;
+  font-size: 1rem;
+  font-style: italic;
+  margin: 15px 0 0 0;
+}
+
+.step-conditions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.condition {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.condition.negative {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.condition.positive {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+@media (max-width: 768px) {
+  .how-it-works {
+    padding: 40px 16px;
+  }
+
+  .how-title {
+    font-size: 1.8rem;
+  }
+
+  .step-card {
+    padding: 20px;
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+  }
+
+  .step-description {
+    font-size: 0.9rem;
+  }
+
+  .step-item {
+    font-size: 0.85rem;
+  }
+
+  .step-conditions {
+    grid-template-columns: 1fr;
+  }
+
+  .steps-container {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-it-works {
+    padding: 30px 12px;
+  }
+
+  .how-title {
+    font-size: 1.5rem;
+  }
+
+  .step-card {
+    padding: 16px;
+  }
+
+  .step-title {
+    font-size: 1rem;
+  }
+
+  .step-description {
+    font-size: 0.85rem;
+  }
+
+  .step-item {
+    font-size: 0.8rem;
+  }
+}
+
+========== components/HowItWorks.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import { FiCheck } from 'react-icons/fi'
+import './HowItWorks.css'
+
+function HowItWorks() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  }
+
+  const steps = [
+    {
+      number: '1',
+      title: 'Paso 1 – Atracción específica',
+      description: 'Anuncios dirigidos exclusivamente a:',
+      items: [
+        'Despido sin justa causa',
+        'Indemnizaciones laborales',
+        'Contrato realidad',
+      ],
+      subtitle: 'Nada genérico. Nada curioso.',
+    },
+    {
+      number: '2',
+      title: 'Paso 2 – Pre-calificación automática',
+      description: 'Antes de llegar a su agenda, cada persona responde:',
+      items: [
+        'Tipo de empresa (formal / capacidad de pago)',
+        'Salario aproximado',
+        'Tiempo laborado',
+        'Motivo del despido',
+      ],
+      positive: 'Si cumple → pasa a evaluación',
+      negative: 'Si no cumple → no agenda',
+    },
+    {
+      number: '3',
+      title: 'Paso 3 – Agenda limpia',
+      description: 'Recibirás:',
+      items: [
+        'Evaluaciones reales',
+        'Personas que entienden que hay dinero en juego',
+        'Menos desgaste operativo',
+      ],
+    },
+  ]
+
+  return (
+    <section className="how-it-works" id="proceso">
+      <motion.div
+        className="how-container"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <motion.h2 variants={itemVariants} className="how-title">
+          ¿Cómo funciona?
+        </motion.h2>
+
+        <motion.div variants={itemVariants} className="steps-container">
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              className="step-card"
+              variants={itemVariants}
+              whileHover={{ borderColor: '#7c3aed', scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="step-header">
+                <h3 className="step-title">{step.title}</h3>
+              </div>
+
+              <p className="step-description">{step.description}</p>
+
+              <ul className="step-items">
+                {step.items.map((item, itemIndex) => (
+                  <li key={itemIndex} className="step-item">
+                    <FiCheck className="step-check-icon" size={20} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {step.subtitle && (
+                <p className="step-subtitle">{step.subtitle}</p>
+              )}
+
+              {step.number === '2' && (
+                <div className="step-conditions">
+                  <p className="condition negative">{step.negative}</p>
+                  <p className="condition positive">{step.positive}</p>
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+export default HowItWorks
+
+========== components/LegalModal.css ==========
+.legal-link {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  font-size: inherit;
+  transition: color 0.3s;
+}
+
+.legal-link:hover {
+  color: #fbbf24;
+}
+
+.legal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 8, 23, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2001;
+  padding: 1rem;
+}
+
+.legal-modal-content {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.legal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: #f1f5f9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+}
+
+.legal-close:hover {
+  color: #fbbf24;
+}
+
+.legal-modal-content h2 {
+  color: #fbbf24;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+}
+
+.legal-modal-content p {
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.legal-modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .legal-modal-content {
+    padding: 1.5rem;
+  }
+
+  .legal-modal-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .legal-close {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+========== components/Logo.css ==========
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--color-yellow), #ffd700);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-dark);
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.2rem;
+    gap: 0.5rem;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logo-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+========== components/Logo.jsx ==========
+import React from 'react'
+import './Logo.css'
+
+function Logo() {
+  return (
+    <div className="logo">
+      <div className="logo-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Símbolo de asesoría/negocio */}
+          <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="2"/>
+          <path d="M20 8v8m0 8v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M12 20h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="20" cy="20" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <span>Stivenads</span>
+    </div>
+  )
+}
+
+export default Logo
+
+========== components/Privacy.jsx ==========
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FiX } from 'react-icons/fi';
+import './LegalModal.css';
+
+export default function Privacy() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <>
+      <button 
+        className="legal-link"
+        onClick={() => setShowModal(true)}
+      >
+        Privacidad
+      </button>
+
+      {showModal && (
+        <motion.div
+          className="legal-modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowModal(false)}
+        >
+          <motion.div
+            className="legal-modal-content"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="legal-close" onClick={() => setShowModal(false)}>
+              <FiX size={24} />
+            </button>
+            <h2>Política de Privacidad</h2>
+            <p>Tu privacidad es importante para nosotros. Protegemos tus datos personales con los más altos estándares de seguridad.</p>
+            <p>Los datos que recopilamos se utilizan exclusivamente para mejorar nuestros servicios y tu experiencia.</p>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+========== components/Promise.css ==========
+.promise {
+  width: 100%;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.promise-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  text-align: center;
+}
+
+.promise-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.why-card {
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 16px;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+  transition: all 0.3s ease;
+}
+
+.why-card:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+  transform: translateY(-5px);
+}
+
+.why-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.why-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #e2e8f0;
+  font-size: 1rem;
+  font-weight: 600;
+  justify-content: flex-start;
+}
+
+.check-icon {
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+.promise-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.star-icon {
+  color: #fbbf24;
+}
+
+.promise-conclusion {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.conclusion-highlight {
+  color: #a78bfa;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.promise-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+  display: inline-block;
+}
+
+.promise-cta:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+  box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+}
+
+.promise-cta:active {
+  transform: scale(0.95);
+}
+
+.promise-subtitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.promise-message {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fbbf24;
+  margin: 0;
+}
+
+.pilot-label {
+  font-size: 1.2rem;
+  color: #a78bfa;
+  margin: 10px 0 0 0;
+  font-weight: 600;
+}
+
+.pilot-points {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.pilot-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  justify-content: flex-start;
+}
+
+.pilot-check-icon {
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.pilot-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #e2e8f0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.detail-icon {
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.detail-text {
+  text-align: left;
+}
+
+.investment-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fbbf24;
+  text-align: center;
+}
+
+.promise-guarantee {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fbbf24;
+  margin: 30px 0 0 0;
+  padding-top: 30px;
+  border-top: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+/* Guarantee Section Styles */
+.promise-guarantee-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  padding: 40px 0 0 0;
+}
+
+.guarantee-badge {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+}
+
+.badge-star {
+  color: #000;
+}
+
+.promise-guarantee-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  line-height: 1.3;
+  margin: 0;
+  max-width: 900px;
+}
+
+.guarantee-features {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.guarantee-feature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.no-devolutions {
+  color: #5d9cff;
+}
+
+.no-small-print {
+  color: #fbbf24;
+}
+
+.promise-footer {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(124, 58, 237, 0.2);
+  display: flex;
+  justify-content: center;
+}
+
+.promise-footer .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #cbd5e1;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.promise-footer .logo-icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbbf24;
+}
+
+.promise-footer .logo-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .promise {
+    padding: 40px 16px;
+  }
+
+  .promise-title {
+    font-size: 1.5rem;
+  }
+
+  .promise-container {
+    gap: 20px;
+  }
+
+  .why-card {
+    padding: 20px;
+  }
+
+  .promise-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .promise-message {
+    font-size: 1.1rem;
+  }
+
+  .promise-conclusion {
+    font-size: 1rem;
+  }
+
+  .promise-guarantee-title {
+    font-size: 1.8rem;
+  }
+
+  .guarantee-features {
+    gap: 20px;
+  }
+
+  .feature-text {
+    font-size: 1.2rem;
+  }
+
+  .guarantee-badge {
+    width: 80px;
+    height: 80px;
+  }
+
+  .badge-star {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .promise-container {
+    gap: 20px;
+  }
+
+  .promise-title {
+    font-size: 1.3rem;
+  }
+
+  .promise-guarantee-title {
+    font-size: 1.4rem;
+  }
+
+  .guarantee-features {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .feature-text {
+    font-size: 1rem;
+  }
+
+  .why-item,
+  .pilot-item {
+    font-size: 0.9rem;
+  }
+
+  .promise-cta {
+    padding: 12px 30px;
+    font-size: 0.95rem;
+  }
+
+  .guarantee-badge {
+    width: 70px;
+    height: 70px;
+  }
+
+  .badge-star {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pilot-label {
+    font-size: 1rem;
+  }
+
+  .promise-message {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .promise-guarantee-title {
+    font-size: 1.2rem;
+  }
+
+  .feature-text {
+    font-size: 0.9rem;
+  }
+
+  .promise-cta {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .promise-subtitle {
+    font-size: 1rem;
+  }
+
+  .why-item,
+  .pilot-item {
+    font-size: 0.85rem;
+  }
+}
+
+========== components/Promise.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import { FiCheck, FiDollarSign, FiClipboard } from 'react-icons/fi'
+import { AiFillStar } from 'react-icons/ai'
+import './Promise.css'
+import Logo from './Logo'
+
+function Promise({ onBookClick }) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  }
+
+  const whyPoints = [
+    'Está diseñado según cómo los abogados aceptan casos',
+    'Filtra por capacidad de pago, no solo intención',
+    'Prioriza rentabilidad, no volumen vacío',
+    'Se enfoca en ahorrar tiempo, no en inflar métricas',
+  ]
+
+  const pilotPoints = [
+    'Implementación completa del sistema',
+    'Optimización durante el piloto',
+    'Facebook e Instagram Ads + filtros + agenda',
+  ]
+
+  return (
+    <section className="promise" id="resultados">
+      <motion.div
+        className="promise-container"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <motion.h2 variants={itemVariants} className="promise-title">
+          ¿Por que este sistema funciona?
+        </motion.h2>
+
+        <motion.div
+          variants={itemVariants}
+          className="promise-card why-card"
+          whileHover={{ borderColor: '#7c3aed', scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ul className="why-list">
+            {whyPoints.map((point, index) => (
+              <li key={index} className="why-item">
+                <FiCheck className="check-icon" size={24} />
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="promise-stars">
+          <AiFillStar className="star-icon" size={28} />
+          <AiFillStar className="star-icon" size={28} />
+          <AiFillStar className="star-icon" size={28} />
+          <AiFillStar className="star-icon" size={28} />
+          <AiFillStar className="star-icon" size={28} />
+        </motion.div>
+
+        <motion.p variants={itemVariants} className="promise-conclusion">
+          <span className="conclusion-highlight">Esto no es Marketing Genérico.</span> Es lógica de negocio legal aplicada a captación!
+        </motion.p>
+
+        <motion.button
+          variants={itemVariants}
+          className="promise-cta"
+          onClick={onBookClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Aplicar al piloto de 30 días
+        </motion.button>
+
+        <motion.h3 variants={itemVariants} className="promise-subtitle">
+          Como comenzamos
+        </motion.h3>
+
+        <motion.p variants={itemVariants} className="promise-message">
+          No hay contratos largos ni promesas irreales.
+        </motion.p>
+
+        <motion.p variants={itemVariants} className="pilot-label">
+          Programa piloto - 30 días
+        </motion.p>
+
+        <motion.div variants={itemVariants} className="pilot-points">
+          {pilotPoints.map((point, index) => (
+            <div key={index} className="pilot-item">
+              <FiCheck className="pilot-check-icon" size={20} />
+              <span>{point}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="pilot-details">
+          <div className="detail-item">
+            <FiDollarSign className="detail-icon" size={24} />
+            <span className="detail-text investment-value">Inversión: $1.500.000 COP</span>
+          </div>
+          <div className="detail-item">
+            <FiClipboard className="detail-icon" size={24} />
+            <span className="detail-text">Presupuesto de pauta aparte</span>
+          </div>
+        </motion.div>
+
+        <motion.h4 variants={itemVariants} className="promise-guarantee">
+          Garantía del Piloto
+        </motion.h4>
+
+        <motion.div variants={itemVariants} className="promise-guarantee-section">
+
+
+          <motion.h3 variants={itemVariants} className="promise-guarantee-title">
+            Si en 30 días no agendamos al menos 15 evaluaciones que cumplan los criterios acordados, extendemos el piloto 30 días sin costo.
+          </motion.h3>
+
+          <motion.div variants={itemVariants} className="guarantee-features">
+            <div className="guarantee-feature">
+              <span className="feature-text no-devolutions">Sin devoluciones</span>
+            </div>
+            <div className="guarantee-feature">
+              <span className="feature-text no-small-print">Sin letra pequeña</span>
+            </div>
+          </motion.div>
+
+          <motion.button
+            variants={itemVariants}
+            className="promise-cta"
+            onClick={onBookClick}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Aplicar al piloto de 30 días
+          </motion.button>
+
+          <motion.div variants={itemVariants} className="promise-footer">
+            <Logo />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+export default Promise
+
+========== components/RealProblem.css ==========
+.real-problem {
+  width: 100%;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.problem-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.problem-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  text-align: center;
+  color: #f1f5f9;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.problem-subtitle {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.subtitle-italic {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #cbd5e1;
+  margin: 8px 0;
+}
+
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.problem-box {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(124, 58, 237, 0.05) 100%);
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.problem-box p {
+  color: #e2e8f0;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.problem-box:hover {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.25) 0%, rgba(124, 58, 237, 0.1) 100%);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .problem-title {
+    font-size: 2rem;
+  }
+
+  .problems-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subtitle-italic {
+    font-size: 0.95rem;
+  }
+
+  .problem-box {
+    padding: 20px;
+  }
+
+  .problem-box p {
+    font-size: 0.9rem;
+  }
+}
+
+========== components/RealProblem.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import './RealProblem.css'
+
+function RealProblem() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  }
+
+  const problems = [
+    'La mayoría de las personas que escriben no califican',
+    'Muchas empresas no tienen capacidad de pago',
+    'Horas perdidas en evaluaciones que no llegan a nada',
+    'Casos con cuantía tan baja que no valen el esfuerzo',
+  ]
+
+  return (
+    <section className="real-problem" id="problemas">
+      <motion.div
+        className="problem-container"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <motion.h2 variants={itemVariants} className="problem-title">
+          El verdadero problema no es la falta de consultas
+        </motion.h2>
+
+        <motion.div variants={itemVariants} className="problem-subtitle">
+          <p className="subtitle-italic">
+            La mayoría de abogados laborales no tienen un problema de demanda.
+          </p>
+          <p className="subtitle-italic">Tienen un problema de calidad.</p>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="problems-grid">
+          {problems.map((problem, index) => (
+            <motion.div
+              key={index}
+              className="problem-box"
+              variants={itemVariants}
+              whileHover={{ scale: 1.05, borderColor: '#7c3aed' }}
+              transition={{ duration: 0.3 }}
+            >
+              <p>{problem}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+export default RealProblem
+
+========== components/Solution.css ==========
+.solution {
+  width: 100%;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.solution-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.solution-header {
+  text-align: center;
+}
+
+.solution-intro {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  margin: 0 0 10px 0;
+  font-weight: 500;
+}
+
+.solution-title {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.solution-cta-top,
+.solution-cta-bottom {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  border: none;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: center;
+  transition: all 0.3s ease;
+}
+
+.solution-cta-top:hover,
+.solution-cta-bottom:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(251, 191, 36, 0.4);
+}
+
+.solution-cta-top:active,
+.solution-cta-bottom:active {
+  transform: scale(0.95);
+}
+
+.solution-message {
+  text-align: center;
+}
+
+.no-leads {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 10px 0;
+}
+
+.solution-value {
+  font-size: 1.8rem;
+  font-style: italic;
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  font-weight: 600;
+}
+
+.solution-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.solution-card {
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 12px;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.solution-card:hover {
+  transform: translateY(-5px);
+}
+
+.info-card:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+}
+
+.clients-card:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+}
+
+.card-icon {
+  font-size: 1.5rem;
+  color: #a78bfa;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.card-description {
+  color: #e2e8f0;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.highlight {
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+.clients-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clients-number {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fbbf24;
+  margin: 0;
+}
+
+.clients-description {
+  color: #e2e8f0;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .solution-title {
+    font-size: 2rem;
+  }
+
+  .no-leads,
+  .solution-value {
+    font-size: 1.4rem;
+  }
+
+  .solution-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-intro {
+    font-size: 1rem;
+  }
+}
+
+========== components/Solution.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import './Solution.css'
+
+function Solution({ onBookClick }) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  }
+
+  return (
+    <section className="solution" id="solucion">
+      <motion.div
+        className="solution-container"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <motion.div variants={itemVariants} className="solution-header">
+          <p className="solution-intro">Más leads no solucionan esto.</p>
+          <h2 className="solution-title">Mejores Filtros, sí.</h2>
+        </motion.div>
+
+        <motion.button
+          variants={itemVariants}
+          className="solution-cta-top"
+          onClick={onBookClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Aplicar al piloto de 30 días
+        </motion.button>
+
+        <motion.div variants={itemVariants} className="solution-message">
+          <p className="no-leads">No vendemos leads.</p>
+          <p className="solution-value">
+            Vendemos evaluaciones de caso que valen la pena
+          </p>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="solution-cards">
+          <motion.div
+            className="solution-card info-card"
+            whileHover={{ scale: 1.02, borderColor: '#7c3aed' }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="card-icon">▲</div>
+            <p className="card-description">
+              Instalamos un <span className="highlight">Sistema de Pre-Calificación de Demandas Laborales</span> que solo agenda evaluaciones cuando el caso cumple criterios técnicos y financieros reales.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="solution-card clients-card"
+            whileHover={{ scale: 1.02, borderColor: '#fbbf24' }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="card-icon">▲</div>
+            <div className="clients-content">
+              <p className="clients-number">+20 clientes</p>
+              <p className="clients-description">
+                Usted se enfoca en litigar. El sistema filtra el ruido.
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <motion.button
+          variants={itemVariants}
+          className="solution-cta-bottom"
+          onClick={onBookClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Aplicar al piloto de 30 días
+        </motion.button>
+      </motion.div>
+    </section>
+  )
+}
+
+export default Solution
+
+========== components/SystemQualification.css ==========
+.system-qualification {
+  width: 100%;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.qualification-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.qualification-title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+.qualification-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.qualification-card {
+  background: linear-gradient(135deg, rgba(45, 62, 127, 0.4), rgba(31, 45, 92, 0.2));
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 2.5rem;
+  transition: var(--transition);
+  position: relative;
+}
+
+.for-card {
+  border-color: rgba(76, 175, 80, 0.3);
+  background: linear-gradient(135deg, rgba(45, 62, 127, 0.5), rgba(31, 45, 92, 0.3));
+}
+
+.for-card:hover {
+  border-color: rgba(76, 175, 80, 0.6);
+  background: linear-gradient(135deg, rgba(45, 62, 127, 0.7), rgba(31, 45, 92, 0.5));
+}
+
+.not-card {
+  border-color: rgba(244, 67, 54, 0.3);
+  background: linear-gradient(135deg, rgba(45, 62, 127, 0.5), rgba(31, 45, 92, 0.3));
+}
+
+.not-card:hover {
+  border-color: rgba(244, 67, 54, 0.6);
+  background: linear-gradient(135deg, rgba(45, 62, 127, 0.7), rgba(31, 45, 92, 0.5));
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.check-icon {
+  color: #4caf50;
+}
+
+.cancel-icon {
+  color: #f44336;
+}
+
+.card-header h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.qualification-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  color: #e2e8f0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.list-item span:last-child {
+  color: #e2e8f0;
+}
+
+.list-icon-check {
+  color: #22c55e;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.list-icon-x {
+  color: #ef4444;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.qualification-cta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+}
+
+.qualification-cta:hover {
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  transform: scale(1.05);
+  box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+}
+
+.qualification-cta:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .system-qualification {
+    padding: 4rem 1.5rem;
+  }
+
+  .qualification-title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .qualification-grid {
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .qualification-card {
+    padding: 1.5rem;
+  }
+
+  .card-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .list-item {
+    font-size: 0.95rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .system-qualification {
+    padding: 3rem 1rem;
+  }
+
+  .qualification-title {
+    font-size: 1.5rem;
+  }
+
+  .qualification-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .qualification-card {
+    padding: 1.2rem;
+  }
+
+  .card-header h3 {
+    font-size: 1rem;
+  }
+
+  .list-item {
+    font-size: 0.9rem;
+  }
+
+  .qualification-cta {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .system-qualification {
+    padding: 2rem 0.75rem;
+  }
+
+  .qualification-title {
+    font-size: 1.3rem;
+  }
+
+  .qualification-card {
+    padding: 1rem;
+  }
+
+  .card-header {
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .check-icon,
+  .cancel-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .card-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .list-item {
+    font-size: 0.85rem;
+    gap: 0.5rem;
+  }
+}
+
+========== components/SystemQualification.jsx ==========
+import React from 'react'
+import { motion } from 'framer-motion'
+import { MdCheckCircle, MdCancel } from 'react-icons/md'
+import { FiCheck, FiX } from 'react-icons/fi'
+import './SystemQualification.css'
+
+function SystemQualification({ onBookClick }) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  }
+
+  const forItems = [
+    'Abogado laboral enfocado en despidos e indemnizaciones',
+    'Trabaja bajo cuota de litis',
+    'Necesita volumen constante, pero solo casos cobrables',
+    'Quiere dejar de perder tiempo evaluando consultas malas',
+  ]
+
+  const notForItems = [
+    'Abogados que solo trabajan por referidos',
+    'Quien no quiera invertir en marketing',
+    'Quien toma cualquier caso "a ver qué pasa"',
+  ]
+
+  return (
+    <section className="system-qualification" id="beneficios">
+      <motion.div
+        className="qualification-container"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-100px' }}
+      >
+        <motion.h2 variants={itemVariants} className="qualification-title">
+          Este Sistema Es Para Ti Si...
+        </motion.h2>
+
+        <motion.div variants={itemVariants} className="qualification-grid">
+          <div className="qualification-card for-card">
+            <div className="card-header">
+              <MdCheckCircle size={32} className="check-icon" />
+              <h3>ES PARA:</h3>
+            </div>
+            <ul className="qualification-list">
+              {forItems.map((item, index) => (
+                <motion.li
+                  key={index}
+                  variants={itemVariants}
+                  className="list-item"
+                >
+                  <FiCheck className="list-icon-check" size={20} />
+                  <span>{item}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="qualification-card not-card">
+            <div className="card-header">
+              <MdCancel size={32} className="cancel-icon" />
+              <h3>NO ES PARA:</h3>
+            </div>
+            <ul className="qualification-list">
+              {notForItems.map((item, index) => (
+                <motion.li
+                  key={index}
+                  variants={itemVariants}
+                  className="list-item"
+                >
+                  <FiX className="list-icon-x" size={20} />
+                  <span>{item}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
+
+        <motion.button
+          variants={itemVariants}
+          className="qualification-cta"
+          onClick={onBookClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Aplicar al piloto de 30 días
+        </motion.button>
+      </motion.div>
+    </section>
+  )
+}
+
+export default SystemQualification
+
+========== components/Terms.jsx ==========
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FiX } from 'react-icons/fi';
+import './LegalModal.css';
+
+export default function Terms() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <>
+      <button 
+        className="legal-link"
+        onClick={() => setShowModal(true)}
+      >
+        Términos
+      </button>
+
+      {showModal && (
+        <motion.div
+          className="legal-modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowModal(false)}
+        >
+          <motion.div
+            className="legal-modal-content"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="legal-close" onClick={() => setShowModal(false)}>
+              <FiX size={24} />
+            </button>
+            <h2>Términos y Condiciones</h2>
+            <p>Al utilizar nuestros servicios, aceptas estos términos y condiciones.</p>
+            <p>Nos comprometemos a proporcionar un servicio profesional y de calidad, respetando todos los derechos y obligaciones establecidos.</p>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+========== index.css ==========
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #0f172a;
+  color: #f1f5f9;
+  line-height: 1.6;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+input, textarea, select {
+  font-family: inherit;
+  color: var(--color-text);
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-blue-light);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-yellow);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 375px) {
+  :root {
+    font-size: 11px;
+  }
+}
+
+========== main.jsx ==========
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+
+========== pages/AdminPage.css ==========
+.admin-login-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.admin-login-box {
+  background: rgba(45, 62, 127, 0.9);
+  border: 1px solid rgba(244, 196, 48, 0.3);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.admin-login-box h1 {
+  color: #f4c430;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.admin-login-box p {
+  color: #e2e8f0;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-group {
+  margin-bottom: 1.5rem;
+}
+
+.login-group input {
+  width: 100%;
+  padding: 0.875rem;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(244, 196, 48, 0.3);
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.login-group input:focus {
+  outline: none;
+  border-color: #f4c430;
+  box-shadow: 0 0 10px rgba(244, 196, 48, 0.3);
+  background: rgba(30, 41, 59, 1);
+}
+
+.error-message {
+  color: #ff3b30;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, #f4c430 0%, #fbbf24 100%);
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(244, 196, 48, 0.3);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.admin-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.admin-header {
+  background: rgba(45, 62, 127, 0.9);
+  border-bottom: 1px solid rgba(244, 196, 48, 0.2);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.admin-header h1 {
+  color: #f4c430;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.logout-button {
+  background: rgba(244, 196, 48, 0.1);
+  color: #f4c430;
+  border: 1px solid #f4c430;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: #f4c430;
+  color: #0f172a;
+}
+
+@media (max-width: 480px) {
+  .admin-login-box {
+    padding: 2rem 1.5rem;
+  }
+
+  .admin-login-box h1 {
+    font-size: 1.4rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .admin-header h1 {
+    font-size: 1.2rem;
+  }
+}
+
+========== pages/AdminPage.jsx ==========
+import React, { useState, useEffect } from 'react'
+import AdminPanel from '../admin/AdminPanel'
+import './AdminPage.css'
+
+function AdminPage({ onExit }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    // Check if already authenticated in this session
+    const adminAuth = sessionStorage.getItem('adminAuthenticated')
+    if (adminAuth === 'true') {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    
+    // Simple password check - in production, use proper authentication
+    const correctPassword = 'Stiven2025' // Change this to a secure password
+    
+    if (password === correctPassword) {
+      sessionStorage.setItem('adminAuthenticated', 'true')
+      setIsAuthenticated(true)
+      setError('')
+    } else {
+      setError('Contraseña incorrecta')
+      setPassword('')
+    }
+  }
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminAuthenticated')
+    setIsAuthenticated(false)
+    setPassword('')
+    if (onExit) onExit()
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="admin-login-container">
+        <div className="admin-login-box">
+          <h1>Panel de Administración</h1>
+          <p>Ingresa la contraseña para acceder</p>
+          
+          <form onSubmit={handleLogin}>
+            <div className="login-group">
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoFocus
+              />
+            </div>
+            
+            {error && <p className="error-message">{error}</p>}
+            
+            <button type="submit" className="login-button">
+              Acceder
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="admin-page">
+      <div className="admin-header">
+        <h1>Panel de Administración - Stivenads</h1>
+        <button className="logout-button" onClick={handleLogout}>
+          Cerrar Sesión
+        </button>
+      </div>
+      <AdminPanel />
+    </div>
+  )
+}
+
+export default AdminPage
+
