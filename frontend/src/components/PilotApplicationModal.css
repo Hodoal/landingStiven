@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,112 +12,101 @@
 }
 
 .pilot-modal {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #2d3e5f 0%, #3d4a63 100%);
+  border-radius: 20px;
   width: 90%;
-  max-width: 600px;
+  max-width: 550px;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  border: 1px solid rgba(244, 196, 48, 0.1);
+  border: none;
   position: relative;
-}
-
-.pilot-modal::before {
-  content: '';
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(244, 196, 48, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  top: -100px;
-  right: -100px;
-  pointer-events: none;
-}
-
-.pilot-modal::after {
-  content: '';
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(45, 62, 127, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  bottom: -50px;
-  left: -50px;
-  pointer-events: none;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid rgba(244, 196, 48, 0.1);
+  padding: 28px 28px 16px 28px;
+  border-bottom: none;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #f4c430;
+  color: #ffffff;
+  letter-spacing: -0.5px;
 }
 
 .close-icon-btn {
   background: none;
   border: none;
   cursor: pointer;
-  color: #94a3b8;
-  padding: 8px;
+  color: #cbd5e1;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: color 0.2s;
+  width: 32px;
+  height: 32px;
 }
 
 .close-icon-btn:hover {
-  color: #f4c430;
+  color: #ffffff;
 }
 
 .progress-bar {
-  height: 4px;
-  background-color: rgba(148, 163, 184, 0.2);
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
   width: 100%;
   position: relative;
   z-index: 1;
+  margin: 0 0 0 0;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
-  transition: width 0.3s ease;
+  transition: width 0.4s ease;
 }
 
 .modal-content {
-  flex: 1;
-  padding: 32px 24px;
+  flex: 1;8px;
   overflow-y: auto;
   color: #f1f5f9;
   position: relative;
   z-index: 1;
+  background: transparent;
 }
 
 .question-number {
-  font-size: 0.875rem;
-  color: #cbd5e1;
-  margin-bottom: 12px;
-  font-weight: 500;
+  font-size: 0.75rem;
+  color: #fbbf24;
+  margin-bottom: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block
+  text-transform: uppercase;
 }
 
-.question-title {
-  font-size: 1.25rem;
+.modal-content h3 {
+  color: #ffffff !important;
+}
+
+.modal-content .question-title {
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #f4c430;
-  margin: 0 0 24px 0;
-  line-height: 1.4;
+  color: #ffffff !important;
+  margin: 0 0 28px 0;
+  line-height: 1.5;
+  letter-spacing: -0.3px;
 }
 
 .options-container {
@@ -129,13 +118,13 @@
 .option-button {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border: 2px solid rgba(244, 196, 48, 0.2);
-  border-radius: 8px;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+  gap: 14px;
+  padding: 16px 18px;
+  border: 2px solid #5a6f8f;
+  border-radius: 10px;
+  background: transparent;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
   text-align: left;
   font-size: 1rem;
   font-weight: 500;
@@ -144,30 +133,33 @@
 
 .option-button:hover {
   border-color: #fbbf24;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+  background: rgba(251, 191, 36, 0.08);
+  transform: translateX(4px);
 }
 
 .option-button.selected {
   border-color: #fbbf24;
-  background: linear-gradient(135deg, rgba(244, 196, 48, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+  background: rgba(251, 191, 36, 0.12);
 }
 
 .option-checkbox {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #cbd5e1;
-  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #fbbf24;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.2s;
-  color: #f1f5f9;
+  color: #fbbf24;
+  background: transparent;
 }
 
 .option-button.selected .option-checkbox {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  background: #fbbf24;
   border-color: #fbbf24;
+  color: #1a2332;
 }
 
 .form-fields {
@@ -187,15 +179,16 @@
 .form-group label {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: #e2e8f0;
+  letter-spacing: -0.2px;
 }
 
 .form-group input,
 .form-group select {
   padding: 12px;
-  border: 2px solid rgba(244, 196, 48, 0.2);
+  border: 2px solid #fbbf24;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+  background: #1a2332;
   color: #f1f5f9;
   font-size: 1rem;
   transition: all 0.2s;
@@ -205,7 +198,8 @@
 .form-group select:focus {
   outline: none;
   border-color: #fbbf24;
-  box-shadow: 0 0 0 3px rgba(244, 196, 48, 0.1);
+  background: rgba(26, 35, 50, 0.8);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
 }
 
 .form-group input::placeholder {
@@ -248,8 +242,8 @@
 .modal-footer {
   display: flex;
   gap: 12px;
-  padding: 24px;
-  border-top: 1px solid rgba(244, 196, 48, 0.1);
+  padding: 24px 28px 28px 28px;
+  border-top: none;
   position: relative;
   z-index: 1;
 }
@@ -257,44 +251,44 @@
 .btn-secondary,
 .btn-primary {
   flex: 1;
-  padding: 12px 16px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  letter-spacing: -0.3px;
 }
 
 .btn-secondary {
-  background: transparent;
-  color: #cbd5e1;
-  border: 2px solid #cbd5e1;
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(203, 213, 225, 0.1);
-  border-color: #f4c430;
-  color: #f4c430;
+  background: rgba(148, 163, 184, 0.2);
+  border-color: rgba(148, 163, 184, 0.5);
 }
 
 .btn-secondary:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #0f172a;
+  color: #1a2332;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(244, 196, 48, 0.2);
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
 }
 
 .btn-primary:disabled {
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
@@ -351,10 +345,11 @@
   .pilot-modal {
     width: 95%;
     max-height: 90vh;
+    border-radius: 16px;
   }
 
   .modal-header {
-    padding: 16px;
+    padding: 20px 20px 12px 20px;
   }
 
   .modal-header h2 {
@@ -362,21 +357,27 @@
   }
 
   .modal-content {
-    padding: 20px 16px;
+    padding: 24px 20px;
   }
 
   .question-title {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 
   .option-button {
-    padding: 12px;
+    padding: 14px 14px;
     font-size: 0.95rem;
   }
 
   .modal-footer {
-    padding: 16px;
-    gap: 8px;
+    padding: 20px 20px 24px 20px;
+    gap: 10px;
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    padding: 12px 16px;
+    font-size: 0.95rem;
   }
 
   .calendar-section {
@@ -384,6 +385,31 @@
   }
 
   .disqualification-container {
-    padding: 32px 16px;
+    padding: 32px 20px;
+  }
+
+  .progress-bar {
+    height: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .modal-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .modal-content {
+    padding: 20px 16px;
+  }
+
+  .question-title {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .option-button {
+    padding: 12px 12px;
+    gap: 10px;
+    font-size: 0.9rem;
   }
 }
