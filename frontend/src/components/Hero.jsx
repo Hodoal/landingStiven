@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { FiArrowDown, FiSmile } from 'react-icons/fi'
-import Calendar from './Calendar'
 import './Hero.css'
 
 function Hero({ onBookClick }) {
@@ -52,13 +51,6 @@ function Hero({ onBookClick }) {
         >
           Aplicar al piloto de 30 días
         </motion.button>
-
-        <motion.div 
-          variants={itemVariants}
-          className="hero-calendar-section"
-        >
-          <Calendar onDateSelect={() => onBookClick()} />
-        </motion.div>
 
         <motion.div variants={itemVariants} className="hero-footer-text">
           <p className="footer-question">¿Aún No Tienes Claro Lo Que Recibirás?</p>
