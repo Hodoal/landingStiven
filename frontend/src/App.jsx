@@ -10,12 +10,14 @@ import Promise from './components/Promise'
 import Footer from './components/Footer'
 import CookiesBanner from './components/CookiesBanner'
 import FloatingButton from './components/FloatingButton'
+import PilotApplicationModal from './components/PilotApplicationModal'
 import BookingModal from './components/BookingModal'
 import AdminPage from './pages/AdminPage'
 import './index.css'
 
 function App() {
-  const [showModal, setShowModal] = useState(false)
+  const [showPilotModal, setShowPilotModal] = useState(false)
+  const [showBookingModal, setShowBookingModal] = useState(false)
   const [showFloatingButton, setShowFloatingButton] = useState(false)
   const [currentPage, setCurrentPage] = useState('home')
 
@@ -71,13 +73,13 @@ function App() {
 
   return (
     <div className="app">
-      <Header onBookClick={() => setShowModal(true)} />
-      <Hero onBookClick={() => setShowModal(true)} />
-      <SystemQualification onBookClick={() => setShowModal(true)} />
+      <Header onBookClick={() => setShowPilotModal(true)} />
+      <Hero onBookClick={() => setShowPilotModal(true)} />
+      <SystemQualification onBookClick={() => setShowPilotModal(true)} />
       <RealProblem />
-      <Solution onBookClick={() => setShowModal(true)} />
+      <Solution onBookClick={() => setShowPilotModal(true)} />
       <HowItWorks />
-      <Promise onBookClick={() => setShowModal(true)} />
+      <Promise onBookClick={() => setShowPilotModal(true)} />
       <Footer />
       <CookiesBanner />
       
@@ -87,12 +89,13 @@ function App() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
         >
-          <FloatingButton onClick={() => setShowModal(true)} />
+          <FloatingButton onClick={() => setShowPilotModal(true)} />
         </motion.div>
       )}
 
-      {showModal && (
-        <BookingModal onClose={() => setShowModal(false)} />
+      <PilotApplicationModal isOpen={showPilotModal} onClose={() => setShowPilotModal(false)} />
+      {showBookingModal && (
+        <BookingModal onClose={() => setShowBookingModal(false)} />
       )}
     </div>
   )

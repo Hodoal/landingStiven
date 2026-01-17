@@ -192,4 +192,101 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// POST: Aplicar a la prueba piloto (nueva lógica de validación)
+router.post('/apply-pilot', async (req, res) => {
+  try {
+    const {
+      is_labor_lawyer,
+      works_quota_litis,
+      monthly_consultations,
+      willing_to_invest_ads,
+      ads_budget_range,
+      main_problem
+    } = req.body;
+
+    // Validaciones de descarte automático
+    const disqualificationReasons = [];
+
+    // 1. Filtro duro: debe ser abogado laboral
+    if (is_labor_lawyer === 'No' || is_labor_lawyer === false) {
+      disqualificationReasons.push('Not a labor lawyer');
+    }
+
+    // 2. Volumen mensual crítico: 0-10 descarta
+    if (monthly_consultations === '0–10') {
+      disqualificationReasons.push('Monthly consultations too low');
+    }
+
+    // 3. Disposición a invertir en publicidad
+    if (willing_to_invest_ads === 'No' || willing_to_invest_ads === false) {
+      disqualificationReasons.push('Not willing to invest in ads');
+    }
+
+    // 4. Presupuesto de publicidad: < 1M descarta
+    if (ads_budget_range === 'Menos de $1.000.000') {
+      disqualificationReasons.push('Ads budget too low');
+    }
+
+    // Clasificar lead según volumen mensual
+    let lead_type = null;
+    if (monthly_consultations === '10–30' || monthly_consultations === '30–60') {
+      lead_type = 'Ideal';
+    } else if (monthly_consultations === '60+') {
+      lead_type = 'Scale';
+    }
+
+    // Determinar si califica
+    const isDisqualified = disqualificationReasons.length > 0;
+
+    const newLead = new Lead({
+      is_labor_lawyer: is_labor_lawyer === 'Sí' || is_labor_lawyer === true,
+      works_quota_litis,
+      monthly_consultations,
+      willing_to_invest_ads: willing_to_invest_ads === 'Sí' || willing_to_invest_ads === true,
+      ads_budget_range,
+      main_problem,
+      lead_type: isDisqualified ? null : lead_type,
+      status: isDisqualified ? 'disqualified' : 'applied',
+      disqualified_reason: isDisqualified ? disqualificationReasons.join(', ') : null,
+      disqualified_at: isDisqualified ? new Date() : null,
+    });
+
+    const savedLead = await newLead.save();
+
+    res.json({
+      success: true,
+      disqualified: isDisqualified,
+      leadId: savedLead._id,
+      lead_type: savedLead.lead_type,
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// POST: Track event (para analytics)
+router.post('/track-event', async (req, res) => {
+  try {
+    const { eventName } = req.body;
+    // Aquí puedes guardar los eventos en una colección de analytics
+    // Por ahora solo registramos en logs
+    console.log(`[Analytics] Event: ${eventName} - ${new Date().toISOString()}`);
+    
+    res.json({
+      success: true,
+      message: 'Event tracked'
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;
