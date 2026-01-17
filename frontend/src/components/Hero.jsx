@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FiArrowDown, FiSmile } from 'react-icons/fi'
+import { FiArrowDown } from 'react-icons/fi'
 import './Hero.css'
 
 function Hero({ onBookClick }) {
@@ -51,20 +51,6 @@ function Hero({ onBookClick }) {
         >
           Aplicar al piloto de 30 días
         </motion.button>
-
-        <motion.div variants={itemVariants} className="hero-footer-text">
-          <p className="footer-question">¿Aún No Tienes Claro Lo Que Recibirás?</p>
-          <motion.button 
-            variants={itemVariants}
-            className="hero-footer-btn"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FiSmile size={20} />
-            Conoce más bajando
-            <FiSmile size={20} />
-          </motion.button>
-        </motion.div>
       </motion.div>
 
       <motion.div 
