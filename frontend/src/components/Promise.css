@@ -95,7 +95,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  width: fit-content;
+  align-self: center;
 }
 
 .promise-cta:hover {
@@ -372,8 +377,9 @@
   }
 
   .promise-cta {
-    padding: 12px 30px;
-    font-size: 0.95rem;
+    padding: 14px 40px;
+    font-size: 1rem;
+    min-height: 44px;
   }
 
   .guarantee-badge {
@@ -405,8 +411,9 @@
   }
 
   .promise-cta {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+    padding: 14px 40px;
+    font-size: 1rem;
+    min-height: 44px;
   }
 
   .promise-subtitle {

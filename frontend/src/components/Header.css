@@ -53,17 +53,19 @@
 .header-btn {
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   color: #000;
-  padding: 12px 24px;
+  padding: 14px 40px;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
   white-space: nowrap;
   border: none;
   cursor: pointer;
+  min-height: 44px;
 }
 
 .header-btn:hover {

@@ -54,14 +54,18 @@
 .cta-button {
   background: var(--color-dark);
   color: var(--color-yellow);
-  padding: 1.2rem 2.5rem;
-  font-size: 1.1rem;
+  padding: 14px 40px;
+  font-size: 1rem;
   font-weight: 700;
   border-radius: 8px;
   border: 2px solid var(--color-dark);
   cursor: pointer;
   transition: var(--transition);
   box-shadow: 0 10px 30px rgba(10, 14, 39, 0.3);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cta-button:hover {

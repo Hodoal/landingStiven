@@ -93,7 +93,7 @@ function App() {
         </motion.div>
       )}
 
-      <PilotApplicationModal isOpen={showPilotModal} onClose={() => setShowPilotModal(false)} />
+      {showPilotModal && <PilotApplicationModal onClose={() => setShowPilotModal(false)} />}
       {showBookingModal && (
         <BookingModal onClose={() => setShowBookingModal(false)} />
       )}
