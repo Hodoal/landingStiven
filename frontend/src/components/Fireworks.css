@@ -1,0 +1,42 @@
+.fireworks-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9998;
+}
+
+.firework {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #10b981);
+  bottom: 0;
+  animation: explode var(--duration) ease-out var(--delay) forwards;
+}
+
+@keyframes explode {
+  0% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--translateY, -500px)) translateX(var(--translateX, 0)) scale(0);
+  }
+}
+
+.firework:nth-child(1) { --translateY: -600px; --translateX: -200px; }
+.firework:nth-child(2) { --translateY: -650px; --translateX: 250px; }
+.firework:nth-child(3) { --translateY: -700px; --translateX: -150px; }
+.firework:nth-child(4) { --translateY: -650px; --translateX: 200px; }
+.firework:nth-child(5) { --translateY: -750px; --translateX: -250px; }
+
+.firework:nth-child(n+6) {
+  --translateY: calc(-600px - (var(--index) * 10px));
+  --translateX: calc((var(--index) * 30px - 150px));
+}

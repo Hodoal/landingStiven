@@ -1,0 +1,115 @@
+.disqualified-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.disqualified-modal {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 40px 30px;
+  max-width: 500px;
+  position: relative;
+  text-align: center;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #f1f5f9;
+  transform: scale(1.1);
+}
+
+.disqualified-icon {
+  color: #ef4444;
+  margin-bottom: 20px;
+}
+
+.disqualified-modal h2 {
+  color: #f1f5f9;
+  font-size: 1.5rem;
+  margin: 15px 0;
+}
+
+.disqualified-modal p {
+  color: #cbd5e1;
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+.requirements {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.requirements li {
+  color: #94a3b8;
+  padding: 8px 0;
+  padding-left: 25px;
+  position: relative;
+}
+
+.requirements li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: bold;
+}
+
+.action-buttons {
+  margin-top: 25px;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+.contact-text {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-top: 15px;
+}
+
+.contact-text a {
+  color: #f59e0b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contact-text a:hover {
+  color: #fbbf24;
+  text-decoration: underline;
+}
