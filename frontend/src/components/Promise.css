@@ -51,7 +51,7 @@
   align-items: center;
   gap: 12px;
   color: #e2e8f0;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   justify-content: flex-start;
 }
@@ -72,7 +72,7 @@
 }
 
 .promise-conclusion {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #e2e8f0;
   margin: 0;
   line-height: 1.8;
