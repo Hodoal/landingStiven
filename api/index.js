@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 
@@ -22,26 +23,39 @@ mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 20000
 }).catch(err => console.error('MongoDB connection error:', err.message));
 
-// Import Routes
-const bookingRoutes = require('../backend/routes/bookingRoutes');
-const calendarRoutes = require('../backend/routes/calendarRoutes');
-const leadsRoutes = require('../backend/routes/leadsRoutes');
-const consultantRoutes = require('../backend/routes/consultantRoutes');
+// Import Routes - with error handling
+let bookingRoutes, calendarRoutes, leadsRoutes, consultantRoutes;
+
+try {
+  bookingRoutes = require(path.join(__dirname, '../backend/routes/bookingRoutes'));
+  calendarRoutes = require(path.join(__dirname, '../backend/routes/calendarRoutes'));
+  leadsRoutes = require(path.join(__dirname, '../backend/routes/leadsRoutes'));
+  consultantRoutes = require(path.join(__dirname, '../backend/routes/consultantRoutes'));
+  console.log('✅ All routes imported successfully');
+} catch (err) {
+  console.error('❌ Error importing routes:', err.message);
+  console.error('Stack:', err.stack);
+}
 
 // Health check endpoints
 app.get('/', (req, res) => {
-  res.json({ message: 'Backend is running' });
+  res.json({ message: 'Backend is running', environment: process.env.NODE_ENV });
 });
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// API Routes
-app.use('/api/booking', bookingRoutes);
-app.use('/api/calendar', calendarRoutes);
-app.use('/api/leads', leadsRoutes);
-app.use('/api/consultants', consultantRoutes);
+// API Routes - only if imported successfully
+if (bookingRoutes) app.use('/api/booking', bookingRoutes);
+if (calendarRoutes) app.use('/api/calendar', calendarRoutes);
+if (leadsRoutes) app.use('/api/leads', leadsRoutes);
+if (consultantRoutes) app.use('/api/consultants', consultantRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found', path: req.path });
+});
 
 // Error handling
 app.use((err, req, res, next) => {
