@@ -2,10 +2,10 @@
   "name": "stivenads",
   "version": "1.0.0",
   "description": "Stivenads marketing scheduling platform",
-  "main": "index.js",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
     "build": "echo 'No build needed'"
   },
   "dependencies": {
