@@ -37,6 +37,22 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Test endpoint working' });
 });
 
+// Diagnostics endpoint
+app.get('/api/diagnostics', (req, res) => {
+  res.json({
+    message: 'Backend diagnostics',
+    nodeEnv: process.env.NODE_ENV,
+    mongoConnected: mongoose.connection.readyState === 1,
+    mongoUri: process.env.MONGODB_URI ? 'configured' : 'missing',
+    routes: {
+      consultants: 'checking...',
+      booking: 'checking...',
+      calendar: 'checking...',
+      leads: 'checking...'
+    }
+  });
+});
+
 // Try to import and use routes
 try {
   const consultantRoutes = require(path.join(__dirname, '../backend/routes/consultantRoutes'));
