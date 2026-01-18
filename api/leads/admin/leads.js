@@ -9,11 +9,15 @@ async function connectDB() {
     return;
   }
   
-  await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/stivenads', {
-    maxPoolSize: 5,
-    minPoolSize: 1,
-    socketTimeoutMS: 30000,
-    connectTimeoutMS: 10000
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/stivenads';
+  await mongoose.connect(uri, {
+    maxPoolSize: 10,
+    minPoolSize: 2,
+    socketTimeoutMS: 45000,
+    connectTimeoutMS: 20000,
+    serverSelectionTimeoutMS: 20000,
+    retryWrites: true,
+    w: 'majority'
   });
   isConnected = true;
 }
@@ -32,7 +36,7 @@ module.exports = async (req, res) => {
     await connectDB();
 
     if (req.method === 'GET') {
-      const leads = await Lead.find().lean().timeout(5000);
+      const leads = await Lead.find().lean().maxTimeMS(30000);
       res.status(200).json({ success: true, data: leads });
     } else {
       res.status(405).json({ success: false, message: 'Method not allowed' });

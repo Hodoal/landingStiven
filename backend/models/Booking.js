@@ -98,6 +98,11 @@ const bookingSchema = new mongoose.Schema({
   }
 }, { toJSON: { virtuals: true } });
 
+// Add indexes for performance
+bookingSchema.index({ createdAt: -1 });
+bookingSchema.index({ clientName: 1 });
+bookingSchema.index({ email: 1 });
+
 // Add virtual id field for compatibility
 bookingSchema.virtual('id').get(function() {
   return this._id.toHexString();
