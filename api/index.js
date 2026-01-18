@@ -23,20 +23,6 @@ mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 20000
 }).catch(err => console.error('MongoDB connection error:', err.message));
 
-// Import Routes - with error handling
-let bookingRoutes, calendarRoutes, leadsRoutes, consultantRoutes;
-
-try {
-  bookingRoutes = require(path.join(__dirname, '../backend/routes/bookingRoutes'));
-  calendarRoutes = require(path.join(__dirname, '../backend/routes/calendarRoutes'));
-  leadsRoutes = require(path.join(__dirname, '../backend/routes/leadsRoutes'));
-  consultantRoutes = require(path.join(__dirname, '../backend/routes/consultantRoutes'));
-  console.log('✅ All routes imported successfully');
-} catch (err) {
-  console.error('❌ Error importing routes:', err.message);
-  console.error('Stack:', err.stack);
-}
-
 // Health check endpoints
 app.get('/', (req, res) => {
   res.json({ message: 'Backend is running', environment: process.env.NODE_ENV });
@@ -46,11 +32,46 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// API Routes - only if imported successfully
-if (bookingRoutes) app.use('/api/booking', bookingRoutes);
-if (calendarRoutes) app.use('/api/calendar', calendarRoutes);
-if (leadsRoutes) app.use('/api/leads', leadsRoutes);
-if (consultantRoutes) app.use('/api/consultants', consultantRoutes);
+// Test endpoint
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Test endpoint working' });
+});
+
+// Try to import and use routes
+try {
+  const consultantRoutes = require(path.join(__dirname, '../backend/routes/consultantRoutes'));
+  app.use('/api/consultants', consultantRoutes);
+  console.log('✅ Consultant routes loaded');
+} catch (err) {
+  console.error('❌ Failed to load consultant routes:', err.message);
+  app.get('/api/consultants', (req, res) => {
+    res.status(500).json({ error: 'Consultant routes not loaded', details: err.message });
+  });
+}
+
+try {
+  const bookingRoutes = require(path.join(__dirname, '../backend/routes/bookingRoutes'));
+  app.use('/api/booking', bookingRoutes);
+  console.log('✅ Booking routes loaded');
+} catch (err) {
+  console.error('❌ Failed to load booking routes:', err.message);
+}
+
+try {
+  const calendarRoutes = require(path.join(__dirname, '../backend/routes/calendarRoutes'));
+  app.use('/api/calendar', calendarRoutes);
+  console.log('✅ Calendar routes loaded');
+} catch (err) {
+  console.error('❌ Failed to load calendar routes:', err.message);
+}
+
+try {
+  const leadsRoutes = require(path.join(__dirname, '../backend/routes/leadsRoutes'));
+  app.use('/api/leads', leadsRoutes);
+  console.log('✅ Leads routes loaded');
+} catch (err) {
+  console.error('❌ Failed to load leads routes:', err.message);
+}
 
 // 404 handler
 app.use((req, res) => {
