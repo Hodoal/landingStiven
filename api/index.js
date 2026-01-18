@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const path = require('path');
 
 const app = express();
 
@@ -23,6 +22,22 @@ mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 20000
 }).catch(err => console.error('MongoDB connection error:', err.message));
 
+// Define Consultant Schema
+const consultantSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  phone: String,
+  specialization: String,
+  bio: String,
+  hourlyRate: Number,
+  isActive: { type: Boolean, default: true },
+  availability: Object,
+  unavailableDates: [Object],
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Consultant = mongoose.model('Consultant', consultantSchema);
+
 // Health check endpoints
 app.get('/', (req, res) => {
   res.json({ message: 'Backend is running', environment: process.env.NODE_ENV });
@@ -34,60 +49,49 @@ app.get('/api/health', (req, res) => {
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Test endpoint working' });
+  res.json({ test: 'ok', node_env: process.env.NODE_ENV });
 });
 
-// Diagnostics endpoint
-app.get('/api/diagnostics', (req, res) => {
-  res.json({
-    message: 'Backend diagnostics',
-    nodeEnv: process.env.NODE_ENV,
-    mongoConnected: mongoose.connection.readyState === 1,
-    mongoUri: process.env.MONGODB_URI ? 'configured' : 'missing',
-    routes: {
-      consultants: 'checking...',
-      booking: 'checking...',
-      calendar: 'checking...',
-      leads: 'checking...'
+// === CONSULTANTS ENDPOINTS ===
+
+// GET /api/consultants - Get all active consultants
+app.get('/api/consultants', async (req, res) => {
+  try {
+    const consultants = await Consultant.find({ isActive: true })
+      .select('name email specialization bio profileImage')
+      .lean()
+      .exec();
+
+    res.json({
+      success: true,
+      data: consultants,
+      count: consultants.length
+    });
+  } catch (error) {
+    console.error('Error fetching consultants:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error al obtener consultores',
+      details: error.message 
+    });
+  }
+});
+
+// GET /api/consultants/:id - Get consultant details
+app.get('/api/consultants/:id', async (req, res) => {
+  try {
+    const consultant = await Consultant.findById(req.params.id).lean();
+
+    if (!consultant) {
+      return res.status(404).json({ success: false, error: 'Consultor no encontrado' });
     }
-  });
+
+    res.json({ success: true, data: consultant });
+  } catch (error) {
+    console.error('Error fetching consultant:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
-
-// Try to import and use routes
-try {
-  const consultantRoutes = require(path.join(__dirname, '../backend/routes/consultantRoutes'));
-  app.use('/api/consultants', consultantRoutes);
-  console.log('✅ Consultant routes loaded');
-} catch (err) {
-  console.error('❌ Failed to load consultant routes:', err.message);
-  app.get('/api/consultants', (req, res) => {
-    res.status(500).json({ error: 'Consultant routes not loaded', details: err.message });
-  });
-}
-
-try {
-  const bookingRoutes = require(path.join(__dirname, '../backend/routes/bookingRoutes'));
-  app.use('/api/booking', bookingRoutes);
-  console.log('✅ Booking routes loaded');
-} catch (err) {
-  console.error('❌ Failed to load booking routes:', err.message);
-}
-
-try {
-  const calendarRoutes = require(path.join(__dirname, '../backend/routes/calendarRoutes'));
-  app.use('/api/calendar', calendarRoutes);
-  console.log('✅ Calendar routes loaded');
-} catch (err) {
-  console.error('❌ Failed to load calendar routes:', err.message);
-}
-
-try {
-  const leadsRoutes = require(path.join(__dirname, '../backend/routes/leadsRoutes'));
-  app.use('/api/leads', leadsRoutes);
-  console.log('✅ Leads routes loaded');
-} catch (err) {
-  console.error('❌ Failed to load leads routes:', err.message);
-}
 
 // 404 handler
 app.use((req, res) => {
