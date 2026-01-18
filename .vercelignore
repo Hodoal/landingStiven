@@ -1,8 +1,15 @@
 .git
+.env
 node_modules
-frontend
-backend/test_pilot.js
+frontend/
 backend/test_pilot.js
 backend/check-db.js
 backend/cleanup-states.js
+backend/debug-*.js
+backend/list-*.js
+backend/seed-*.js
+backend/test-*.js
+api/
 *.md
+docs/
+scripts/
