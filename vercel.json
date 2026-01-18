@@ -1,9 +1,13 @@
 {
   "version": 2,
+  "name": "landing-stiven-backend",
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": "backend/**"
+      }
     }
   ],
   "routes": [
@@ -11,5 +15,8 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
