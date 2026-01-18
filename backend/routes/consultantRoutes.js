@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Consultant = require('../models/Consultant');
 const availabilityService = require('../services/availabilityService');
+const calendarService = require('../services/calendarService');
 
 /**
  * GET /api/consultants
@@ -43,7 +44,7 @@ router.get('/:id', async (req, res) => {
 /**
  * GET /api/consultants/:id/available-times
  * Obtener horarios disponibles para una fecha específica
- * NUEVO: Muestra TODOS los días y solo excluye horarios ocupados (con reuniones confirmadas)
+ * NUEVO: Filtra directamente con Google Calendar API (no con reuniones en BD)
  * Query params: date (YYYY-MM-DD), duration (minutos)
  */
 router.get('/:id/available-times', async (req, res) => {
@@ -64,23 +65,42 @@ router.get('/:id/available-times', async (req, res) => {
       return res.status(404).json({ error: 'Consultor no disponible' });
     }
 
-    // Usar la nueva función que obtiene horarios sin considerar disponibilidad configurada
-    const result = await availabilityService.getAvailableSlotsSimple(
-      req.params.id,
-      date,
-      parseInt(duration)
-    );
-
+    // Usar Google Calendar API para obtener disponibilidad
+    const calendarResult = await calendarService.getAvailableSlots(date);
+    
     const durationMin = parseInt(duration);
-    const availableTimes = result.availableSlots;
-    const occupiedTimes = result.bookedSlots;
+    
+    // Convertir slots de Google Calendar al formato esperado
+    const availableTimes = calendarResult.availableSlots.map(slot => ({
+      startTime: slot,
+      endTime: addMinutesToTime(slot, durationMin),
+      available: true
+    }));
+    
+    const occupiedTimes = calendarResult.bookedSlots.map(slot => {
+      // Extraer hora de inicio del formato ISO
+      const startDate = new Date(slot.start);
+      const endDate = new Date(slot.end);
+      const startHours = String(startDate.getHours()).padStart(2, '0');
+      const startMinutes = String(startDate.getMinutes()).padStart(2, '0');
+      const startTime = `${startHours}:${startMinutes}`;
+      
+      return {
+        startTime: startTime,
+        endTime: slot.end.substring(11, 16),
+        available: false,
+        title: slot.title
+      };
+    });
 
     // Crear lista de TODOS los slots (disponibles + ocupados)
     const allSlots = [...availableTimes, ...occupiedTimes].sort((a, b) => {
-      return availabilityService.timeToMinutes(a.startTime) - availabilityService.timeToMinutes(b.startTime);
+      const aMinutes = timeToMinutes(a.startTime);
+      const bMinutes = timeToMinutes(b.startTime);
+      return aMinutes - bMinutes;
     });
 
-    console.log(`\n📅 Disponibilidad ${date}:`);
+    console.log(`\n📅 Disponibilidad ${date} (desde Google Calendar):`);
     console.log(`   ✅ Libres: ${availableTimes.length}`);
     console.log(`   ❌ Ocupados: ${occupiedTimes.length}`);
 
@@ -89,13 +109,14 @@ router.get('/:id/available-times', async (req, res) => {
       success: true,
       date: date,
       duration: durationMin,
-      availableTimes: availableTimes,      // Horarios realmente libres
-      occupiedTimes: occupiedTimes,         // Horarios ocupados
+      availableTimes: availableTimes,      // Horarios realmente libres (Google Calendar)
+      occupiedTimes: occupiedTimes,         // Horarios ocupados (Google Calendar)
       allSlots: allSlots,                  // TODOS los slots con status
       dayHasAvailability: availableTimes.length > 0,
       totalAvailable: availableTimes.length,
       totalOccupied: occupiedTimes.length,
-      message: `${availableTimes.length} horarios disponibles, ${occupiedTimes.length} ocupados`
+      source: 'google-calendar',
+      message: `${availableTimes.length} horarios disponibles, ${occupiedTimes.length} ocupados (desde Google Calendar)`
     });
   } catch (error) {
     console.error('Error fetching available times:', error);
@@ -295,5 +316,23 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al desactivar consultor' });
   }
 });
+
+/**
+ * Helper function: Convert time string HH:MM to minutes
+ */
+function timeToMinutes(timeString) {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+/**
+ * Helper function: Add minutes to a time string (HH:MM)
+ */
+function addMinutesToTime(timeString, minutes) {
+  const totalMinutes = timeToMinutes(timeString) + minutes;
+  const hours = Math.floor(totalMinutes / 60);
+  const mins = totalMinutes % 60;
+  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+}
 
 module.exports = router;
