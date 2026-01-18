@@ -44,12 +44,13 @@ router.get('/:id', async (req, res) => {
 /**
  * GET /api/consultants/:id/available-times
  * Obtener horarios disponibles para una fecha específica
- * NUEVO: Filtra directamente con Google Calendar API (no con reuniones en BD)
- * Query params: date (YYYY-MM-DD), duration (minutos)
+ * Filtra directamente con Google Calendar API
+ * Solo retorna horarios disponibles (no ocupados)
+ * Rango: 8 AM a 10 PM en intervalos de 1 hora
  */
 router.get('/:id/available-times', async (req, res) => {
   try {
-    const { date, duration = 60 } = req.query;
+    const { date } = req.query;
 
     if (!date) {
       return res.status(400).json({ error: 'Se requiere parámetro: date (YYYY-MM-DD)' });
@@ -65,58 +66,28 @@ router.get('/:id/available-times', async (req, res) => {
       return res.status(404).json({ error: 'Consultor no disponible' });
     }
 
-    // Usar Google Calendar API para obtener disponibilidad
+    // Obtener disponibilidad desde Google Calendar API
     const calendarResult = await calendarService.getAvailableSlots(date);
     
-    const durationMin = parseInt(duration);
-    
-    // Convertir slots de Google Calendar al formato esperado
+    // Solo retornar horarios disponibles (filtrados de Google Calendar)
     const availableTimes = calendarResult.availableSlots.map(slot => ({
       startTime: slot,
-      endTime: addMinutesToTime(slot, durationMin),
+      endTime: addMinutesToTime(slot, 60), // 1 hora
       available: true
     }));
-    
-    const occupiedTimes = calendarResult.bookedSlots.map(slot => {
-      // Extraer hora de inicio del formato ISO
-      const startDate = new Date(slot.start);
-      const endDate = new Date(slot.end);
-      const startHours = String(startDate.getHours()).padStart(2, '0');
-      const startMinutes = String(startDate.getMinutes()).padStart(2, '0');
-      const startTime = `${startHours}:${startMinutes}`;
-      
-      return {
-        startTime: startTime,
-        endTime: slot.end.substring(11, 16),
-        available: false,
-        title: slot.title
-      };
-    });
-
-    // Crear lista de TODOS los slots (disponibles + ocupados)
-    const allSlots = [...availableTimes, ...occupiedTimes].sort((a, b) => {
-      const aMinutes = timeToMinutes(a.startTime);
-      const bMinutes = timeToMinutes(b.startTime);
-      return aMinutes - bMinutes;
-    });
 
     console.log(`\n📅 Disponibilidad ${date} (desde Google Calendar):`);
-    console.log(`   ✅ Libres: ${availableTimes.length}`);
-    console.log(`   ❌ Ocupados: ${occupiedTimes.length}`);
+    console.log(`   ✅ Horarios disponibles: ${availableTimes.length}`);
 
     // Retornar datos mejorados
     res.json({
       success: true,
       date: date,
-      duration: durationMin,
-      availableTimes: availableTimes,      // Horarios realmente libres (Google Calendar)
-      occupiedTimes: occupiedTimes,         // Horarios ocupados (Google Calendar)
-      allSlots: allSlots,                  // TODOS los slots con status
-      dayHasAvailability: availableTimes.length > 0,
+      duration: 60,
+      availableTimes: availableTimes,
       totalAvailable: availableTimes.length,
-      totalOccupied: occupiedTimes.length,
       source: 'google-calendar',
-      message: `${availableTimes.length} horarios disponibles, ${occupiedTimes.length} ocupados (desde Google Calendar)`
+      message: `${availableTimes.length} horarios disponibles`
     });
   } catch (error) {
     console.error('Error fetching available times:', error);

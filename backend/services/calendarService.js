@@ -182,33 +182,31 @@ async function getAvailableSlots(dateInput) {
 function calculateAvailableSlots(bookedSlots) {
   console.log('\n🔄 Calculating available slots...');
   
-  // Generate all possible slots (8:00 to 17:30 in 30-min intervals)
+  // Generate all possible slots: 8:00 AM to 10:00 PM in 1-hour intervals
   const allSlots = [];
-  for (let i = 8; i < 18; i++) {
+  for (let i = 8; i <= 22; i++) {
     allSlots.push(`${String(i).padStart(2, '0')}:00`);
-    if (i < 17) { // Don't add :30 for 18:00
-      allSlots.push(`${String(i).padStart(2, '0')}:30`);
-    }
   }
 
   console.log(`  Total possible slots: ${allSlots.length}`);
+  console.log(`  Slot range: 08:00 to 22:00 (1-hour intervals)`);
 
-  // Create a Set of booked time ranges
+  // Create a Set of booked time ranges (hour-level blocking)
   const bookedTimes = new Set();
   
   bookedSlots.forEach((slot, slotIndex) => {
-    console.log(`\n  Processing booked slot ${slotIndex + 1}:`);
+    console.log(`\n  Processing booked event ${slotIndex + 1}:`);
     const startTime = new Date(slot.start);
     const endTime = new Date(slot.end);
     
-    console.log(`    Duration: ${startTime.toLocaleString('es-CO')} to ${endTime.toLocaleString('es-CO')}`);
+    console.log(`    Start: ${startTime.toLocaleString('es-CO')}`);
+    console.log(`    End: ${endTime.toLocaleString('es-CO')}`);
 
-    // For each 30-minute interval during the booked time, mark as unavailable
+    // Get hours that this event spans
     let currentTime = new Date(startTime);
-    let intervalCount = 0;
     
     while (currentTime < endTime) {
-      // Format current time in local timezone using Intl
+      // Format current time in local timezone
       const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/Bogota',
         hour: '2-digit',
@@ -218,22 +216,19 @@ function calculateAvailableSlots(bookedSlots) {
       
       const parts = formatter.formatToParts(currentTime);
       const hours = parts.find(p => p.type === 'hour').value;
-      const minutes = parts.find(p => p.type === 'minute').value;
-      const timeStr = `${hours}:${minutes}`;
+      const timeStr = `${hours}:00`; // Always block full hour (HH:00)
       
-      bookedTimes.add(timeStr);
-      intervalCount++;
+      if (!bookedTimes.has(timeStr)) {
+        bookedTimes.add(timeStr);
+        console.log(`      ⏸️  Blocking hour: ${timeStr}`);
+      }
       
-      console.log(`      ⏸️  Marking as booked: ${timeStr}`);
-      
-      // Increment by 30 minutes
-      currentTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
+      // Increment by 1 hour
+      currentTime = new Date(currentTime.getTime() + 60 * 60 * 1000);
     }
-    
-    console.log(`    Total intervals blocked: ${intervalCount}`);
   });
 
-  console.log(`\n  Total booked time slots: ${bookedTimes.size}`);
+  console.log(`\n  Total booked hours: ${bookedTimes.size}`);
   console.log(`  Booked times: ${Array.from(bookedTimes).sort().join(', ')}`);
 
   const availableSlots = allSlots.filter(slot => !bookedTimes.has(slot));
