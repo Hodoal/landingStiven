@@ -2,6 +2,22 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Lead = require('../../backend/models/Lead');
 
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected && mongoose.connection.readyState === 1) {
+    return;
+  }
+  
+  await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/stivenads', {
+    maxPoolSize: 5,
+    minPoolSize: 1,
+    socketTimeoutMS: 30000,
+    connectTimeoutMS: 10000
+  });
+  isConnected = true;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
@@ -13,18 +29,16 @@ module.exports = async (req, res) => {
   }
 
   try {
-    if (!mongoose.connections[0].readyState) {
-      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/stivenads');
-    }
+    await connectDB();
 
     if (req.method === 'GET') {
-      const leads = await Lead.find();
+      const leads = await Lead.find().lean().timeout(5000);
       res.status(200).json({ success: true, data: leads });
     } else {
       res.status(405).json({ success: false, message: 'Method not allowed' });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error:', error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 };

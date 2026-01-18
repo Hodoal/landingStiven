@@ -1,41 +1,6 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/api/health",
-      "dest": "/api/health.js"
-    },
-    {
-      "src": "/api/booking/list",
-      "dest": "/api/booking/list.js"
-    },
-    {
-      "src": "/api/booking/confirm-sale",
-      "dest": "/api/booking/confirm-sale.js"
-    },
-    {
-      "src": "/api/booking/delete",
-      "dest": "/api/booking/delete.js"
-    },
-    {
-      "src": "/api/leads/admin/leads",
-      "dest": "/api/leads/admin/leads.js"
-    },
-    {
-      "src": "/api/leads/create",
-      "dest": "/api/leads/create.js"
-    },
-    {
-      "src": "/api/consultants/list",
-      "dest": "/api/consultants/list.js"
-    },
-    {
-      "src": "/api/calendar/(.*)",
-      "dest": "/api/calendar/index.js"
-    }
-  ]
+  "env": {
+    "MONGODB_URI": "@mongodb_uri"
+  }
 }
