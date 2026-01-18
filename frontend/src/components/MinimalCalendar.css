@@ -125,12 +125,27 @@
   cursor: not-allowed;
   border-color: rgba(251, 191, 36, 0.05);
   background: rgba(200, 200, 200, 0.05);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .day-number-modern.disabled:hover {
   transform: none;
   box-shadow: none;
   background: rgba(200, 200, 200, 0.05);
+}
+
+.day-number-modern.available {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: transparent;
+  color: #ffffff;
+}
+
+/* Fecha disponible - Estado hover */
+.day-number-modern.available:hover {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.08);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
 }
 
 /* Today - Border Style */
@@ -284,5 +299,25 @@
     font-size: 11px !important;
     border-radius: 5px !important;
     padding: 1px !important;
+  }
+}
+
+/* Loading State */
+.calendar-loading {
+  text-align: center;
+  padding: 12px 8px;
+  font-size: 12px;
+  color: #fbbf24;
+  font-weight: 500;
+  opacity: 0.8;
+  animation: pulse-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-loading {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
   }
 }

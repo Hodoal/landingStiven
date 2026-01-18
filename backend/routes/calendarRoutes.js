@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { google } = require('googleapis');
+const calendarService = require('../services/calendarService');
 
 // Placeholder for calendar routes - can be extended for additional calendar management
 router.get('/status', (req, res) => {
@@ -225,6 +226,48 @@ router.post('/create-event-mock', (req, res) => {
       success: false, 
       message: 'Error creating event',
       error: error.message 
+    });
+  }
+});
+
+// GET available dates for a given month
+// Query params: year, month (1-12)
+router.get('/available-dates', async (req, res) => {
+  try {
+    const { year, month } = req.query;
+    
+    if (!year || !month) {
+      return res.status(400).json({
+        success: false,
+        message: 'Year and month query parameters are required'
+      });
+    }
+
+    const yearNum = parseInt(year, 10);
+    const monthNum = parseInt(month, 10);
+
+    if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid year or month format'
+      });
+    }
+
+    const availableDates = await calendarService.getAvailableDatesByMonth(yearNum, monthNum);
+    
+    res.json({
+      success: true,
+      year: yearNum,
+      month: monthNum,
+      availableDates: availableDates,
+      total: availableDates.length
+    });
+  } catch (error) {
+    console.error('Error getting available dates:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting available dates',
+      error: error.message
     });
   }
 });

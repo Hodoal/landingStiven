@@ -21,20 +21,12 @@ export default function MinimalCalendar({ onDateSelect, selectedDate }) {
   
   const handleDateClick = (day) => {
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+    const dateString = date.toISOString().split('T')[0]
     
-    // Solo permitir fechas futuras (desde mañana)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    
-    if (date >= tomorrow) {
-      const dateString = date.toISOString().split('T')[0]
+    // Solo permitir si no es una fecha pasada
+    if (!isPastDate(day)) {
       onDateSelect(dateString)
     }
-  }
-  
-  const getDayName = (day) => {
-    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab']
-    return days[day]
   }
   
   const getMonthYear = () => {
@@ -73,9 +65,18 @@ export default function MinimalCalendar({ onDateSelect, selectedDate }) {
     if (!day) return false
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
     date.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return date < tomorrow
+    // Permitir HOY y todas las fechas futuras (no pasadas)
+    // Comparar: si date es MENOR a today, es pasada
+    return date < today
+  }
+  
+  const isDateDisabled = (day) => {
+    // Solo deshabilitar si es fecha pasada
+    // Permitir todos los días futuros
+    if (!day) return true
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+    date.setHours(0, 0, 0, 0)
+    return date < today
   }
   
   return (
@@ -105,9 +106,10 @@ export default function MinimalCalendar({ onDateSelect, selectedDate }) {
                 className={`day-number-modern
                   ${isToday(day) ? 'today' : ''} 
                   ${isSelected(day) ? 'selected' : ''} 
-                  ${isPastDate(day) ? 'disabled' : ''}
+                  ${isDateDisabled(day) ? 'disabled' : 'available'}
                 `}
-                disabled={isPastDate(day)}
+                disabled={isDateDisabled(day)}
+                title={isDateDisabled(day) ? 'Fecha pasada' : 'Seleccionar'}
               >
                 {day}
               </button>

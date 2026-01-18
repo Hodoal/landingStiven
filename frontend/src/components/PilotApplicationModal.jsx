@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiX, FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
 import axios from 'axios'
@@ -16,6 +16,9 @@ export default function PilotApplicationModal({ onClose }) {
   const [qualificationResult, setQualificationResult] = useState(null)
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedTime, setSelectedTime] = useState(null)
+  const [availableTimes, setAvailableTimes] = useState([])
+  const [consultantId, setConsultantId] = useState(null)
+  const [timesLoading, setTimesLoading] = useState(false)
 
   // 6 PREGUNTAS ORIGINALES
   const questions = [
@@ -95,6 +98,50 @@ export default function PilotApplicationModal({ onClose }) {
 
   const currentQuestion = questions[step]
   const totalSteps = questions.length + 1
+
+  // Cargar consultor cuando se monta el componente
+  useEffect(() => {
+    loadDefaultConsultant()
+  }, [])
+
+  // Cargar horarios disponibles cuando se selecciona una fecha
+  useEffect(() => {
+    if (selectedDate && consultantId) {
+      loadAvailableTimes(selectedDate)
+    }
+  }, [selectedDate, consultantId])
+
+  const loadDefaultConsultant = async () => {
+    try {
+      const response = await axios.get('/api/consultants')
+      if (response.data && response.data.length > 0) {
+        setConsultantId(response.data[0]._id || response.data[0].id)
+      }
+    } catch (error) {
+      console.error('Error loading consultant:', error)
+    }
+  }
+
+  const loadAvailableTimes = async (date) => {
+    try {
+      setTimesLoading(true)
+      const dateString = typeof date === 'string' ? date : date.toISOString().split('T')[0]
+      const response = await axios.get(`/api/consultants/${consultantId}/available-times`, {
+        params: { date: dateString, duration: 60 }
+      })
+      
+      const times = response.data.availableTimes || []
+      setAvailableTimes(times)
+      setSelectedTime(null)
+      
+      console.log('Available times for', dateString, ':', times.length, 'horarios')
+    } catch (error) {
+      console.error('Error fetching available times:', error)
+      setAvailableTimes([])
+    } finally {
+      setTimesLoading(false)
+    }
+  }
 
   const handleOptionSelect = (value, questionId) => {
     setResponses(prev => ({ ...prev, [questionId]: value }))
@@ -176,6 +223,58 @@ export default function PilotApplicationModal({ onClose }) {
     } catch (err) {
       console.error('Error:', err)
       setError('Hubo un error al enviar el formulario. Intenta de nuevo.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleConfirmMeeting = async () => {
+    if (!selectedDate || !selectedTime) {
+      setError('Por favor selecciona fecha y hora')
+      return
+    }
+
+    // Validate all required data is present
+    if (!formData.name || !formData.email || !formData.phone) {
+      setError('Falta información de contacto. Por favor completa el formulario.')
+      return
+    }
+
+    if (!responses.is_labor_lawyer || !responses.monthly_consultations) {
+      setError('Falta información del cuestionario. Por favor completa todas las preguntas.')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const payload = {
+        ...responses,
+        main_problem: responses.main_problem || [],
+        ...formData,
+        scheduled_date: selectedDate,
+        scheduled_time: selectedTime
+      }
+
+      console.log('📤 Payload being sent:', JSON.stringify(payload, null, 2));
+      console.log('📤 Sending to /api/leads/apply-pilot with:', payload);
+      const response = await axios.post('/api/leads/apply-pilot', payload)
+      console.log('✅ Response received:', response.data);
+
+      if (response.data.disqualified) {
+        setQualificationResult('disqualified')
+      } else {
+        setStep('success')
+      }
+    } catch (err) {
+      console.error('❌ Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        fullError: err
+      });
+      setError(err.response?.data?.message || err.response?.data?.details || 'Hubo un error al confirmar la reunión. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -378,7 +477,7 @@ export default function PilotApplicationModal({ onClose }) {
             {qualificationResult === 'qualified' && (
               <div className="calendar-container">
                 <h3>Solicita tu reunión</h3>
-                <p>Selecciona fecha y hora disponible</p>
+                <p>Selecciona una fecha con horarios disponibles</p>
                 
                 <MinimalCalendar 
                   onDateSelect={setSelectedDate}
@@ -388,18 +487,26 @@ export default function PilotApplicationModal({ onClose }) {
                 {selectedDate && (
                   <div className="time-selection">
                     <label>Selecciona hora:</label>
-                    <div className="time-grid">
-                      {['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
-                        '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'].map(time => (
-                        <button
-                          key={time}
-                          onClick={() => setSelectedTime(time)}
-                          className={`time-slot ${selectedTime === time ? 'active' : ''}`}
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
+                    {timesLoading ? (
+                      <p className="loading-times">Cargando horarios disponibles...</p>
+                    ) : availableTimes.length > 0 ? (
+                      <div className="time-grid">
+                        {availableTimes.map((timeObj) => {
+                          const timeStr = timeObj.startTime || timeObj
+                          return (
+                            <button
+                              key={timeStr}
+                              onClick={() => setSelectedTime(timeStr)}
+                              className={`time-slot ${selectedTime === timeStr ? 'active' : ''}`}
+                            >
+                              {timeStr}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <p className="no-availability">No hay horarios disponibles para esta fecha</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -434,7 +541,7 @@ export default function PilotApplicationModal({ onClose }) {
               {qualificationResult === 'qualified' && selectedDate && selectedTime && (
                 <button
                   className="btn-primary full-width"
-                  onClick={() => setStep('success')}
+                  onClick={handleConfirmMeeting}
                   style={{ opacity: loading ? 0.7 : 1 }}
                   disabled={loading}
                 >

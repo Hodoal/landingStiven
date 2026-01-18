@@ -102,22 +102,63 @@ router.get('/available-times', async (req, res) => {
 // CREATE new booking - Save to MongoDB
 router.post('/create', async (req, res) => {
   try {
-    const { name, email, phone, company, message, date, time } = req.body;
+    const { name, email, phone, company, message, date, time, consultantId } = req.body;
 
     // Validate required fields
     if (!name || !email || !phone || !date || !time) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Missing required fields' 
+        message: 'Missing required fields: name, email, phone, date, time' 
       });
     }
 
     // Parse date string (YYYY-MM-DD) and time string (HH:MM)
-    // Using UTC parsing to avoid timezone issues
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     
-    // Create datetime in user's timezone (America/Bogota)
+    // Create date object (inicio del día)
+    const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Validar que la fecha NO sea anterior a hoy
+    if (bookingDate < today) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No se puede agendar en fechas pasadas' 
+      });
+    }
+
+    // Si hay consultantId, validar disponibilidad
+    if (consultantId) {
+      const Consultant = require('../models/Consultant');
+      const availabilityService = require('../services/availabilityService');
+      
+      const consultant = await Consultant.findById(consultantId);
+      if (!consultant || !consultant.isActive) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Consultor no disponible' 
+        });
+      }
+
+      // Validar disponibilidad
+      const availability = await availabilityService.checkAvailability(
+        consultantId,
+        bookingDate,
+        time,
+        60 // duración estándar
+      );
+
+      if (!availability.available) {
+        return res.status(400).json({ 
+          success: false, 
+          message: availability.reason || 'Horario no disponible' 
+        });
+      }
+    }
+
+    // Create datetime for Google Calendar
     const dateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
     let googleCalendarResponse = null;
@@ -157,7 +198,9 @@ router.post('/create', async (req, res) => {
       meetLink: meetLink,
       googleCalendarEventId: googleCalendarEventId,
       confirmationToken: confirmationToken,
-      status: 'confirmed'
+      status: 'confirmed',
+      consultantId: consultantId || null,
+      durationMinutes: 60
     });
 
     // Save to MongoDB

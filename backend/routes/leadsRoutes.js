@@ -1,5 +1,7 @@
 const express = require('express');
 const Lead = require('../models/Lead');
+const calendarService = require('../services/calendarService');
+const emailService = require('../services/emailService');
 const router = express.Router();
 
 // Clasificar lead basado en consultas mensuales
@@ -39,6 +41,25 @@ router.post('/submit-application', async (req, res) => {
     });
 
     const savedLead = await newLead.save();
+
+    // Si el lead califica, crear también un Booking
+    if (!isDisqualified && scheduled_date && scheduled_time) {
+      try {
+        const Booking = require('../models/Booking');
+        const newBooking = new Booking({
+          clientName: full_name,
+          email,
+          phone,
+          date: scheduled_date,
+          time: scheduled_time,
+          status: 'No Confirmado'
+        });
+        await newBooking.save();
+      } catch (bookingError) {
+        console.error('Error creating booking:', bookingError);
+        // No fallar si no se puede crear el booking
+      }
+    }
 
     res.json({
       success: true,
@@ -195,14 +216,29 @@ router.delete('/:id', async (req, res) => {
 // POST: Aplicar a la prueba piloto (nueva lógica de validación)
 router.post('/apply-pilot', async (req, res) => {
   try {
+    console.log('📥 /apply-pilot received:', JSON.stringify(req.body, null, 2));
+    
     const {
       is_labor_lawyer,
       works_quota_litis,
       monthly_consultations,
       willing_to_invest_ads,
       ads_budget_range,
-      main_problem
+      main_problem,
+      name,
+      email,
+      phone,
+      scheduled_date,
+      scheduled_time
     } = req.body;
+    
+    // Validar campos requeridos
+    if (!name || !email || !phone || !monthly_consultations) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, phone, and monthly_consultations are required fields'
+      });
+    }
 
     // Validaciones de descarte automático
     const disqualificationReasons = [];
@@ -238,7 +274,10 @@ router.post('/apply-pilot', async (req, res) => {
     // Determinar si califica
     const isDisqualified = disqualificationReasons.length > 0;
 
-    const newLead = new Lead({
+    const leadData = {
+      full_name: name,
+      email,
+      phone,
       is_labor_lawyer: is_labor_lawyer === 'Sí' || is_labor_lawyer === true,
       works_quota_litis,
       monthly_consultations,
@@ -249,21 +288,106 @@ router.post('/apply-pilot', async (req, res) => {
       status: isDisqualified ? 'disqualified' : 'applied',
       disqualified_reason: isDisqualified ? disqualificationReasons.join(', ') : null,
       disqualified_at: isDisqualified ? new Date() : null,
-    });
+    };
 
+    console.log('✅ leadData created:', JSON.stringify(leadData, null, 2));
+
+    // Si tiene fecha y hora programadas, actualizar estado y crear evento en calendar
+    if (scheduled_date && scheduled_time && !isDisqualified) {
+      leadData.scheduled_date = scheduled_date;
+      leadData.scheduled_time = scheduled_time;
+      leadData.status = 'scheduled';
+
+      // Intentar crear evento en Google Calendar
+      try {
+        const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
+        
+        const calendarEvent = await calendarService.createGoogleCalendarEvent({
+          title: `Reunión Piloto - ${name}`,
+          description: `Reunión piloto 30 días con ${name}. Email: ${email}, Teléfono: ${phone}`,
+          startTime,
+          attendeeEmail: email
+        });
+
+        leadData.googleCalendarEventId = calendarEvent.eventId;
+      } catch (calendarError) {
+        console.error('⚠️  Error al crear evento en Google Calendar:', calendarError.message);
+        // No fallar la solicitud si hay error con Google Calendar
+        // El evento se puede crear manualmente después
+      }
+    }
+
+    const newLead = new Lead(leadData);
+    console.log('💾 Attempting to save lead with data:', JSON.stringify(leadData, null, 2));
+    
     const savedLead = await newLead.save();
+    console.log('✅ Lead saved successfully:', savedLead._id);
+
+    // Send confirmation emails if the lead is scheduled
+    if (scheduled_date && scheduled_time && !isDisqualified) {
+      try {
+        // Find the calendar event that was created
+        const calendarEventId = savedLead.googleCalendarEventId || 'N/A';
+        const meetLink = `https://meet.google.com/${calendarEventId}`;
+
+        // Send email to client
+        await emailService.sendPilotProgramConfirmation({
+          clientName: name,
+          clientEmail: email,
+          clientPhone: phone,
+          scheduledDate: scheduled_date,
+          scheduledTime: scheduled_time,
+          meetLink: meetLink
+        });
+        console.log('✅ Client confirmation email sent to:', email);
+
+        // Send email to admin
+        const adminEmail = process.env.EMAIL_USER || 'admin@stivenads.com';
+        await emailService.sendPilotProgramNotificationToAdmin({
+          clientName: name,
+          clientEmail: email,
+          clientPhone: phone,
+          scheduledDate: scheduled_date,
+          scheduledTime: scheduled_time,
+          meetLink: meetLink,
+          leadType: lead_type,
+          budgetRange: ads_budget_range,
+          mainProblems: main_problem,
+          adminEmail: adminEmail
+        });
+        console.log('✅ Admin notification email sent to:', adminEmail);
+      } catch (emailError) {
+        console.error('⚠️  Error al enviar emails:', emailError.message);
+        // No fallar la solicitud si hay error con los emails
+      }
+    }
 
     res.json({
       success: true,
       disqualified: isDisqualified,
       leadId: savedLead._id,
       lead_type: savedLead.lead_type,
+      eventId: savedLead.googleCalendarEventId,
+      message: isDisqualified ? 'Lead disqualified' : 'Lead applied and scheduled successfully'
     });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('❌ Error in /apply-pilot:');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error constructor:', error.constructor.name);
+    
+    // Si es un error de validación de Mongoose
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      console.error('Validation errors:', messages);
+    }
+    
+    console.error('Full error:', error);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
+      errorType: error.name,
+      details: error.message
     });
   }
 });

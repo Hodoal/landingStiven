@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiChevronLeft, FiChevronRight, FiCalendar } from 'react-icons/fi'
 import './Calendar.css'
@@ -12,11 +12,6 @@ function Calendar({ onDateSelect, selectedDate }) {
 
   const getFirstDayOfMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
-
-  const getDayName = (dayIndex) => {
-    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab']
-    return days[dayIndex]
   }
 
   const generateCalendarDays = () => {
@@ -41,6 +36,7 @@ function Calendar({ onDateSelect, selectedDate }) {
     if (!date) return true
     const today = new Date()
     today.setHours(0, 0, 0, 0)
+    // Solo deshabilitar si es fecha pasada
     return date < today
   }
 

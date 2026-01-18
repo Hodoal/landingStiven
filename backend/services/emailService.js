@@ -265,8 +265,244 @@ async function sendCancellationEmail(options) {
   });
 }
 
+// Send pilot program confirmation email to client
+async function sendPilotProgramConfirmation(options) {
+  const { clientName, clientEmail, clientPhone, scheduledDate, scheduledTime, meetLink } = options;
+
+  const formattedDate = new Date(scheduledDate).toLocaleDateString('es-ES', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+          .header { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #1a2844; padding: 40px 20px; text-align: center; }
+          .header h1 { margin: 0; font-size: 28px; font-weight: bold; }
+          .header p { margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; }
+          .content { padding: 40px; }
+          .welcome { font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 30px; }
+          .details-box { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px; padding: 25px; margin: 25px 0; border-left: 5px solid #fbbf24; }
+          .detail-row { display: flex; justify-content: space-between; margin: 12px 0; }
+          .detail-label { font-weight: bold; color: #1a2844; }
+          .detail-value { color: #555; }
+          .highlight { background-color: #fffbeb; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #fbbf24; }
+          .highlight ul { margin: 10px 0; padding-left: 20px; }
+          .highlight li { margin: 8px 0; color: #555; }
+          .cta-button { display: inline-block; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #1a2844; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; transition: transform 0.2s; }
+          .cta-button:hover { transform: translateY(-2px); }
+          .meet-link { background: #f0f9ff; border: 2px solid #0284c7; border-radius: 6px; padding: 15px; margin: 20px 0; text-align: center; }
+          .meet-link a { color: #0284c7; text-decoration: none; font-weight: bold; }
+          .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb; }
+          .footer p { margin: 5px 0; font-size: 12px; color: #666; }
+          .footer-logo { font-weight: bold; color: #1a2844; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎉 ¡Bienvenido al Programa Piloto!</h1>
+            <p>Tu reunión ha sido confirmada</p>
+          </div>
+
+          <div class="content">
+            <div class="welcome">
+              <p>Hola <strong>${clientName}</strong>,</p>
+              <p>Nos complace informarte que has sido aceptado en nuestro <strong>Programa Piloto de 30 días</strong>. Esta es una oportunidad exclusiva para recibir asesorías personalizadas en marketing digital.</p>
+            </div>
+
+            <div class="details-box">
+              <div class="detail-row">
+                <span class="detail-label">📅 Fecha:</span>
+                <span class="detail-value"><strong>${formattedDate}</strong></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">🕐 Hora:</span>
+                <span class="detail-value"><strong>${scheduledTime}</strong></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">📞 Teléfono de contacto:</span>
+                <span class="detail-value">${clientPhone}</span>
+              </div>
+            </div>
+
+            <div class="highlight">
+              <strong>¿Qué esperar en la primera reunión?</strong>
+              <ul>
+                <li>Análisis de tu situación actual en marketing</li>
+                <li>Identificación de tus principales desafíos</li>
+                <li>Estrategia personalizada para tu negocio</li>
+                <li>Plan de acción concreto para los próximos 30 días</li>
+              </ul>
+            </div>
+
+            <div class="meet-link">
+              <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Enlace de Google Meet:</p>
+              <a href="${meetLink}" target="_blank" style="font-size: 16px;">${meetLink}</a>
+            </div>
+
+            <p style="color: #666; font-size: 14px;">
+              <strong>Importante:</strong> Por favor, únete a la reunión 5-10 minutos antes de la hora programada. Prepara un espacio tranquilo y asegúrate de tener buena conexión a internet.
+            </p>
+
+            <p style="color: #666; font-size: 14px; margin-top: 20px;">
+              Si necesitas reprogramar o tienes preguntas, no dudes en contactarnos.
+            </p>
+
+            <center>
+              <a href="${process.env.FRONTEND_URL}" class="cta-button">Ir a Stivenads</a>
+            </center>
+          </div>
+
+          <div class="footer">
+            <p class="footer-logo">Stivenads</p>
+            <p>Asesorías de Marketing Digital Personalizadas</p>
+            <p>${process.env.EMAIL_FROM}</p>
+            <p>Este es un correo automático. No respondas directamente a este mensaje.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: clientEmail,
+    subject: `🎉 ¡Bienvenido al Programa Piloto Stivenads! - Reunión confirmada para ${formattedDate}`,
+    html: htmlContent
+  });
+}
+
+// Send pilot program notification email to admin/organizer
+async function sendPilotProgramNotificationToAdmin(options) {
+  const { clientName, clientEmail, clientPhone, scheduledDate, scheduledTime, meetLink, leadType, budgetRange, mainProblems, adminEmail } = options;
+
+  const formattedDate = new Date(scheduledDate).toLocaleDateString('es-ES', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const problemsList = Array.isArray(mainProblems) ? mainProblems.join(', ') : mainProblems;
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px; }
+          .container { max-width: 700px; margin: 0 auto; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+          .header { background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: white; padding: 40px 20px; text-align: center; }
+          .header h1 { margin: 0; font-size: 28px; font-weight: bold; }
+          .content { padding: 40px; }
+          .notification { background: #f0f9ff; border-left: 5px solid #0284c7; padding: 20px; border-radius: 6px; margin-bottom: 30px; }
+          .notification p { margin: 0; color: #0c4a6e; }
+          .client-info { background: #f5f7fa; border-radius: 8px; padding: 25px; margin: 25px 0; }
+          .info-row { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
+          .info-row:last-child { border-bottom: none; }
+          .info-label { font-weight: bold; color: #1a2844; min-width: 150px; }
+          .info-value { color: #555; text-align: right; }
+          .meeting-details { background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%); border-radius: 8px; padding: 25px; margin: 25px 0; border-left: 5px solid #f59e0b; }
+          .meeting-details h3 { margin: 0 0 15px 0; color: #92400e; }
+          .detail-row { margin: 12px 0; }
+          .detail-label { font-weight: bold; color: #92400e; }
+          .detail-value { color: #78350f; }
+          .status-badge { display: inline-block; background: #10b981; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+          .meet-link { background: white; border: 2px solid #0284c7; border-radius: 6px; padding: 15px; margin: 20px 0; text-align: center; }
+          .meet-link a { color: #0284c7; text-decoration: none; font-weight: bold; }
+          .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb; }
+          .footer p { margin: 5px 0; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📩 Nueva Solicitud del Programa Piloto</h1>
+            <p><span class="status-badge">Confirmada</span></p>
+          </div>
+
+          <div class="content">
+            <div class="notification">
+              <p><strong>${clientName}</strong> ha sido aceptado en el programa piloto y tiene una reunión agendada.</p>
+            </div>
+
+            <h3 style="color: #1a2844; margin-top: 0;">Información del Cliente</h3>
+            <div class="client-info">
+              <div class="info-row">
+                <span class="info-label">Nombre:</span>
+                <span class="info-value"><strong>${clientName}</strong></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value"><strong>${clientEmail}</strong></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Teléfono:</span>
+                <span class="info-value"><strong>${clientPhone}</strong></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Tipo de Lead:</span>
+                <span class="info-value"><strong>${leadType}</strong></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Presupuesto:</span>
+                <span class="info-value"><strong>${budgetRange}</strong></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Problemas Principales:</span>
+                <span class="info-value"><strong>${problemsList}</strong></span>
+              </div>
+            </div>
+
+            <h3 style="color: #1a2844;">Detalles de la Reunión</h3>
+            <div class="meeting-details">
+              <div class="detail-row">
+                <span class="detail-label">📅 Fecha:</span>
+                <span class="detail-value"><strong>${formattedDate}</strong></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">🕐 Hora:</span>
+                <span class="detail-value"><strong>${scheduledTime}</strong></span>
+              </div>
+              <div class="meet-link">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #78350f;">Enlace de Google Meet:</p>
+                <a href="${meetLink}" target="_blank">${meetLink}</a>
+              </div>
+            </div>
+
+            <p style="color: #666; font-size: 14px; margin-top: 20px; background: #f0fdf4; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
+              ✓ El cliente ha recibido un email de confirmación con todos los detalles de la reunión.
+            </p>
+          </div>
+
+          <div class="footer">
+            <p><strong>Stivenads Admin</strong></p>
+            <p>Programa Piloto - Sistema de Notificaciones</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: adminEmail,
+    subject: `📩 Nueva Solicitud Piloto - ${clientName} - ${formattedDate}`,
+    html: htmlContent
+  });
+}
+
 module.exports = {
   sendConfirmationEmail,
   sendRescheduleNotification,
-  sendCancellationEmail
+  sendCancellationEmail,
+  sendPilotProgramConfirmation,
+  sendPilotProgramNotificationToAdmin
 };

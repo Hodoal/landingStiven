@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const bookingRoutes = require('./routes/bookingRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
 const leadsRoutes = require('./routes/leadsRoutes');
+const consultantRoutes = require('./routes/consultantRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,6 +30,7 @@ mongoose.connect(MONGODB_URI)
 app.use('/api/booking', bookingRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/leads', leadsRoutes);
+app.use('/api/consultants', consultantRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

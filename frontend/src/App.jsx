@@ -6,6 +6,7 @@ import SystemQualification from './components/SystemQualification'
 import RealProblem from './components/RealProblem'
 import Solution from './components/Solution'
 import HowItWorks from './components/HowItWorks'
+import AboutStiven from './components/AboutStiven'
 import Promise from './components/Promise'
 import Footer from './components/Footer'
 import CookiesBanner from './components/CookiesBanner'
@@ -79,6 +80,7 @@ function App() {
       <RealProblem />
       <Solution onBookClick={() => setShowPilotModal(true)} />
       <HowItWorks />
+      <AboutStiven onBookClick={() => setShowPilotModal(true)} />
       <Promise onBookClick={() => setShowPilotModal(true)} />
       <Footer />
       <CookiesBanner />

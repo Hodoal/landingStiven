@@ -258,8 +258,82 @@ async function deleteGoogleCalendarEvent(eventId) {
   }
 }
 
+// Get available dates for a given month
+// Returns an array of available dates (YYYY-MM-DD format)
+async function getAvailableDatesByMonth(year, month) {
+  try {
+    // Return all dates as available if Google Calendar is not configured
+    if (!isGoogleCalendarConfigured()) {
+      console.log('⚠️  Google Calendar not fully configured, returning all dates as available');
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const availableDates = [];
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        availableDates.push(dateStr);
+      }
+      return availableDates;
+    }
+
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const availableDates = [];
+    const bookedDates = new Set();
+
+    // Get all events for the entire month
+    const monthStart = new Date(Date.UTC(year, month - 1, 1, 5, 0, 0, 0)); // Start at 00:00 Bogota time
+    const monthEnd = new Date(Date.UTC(year, month, 1, 4, 59, 59, 999)); // End at 23:59:59 Bogota time
+
+    console.log(`\n🔍 Checking availability for ${year}-${String(month).padStart(2, '0')}`);
+    console.log(`📅 Query range: ${monthStart.toISOString()} to ${monthEnd.toISOString()}`);
+
+    const response = await calendar.events.list({
+      calendarId: process.env.GOOGLE_CALENDAR_ID,
+      timeMin: monthStart.toISOString(),
+      timeMax: monthEnd.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+      timeZone: 'America/Bogota'
+    });
+
+    const events = response.data.items || [];
+    console.log(`📊 Found ${events.length} event(s) in this month`);
+
+    // Mark dates with events as booked
+    events.forEach(event => {
+      if (event.start.dateTime) {
+        const eventDate = event.start.dateTime.split('T')[0];
+        bookedDates.add(eventDate);
+        console.log(`  ❌ ${eventDate} - ${event.summary}`);
+      }
+    });
+
+    // Build list of available dates
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      
+      // Only include dates that are not booked
+      if (!bookedDates.has(dateStr)) {
+        availableDates.push(dateStr);
+      }
+    }
+
+    console.log(`✅ Available dates: ${availableDates.length} out of ${daysInMonth}`);
+    return availableDates;
+  } catch (error) {
+    console.error('Error getting available dates:', error);
+    // Return all dates as available if there's an error
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const availableDates = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      availableDates.push(dateStr);
+    }
+    return availableDates;
+  }
+}
+
 module.exports = {
   createGoogleCalendarEvent,
   getAvailableSlots,
-  deleteGoogleCalendarEvent
+  deleteGoogleCalendarEvent,
+  getAvailableDatesByMonth
 };

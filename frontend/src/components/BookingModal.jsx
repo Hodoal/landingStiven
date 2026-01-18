@@ -19,14 +19,30 @@ function BookingModal({ onClose }) {
   const [loading, setLoading] = useState(false)
   const [availableTimes, setAvailableTimes] = useState([])
   const [bookedSlots, setBookedSlots] = useState([])
+  const [allSlots, setAllSlots] = useState([]) // Nuevo: todos los slots del día
+  const [consultantId, setConsultantId] = useState(null)
 
   useEffect(() => {
+    // Cargar primer consultor disponible
+    loadDefaultConsultant()
+    
     // Limpiar el textarea cuando se monta el componente
     const textarea = document.querySelector('textarea[name="message"]')
     if (textarea) {
       textarea.value = ''
     }
   }, [])
+
+  const loadDefaultConsultant = async () => {
+    try {
+      const response = await axios.get('/api/consultants')
+      if (response.data && response.data.length > 0) {
+        setConsultantId(response.data[0]._id || response.data[0].id)
+      }
+    } catch (error) {
+      console.error('Error loading consultants:', error)
+    }
+  }
 
   const handleFormChange = (e) => {
     const { name, value } = e.target
@@ -46,17 +62,40 @@ function BookingModal({ onClose }) {
     setLoading(true)
     try {
       // Llamar al backend para obtener horarios disponibles
-      const response = await axios.get(`/api/booking/available-times`, {
-        params: { date: date.toISOString().split('T')[0] }
-      })
-      setAvailableTimes(response.data.times || generateTimeSlots())
-      setBookedSlots(response.data.bookedSlots || [])
-      console.log('Available times:', response.data.times)
-      console.log('Booked slots:', response.data.bookedSlots)
+      if (consultantId) {
+        const response = await axios.get(`/api/consultants/${consultantId}/available-times`, {
+          params: { date: date.toISOString().split('T')[0], duration: 60 }
+        })
+        
+        // Obtener datos del response mejorado
+        const availableTimes = response.data.availableTimes || []
+        const occupiedTimes = response.data.occupiedTimes || []
+        const allSlots = response.data.allSlots || [] // TODOS los slots
+        
+        setAvailableTimes(availableTimes)
+        setBookedSlots(occupiedTimes)
+        setAllSlots(allSlots)
+        
+        console.log('✅ Horarios disponibles:', availableTimes.length)
+        console.log('❌ Horarios ocupados:', occupiedTimes.length)
+        console.log('📊 Total de slots:', allSlots.length)
+        console.log('Detalles:', {
+          disponibles: availableTimes.map(s => s.startTime),
+          ocupados: occupiedTimes.map(s => s.startTime)
+        })
+      } else {
+        // Fallback al endpoint antiguo si no hay consultantId
+        const response = await axios.get(`/api/booking/available-times`, {
+          params: { date: date.toISOString().split('T')[0] }
+        })
+        setAvailableTimes(response.data.times || generateTimeSlots())
+        setBookedSlots(response.data.bookedSlots || [])
+      }
     } catch (error) {
       console.error('Error fetching available times:', error)
-      setAvailableTimes(generateTimeSlots())
+      setAvailableTimes([])
       setBookedSlots([])
+      setAllSlots([])
     }
     setLoading(false)
   }
@@ -82,7 +121,8 @@ function BookingModal({ onClose }) {
       const response = await axios.post('/api/booking/create', {
         ...formData,
         date: selectedDate.toISOString().split('T')[0],
-        time: selectedTime
+        time: selectedTime,
+        consultantId: consultantId // Agregar consultantId
       })
       
       if (response.data.success) {
@@ -218,25 +258,93 @@ function BookingModal({ onClose }) {
                   animate={{ opacity: 1, y: 0 }}
                   className="time-slots"
                 >
-                  <h3>Horarios disponibles: {selectedDate.toLocaleDateString('es-ES')}</h3>
-                  <div className="slots-grid">
-                    {availableTimes && availableTimes.length > 0 ? (
-                      availableTimes.map((time) => (
-                        <button
-                          key={time}
-                          className={`time-slot ${selectedTime === time ? 'active' : ''}`}
-                          onClick={() => handleTimeSelect(time)}
-                        >
-                          <FiClock size={16} />
-                          {time}
-                        </button>
-                      ))
-                    ) : (
-                      <p className="no-availability">No hay horarios disponibles para esta fecha</p>
+                  <h3>
+                    Horarios disponibles: {selectedDate.toLocaleDateString('es-ES')}
+                    {availableTimes.length > 0 && (
+                      <span className="availability-count">
+                        {availableTimes.length} disponible{availableTimes.length !== 1 ? 's' : ''}
+                      </span>
                     )}
+                  </h3>
+                  
+                  {/* Mostrar leyenda de colores */}
+                  <div className="time-legend">
+                    <div className="legend-item">
+                      <div className="legend-color available"></div>
+                      <span>Disponible</span>
+                    </div>
+                    <div className="legend-item">
+                      <div className="legend-color occupied"></div>
+                      <span>Ocupado</span>
+                    </div>
                   </div>
+
+                  {/* Si tenemos allSlots, mostrar vista completa. Si no, mostrar solo disponibles */}
+                  {allSlots && allSlots.length > 0 ? (
+                    <div className="slots-grid">
+                      {allSlots.map((slot, index) => {
+                        const isOccupied = !slot.available
+                        const isSelected = selectedTime === slot.startTime
+                        return (
+                          <button
+                            key={`${slot.startTime}-${index}`}
+                            className={`time-slot ${isOccupied ? 'occupied-slot' : 'available-slot'} ${isSelected ? 'active' : ''}`}
+                            onClick={() => !isOccupied && handleTimeSelect(slot.startTime)}
+                            title={isOccupied ? 'Horario ocupado' : 'Horario disponible - Haz clic para seleccionar'}
+                            disabled={isOccupied}
+                          >
+                            <FiClock size={16} />
+                            <span>{slot.startTime}</span>
+                            <span className={`slot-status ${isOccupied ? 'occupied' : 'available'}`}>
+                              {isOccupied ? '✕' : '✓'}
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="slots-grid">
+                      {availableTimes && availableTimes.length > 0 ? (
+                        availableTimes.map((timeSlot, index) => {
+                          // Manejar tanto strings como objetos
+                          const time = typeof timeSlot === 'string' ? timeSlot : timeSlot.startTime
+                          return (
+                            <button
+                              key={`${time}-${index}`}
+                              className={`time-slot available-slot ${selectedTime === time ? 'active' : ''}`}
+                              onClick={() => handleTimeSelect(time)}
+                              title="Horario disponible - Haz clic para seleccionar"
+                            >
+                              <FiClock size={16} />
+                              <span>{time}</span>
+                              <span className="slot-status available">✓</span>
+                            </button>
+                          )
+                        })
+                      ) : loading ? (
+                        <p className="loading-times">Cargando horarios...</p>
+                      ) : (
+                        <p className="no-availability">
+                          ❌ No hay horarios disponibles para esta fecha
+                          {bookedSlots.length > 0 && ` (${bookedSlots.length} horarios ocupados)`}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Mostrar horarios ocupados */}
                   {bookedSlots.length > 0 && (
-                    <p className="booked-info">({generateTimeSlots().length - availableTimes.length} horarios ocupados)</p>
+                    <div className="booked-slots-info">
+                      <p className="booked-title">Horarios ocupados:</p>
+                      <div className="booked-slots-list">
+                        {bookedSlots.map((slot, index) => (
+                          <div key={index} className="booked-slot-item">
+                            <span className="booked-time">{slot.startTime}</span>
+                            <span className="booked-client">({slot.clientName})</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </motion.div>
               )}

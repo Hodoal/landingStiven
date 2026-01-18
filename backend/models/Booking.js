@@ -48,6 +48,19 @@ const bookingSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'meeting-completed', 'sold', 'cancelled', 'No Confirmado'],
     default: 'pending'
   },
+  // Referencia al consultor asignado
+  consultantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Consultant',
+    default: null
+  },
+  // Duración de la reunión en minutos
+  durationMinutes: {
+    type: Number,
+    default: 60,
+    min: 15,
+    max: 480
+  },
   emailSent: {
     type: Boolean,
     default: false
