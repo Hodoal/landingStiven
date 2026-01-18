@@ -64,6 +64,36 @@ router.get('/list', async (req, res) => {
   }
 });
 
+// GET booking by email
+router.get('/by-email/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    const booking = await Booking.findOne({ email: email });
+    
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: 'Booking not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      booking: {
+        ...booking.toObject({ virtuals: true }),
+        id: booking._id.toString()
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching booking by email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching booking',
+      error: error.message
+    });
+  }
+});
+
 // GET available times for a specific date
 router.get('/available-times', async (req, res) => {
   try {
@@ -567,17 +597,28 @@ router.delete('/:id', async (req, res) => {
     console.log(`\n🗑️  DELETE request for booking ID: ${id}`);
     
     // Find booking in MongoDB
-    const booking = await Booking.findById(id);
+    let booking = await Booking.findById(id);
+    let bookingId = id; // Guardar el ID que será usado para eliminar
 
+    // Si no encontramos por ID, intentar buscar por email (en caso de que el ID sea inválido)
     if (!booking) {
-      console.warn(`❌ Booking not found with id: ${id}`);
-      return res.status(404).json({
-        success: false,
-        message: `Booking not found with id: ${id}`
-      });
+      console.warn(`⚠️  Booking not found with id: ${id}, intentando buscar por email...`);
+      booking = await Booking.findOne({ email: id });
+      
+      if (!booking) {
+        console.warn(`⚠️  Booking not found with id or email: ${id} - probablemente ya fue eliminado`);
+        // Devolver OK de todos modos, ya que el objetivo es que no esté en la BD
+        return res.json({
+          success: true,
+          message: 'Booking already deleted or does not exist',
+          deletedBooking: null
+        });
+      }
+      bookingId = booking._id.toString(); // Usar el ID encontrado
+      console.log(`✓ Found booking by email: ${booking.clientName} (ID: ${bookingId})`);
+    } else {
+      console.log(`✓ Found booking by id: ${booking.clientName}`);
     }
-
-    console.log(`✓ Found booking: ${booking.clientName}`);
 
     // Try to delete from Google Calendar
     try {
@@ -590,17 +631,23 @@ router.delete('/:id', async (req, res) => {
       // Don't fail the entire request if calendar deletion fails
     }
 
-    // Delete from MongoDB
-    await Booking.findByIdAndDelete(id);
-    console.log(`✓ Booking deleted from MongoDB`);
+    // Delete from MongoDB usando el ID correcto
+    console.log(`🗑️  Intentando eliminar booking con ID: ${bookingId}`);
+    const result = await Booking.findByIdAndDelete(bookingId);
+    
+    if (result) {
+      console.log(`✓ Booking eliminado exitosamente de MongoDB:`, result._id);
+    } else {
+      console.warn(`⚠️  findByIdAndDelete no retornó nada (booking podría no existir)`);
+    }
 
     res.json({
       success: true,
       message: 'Booking deleted permanently',
-      deletedBooking: {
-        ...booking.toObject({ virtuals: true }),
-        id: booking._id.toString()
-      }
+      deletedBooking: result ? {
+        ...result.toObject({ virtuals: true }),
+        id: result._id.toString()
+      } : null
     });
   } catch (error) {
     console.error('❌ Error deleting booking:', error);

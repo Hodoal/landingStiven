@@ -198,14 +198,45 @@ router.put('/mark-as-sold/:id', async (req, res) => {
 // DELETE: Eliminar lead
 router.delete('/:id', async (req, res) => {
   try {
-    const result = await Lead.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+    console.log(`\n🗑️  DELETE request for lead ID: ${id}`);
+    
+    // Verificar que exista antes de eliminar
+    const leadBefore = await Lead.findById(id);
+    if (leadBefore) {
+      console.log(`📋 Lead encontrado antes de eliminar:`, leadBefore.full_name, leadBefore.email);
+    } else {
+      console.warn(`⚠️  Lead NOT FOUND with id: ${id} antes de eliminar`);
+      return res.json({
+        success: true,
+        message: 'Lead ya estaba eliminado o no existe',
+        deletedLead: null
+      });
+    }
+    
+    const result = await Lead.findByIdAndDelete(id);
+    
+    if (result) {
+      console.log(`✓ Lead eliminado exitosamente:`, result.full_name, `(ID: ${result._id})`);
+      
+      // Verificar que se eliminó
+      const leadAfter = await Lead.findById(id);
+      if (leadAfter) {
+        console.error(`❌ ERROR: Lead aún existe después de delete!`);
+      } else {
+        console.log(`✓ Verificado: Lead no existe en BD después del delete`);
+      }
+    } else {
+      console.warn(`⚠️  findByIdAndDelete retornó null`);
+    }
     
     res.json({
       success: true,
-      message: 'Lead eliminado'
+      message: 'Lead eliminado',
+      deletedLead: result
     });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('❌ Error deleting lead:', error);
     res.status(500).json({ 
       success: false, 
       message: error.message 
@@ -292,29 +323,12 @@ router.post('/apply-pilot', async (req, res) => {
 
     console.log('✅ leadData created:', JSON.stringify(leadData, null, 2));
 
-    // Si tiene fecha y hora programadas, actualizar estado y crear evento en calendar
+    // Si tiene fecha y hora programadas, actualizar estado
     if (scheduled_date && scheduled_time && !isDisqualified) {
       leadData.scheduled_date = scheduled_date;
       leadData.scheduled_time = scheduled_time;
       leadData.status = 'scheduled';
-
-      // Intentar crear evento en Google Calendar
-      try {
-        const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
-        
-        const calendarEvent = await calendarService.createGoogleCalendarEvent({
-          title: `Reunión Piloto - ${name}`,
-          description: `Reunión piloto 30 días con ${name}. Email: ${email}, Teléfono: ${phone}`,
-          startTime,
-          attendeeEmail: email
-        });
-
-        leadData.googleCalendarEventId = calendarEvent.eventId;
-      } catch (calendarError) {
-        console.error('⚠️  Error al crear evento en Google Calendar:', calendarError.message);
-        // No fallar la solicitud si hay error con Google Calendar
-        // El evento se puede crear manualmente después
-      }
+      // Calendar event creation happens in background
     }
 
     const newLead = new Lead(leadData);
@@ -323,45 +337,7 @@ router.post('/apply-pilot', async (req, res) => {
     const savedLead = await newLead.save();
     console.log('✅ Lead saved successfully:', savedLead._id);
 
-    // Send confirmation emails if the lead is scheduled
-    if (scheduled_date && scheduled_time && !isDisqualified) {
-      try {
-        // Find the calendar event that was created
-        const calendarEventId = savedLead.googleCalendarEventId || 'N/A';
-        const meetLink = `https://meet.google.com/${calendarEventId}`;
-
-        // Send email to client
-        await emailService.sendPilotProgramConfirmation({
-          clientName: name,
-          clientEmail: email,
-          clientPhone: phone,
-          scheduledDate: scheduled_date,
-          scheduledTime: scheduled_time,
-          meetLink: meetLink
-        });
-        console.log('✅ Client confirmation email sent to:', email);
-
-        // Send email to admin
-        const adminEmail = process.env.EMAIL_USER || 'admin@stivenads.com';
-        await emailService.sendPilotProgramNotificationToAdmin({
-          clientName: name,
-          clientEmail: email,
-          clientPhone: phone,
-          scheduledDate: scheduled_date,
-          scheduledTime: scheduled_time,
-          meetLink: meetLink,
-          leadType: lead_type,
-          budgetRange: ads_budget_range,
-          mainProblems: main_problem,
-          adminEmail: adminEmail
-        });
-        console.log('✅ Admin notification email sent to:', adminEmail);
-      } catch (emailError) {
-        console.error('⚠️  Error al enviar emails:', emailError.message);
-        // No fallar la solicitud si hay error con los emails
-      }
-    }
-
+    // ⚡ RESPOND IMMEDIATELY - Process background tasks asynchronously
     res.json({
       success: true,
       disqualified: isDisqualified,
@@ -370,6 +346,68 @@ router.post('/apply-pilot', async (req, res) => {
       eventId: savedLead.googleCalendarEventId,
       message: isDisqualified ? 'Lead disqualified' : 'Lead applied and scheduled successfully'
     });
+
+    // 🔄 Process calendar and emails in background (don't await, don't block response)
+    if (scheduled_date && scheduled_time && !isDisqualified) {
+      setImmediate(async () => {
+        try {
+          // Try to create calendar event if not already created
+          if (!savedLead.googleCalendarEventId) {
+            try {
+              const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
+              const calendarEvent = await calendarService.createGoogleCalendarEvent({
+                title: `Reunión Piloto - ${name}`,
+                description: `Reunión piloto 30 días con ${name}. Email: ${email}, Teléfono: ${phone}`,
+                startTime,
+                attendeeEmail: email
+              });
+              
+              // Update lead with calendar event ID
+              await Lead.findByIdAndUpdate(
+                savedLead._id,
+                { googleCalendarEventId: calendarEvent.eventId }
+              );
+              console.log('✅ Calendar event created in background');
+            } catch (calendarError) {
+              console.error('⚠️  Background: Error creating calendar event:', calendarError.message);
+            }
+          }
+
+          // Send confirmation emails
+          const calendarEventId = savedLead.googleCalendarEventId || 'N/A';
+          const meetLink = `https://meet.google.com/${calendarEventId}`;
+
+          // Send email to client
+          await emailService.sendPilotProgramConfirmation({
+            clientName: name,
+            clientEmail: email,
+            clientPhone: phone,
+            scheduledDate: scheduled_date,
+            scheduledTime: scheduled_time,
+            meetLink: meetLink
+          });
+          console.log('✅ Background: Client confirmation email sent to:', email);
+
+          // Send email to admin
+          const adminEmail = process.env.EMAIL_USER || 'admin@stivenads.com';
+          await emailService.sendPilotProgramNotificationToAdmin({
+            clientName: name,
+            clientEmail: email,
+            clientPhone: phone,
+            scheduledDate: scheduled_date,
+            scheduledTime: scheduled_time,
+            meetLink: meetLink,
+            leadType: lead_type,
+            budgetRange: ads_budget_range,
+            mainProblems: main_problem,
+            adminEmail: adminEmail
+          });
+          console.log('✅ Background: Admin notification email sent to:', adminEmail);
+        } catch (error) {
+          console.error('⚠️  Error in background processing:', error.message);
+        }
+      });
+    }
   } catch (error) {
     console.error('❌ Error in /apply-pilot:');
     console.error('Error name:', error.name);
@@ -418,16 +456,63 @@ router.put('/update-schedule/:id', async (req, res) => {
   try {
     const { scheduled_date, scheduled_time } = req.body;
     
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: 'Lead not found'
+      });
+    }
+
+    const oldDate = lead.scheduled_date;
+    const oldTime = lead.scheduled_time;
+
+    // Delete old Google Calendar event if exists
+    if (lead.googleCalendarEventId) {
+      try {
+        await calendarService.deleteGoogleCalendarEvent(lead.googleCalendarEventId);
+        console.log('✓ Old calendar event deleted for lead');
+      } catch (calendarError) {
+        console.warn('⚠️  Could not delete old calendar event:', calendarError.message);
+      }
+    }
+
+    // Create new Google Calendar event with new date/time
+    let newGoogleCalendarEventId = lead.googleCalendarEventId;
+
+    try {
+      const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
+      
+      const calendarEvent = await calendarService.createGoogleCalendarEvent({
+        title: `Reunión Piloto - ${lead.full_name}`,
+        description: `Reunión piloto 30 días con ${lead.full_name}. Email: ${lead.email}, Teléfono: ${lead.phone}`,
+        startTime,
+        attendeeEmail: lead.email
+      });
+
+      if (calendarEvent && calendarEvent.eventId) {
+        newGoogleCalendarEventId = calendarEvent.eventId;
+        console.log('✓ New calendar event created for lead:', newGoogleCalendarEventId);
+      }
+    } catch (calendarError) {
+      console.warn('⚠️  Could not create new calendar event:', calendarError.message);
+      // Don't fail the reschedule if calendar creation fails
+    }
+
+    // Update lead
     const updatedLead = await Lead.findByIdAndUpdate(
       req.params.id,
       {
         scheduled_date,
         scheduled_time,
+        googleCalendarEventId: newGoogleCalendarEventId,
         status: 'scheduled',
         updatedAt: new Date()
       },
       { new: true }
     );
+
+    console.log(`✓ Lead rescheduled: ${oldDate} ${oldTime} → ${scheduled_date} ${scheduled_time}`);
 
     res.json({
       success: true,

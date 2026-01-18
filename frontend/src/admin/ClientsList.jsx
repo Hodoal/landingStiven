@@ -39,7 +39,7 @@ export default function ClientsList() {
     } else if (booking.status === 'confirmed') {
       return 'Agendado';
     }
-    return 'No Confirmado';
+    return 'Agendado';
   };
 
   const getStatusColor = (estado) => {
@@ -62,28 +62,50 @@ export default function ClientsList() {
   const fetchClientes = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Recargando clientes desde la BD...');
+      
       // Fetch leads primero para filtrar solo los calificados (Ideal o Scale)
       const leadsResponse = await axios.get('/api/leads/admin/leads');
-      const qualifiedLeads = leadsResponse.data.data
+      const leadsData = leadsResponse.data.data || [];
+      console.log('📋 Leads obtenidos:', leadsData.length);
+      console.log('   Detalles leads:', leadsData.map(l => ({ email: l.email, type: l.lead_type })));
+      
+      const qualifiedLeads = (leadsResponse.data.data || [])
         .filter(lead => lead.lead_type === 'Ideal' || lead.lead_type === 'Scale')
         .filter(lead => lead.status !== 'disqualified' && lead.status !== 'sold');
+
+      console.log('✓ Leads calificados:', qualifiedLeads.length);
+      console.log('   Detalles calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id })));
 
       // Fetch bookings
       const bookingsResponse = await axios.get('/api/booking/list');
       const allBookings = bookingsResponse.data.success ? bookingsResponse.data.bookings : [];
+      console.log('📋 Bookings obtenidos:', allBookings.length);
+      console.log('   Detalles bookings:', allBookings.map(b => ({ email: b.email, id: b.id || b._id, status: b.status })));
+      console.log('   Response completa:', bookingsResponse.data);
 
       // Combinar leads con bookings, pero también mostrar leads sin booking si tienen scheduled_date
       const clientesData = [];
 
-      // 1. Primero agregar leads que tienen booking
+      // 1. Primero agregar TODOS los bookings (con o sin lead correspondiente)
       const leadsWithBookings = new Set();
+      console.log('🔍 Procesando bookings...');
+      console.log('   Bookings disponibles:', allBookings.map(b => ({ email: b.email, id: b.id || b._id, name: b.clientName })));
+      console.log('   Leads calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id, name: l.full_name })));
+      
       allBookings.forEach(booking => {
         const correspondingLead = qualifiedLeads.find(l => l.email === booking.email);
-        if (correspondingLead && booking.status !== 'sold') {
-          leadsWithBookings.add(correspondingLead._id);
+        console.log(`   Booking: ${booking.email} → Lead encontrado: ${correspondingLead ? 'SÍ' : 'NO'}`);
+        
+        // Agregar el booking incluso si no hay lead correspondiente
+        if (booking.status !== 'sold') {
+          if (correspondingLead) {
+            leadsWithBookings.add(correspondingLead._id);
+          }
+          
           const computedStatus = getComputedStatus(booking, booking.date, booking.time);
           clientesData.push({
-            id: booking.id,
+            id: booking.id || booking._id,
             nombre: booking.clientName || 'N/A',
             email: booking.email || 'N/A',
             telefono: booking.phone || 'N/A',
@@ -92,8 +114,11 @@ export default function ClientsList() {
             estado: computedStatus,
             status: booking.status,
             leadType: correspondingLead?.lead_type || 'N/A',
-            leadInfo: correspondingLead,
-            bookingInfo: booking
+            leadInfo: correspondingLead || null,
+            bookingInfo: {
+              ...booking,
+              _id: booking.id || booking._id // Asegurar que _id sea igual a id
+            }
           });
         }
       });
@@ -118,11 +143,12 @@ export default function ClientsList() {
         }
       });
       
+      console.log('✓ Total de clientes:', clientesData.length);
       setClientes(clientesData);
       aplicarFiltro(clientesData, filtro);
       setError(null);
     } catch (err) {
-      console.error('Error:', err);
+      console.error('❌ Error al cargar clientes:', err);
       setError('Error al cargar clientes');
       setClientes([]);
     } finally {
@@ -230,25 +256,27 @@ export default function ClientsList() {
     }
 
     try {
-      // Si tiene booking, actualizar el booking
+      // Si tiene booking, actualizar el booking a sold
       if (selectedClient.bookingInfo) {
-        await axios.put(`/api/booking/${selectedClient.id}`, {
-          status: 'sold',
-          venta_confirmada: true,
+        console.log('💰 Procesando pago para booking:', selectedClient.id);
+        const bookingId = selectedClient.bookingInfo._id || selectedClient.bookingInfo.id || selectedClient.id;
+        await axios.put(`/api/booking/${bookingId}/confirm-sale`, {
           monto_venta: parseFloat(paymentAmount)
         });
       }
 
       // Actualizar el lead como vendido
       if (selectedClient.leadInfo?._id) {
+        console.log('💰 Marcando lead como sold:', selectedClient.leadInfo._id);
         await axios.put(`/api/leads/mark-as-sold/${selectedClient.leadInfo._id}`, {
           sale_amount: parseFloat(paymentAmount)
         });
       }
 
+      console.log('✅ Pago procesado, recargando clientes...');
       setShowPaymentModal(false);
       setPaymentAmount('');
-      fetchClientes();
+      await fetchClientes();
       alert('Pago registrado y cliente movido a clientes confirmados');
     } catch (err) {
       console.error('Error processing payment:', err);
@@ -260,23 +288,83 @@ export default function ClientsList() {
     if (!clienteToDelete) return;
 
     try {
-      // Eliminar el booking si existe
-      if (clienteToDelete.bookingInfo) {
-        await axios.delete(`/api/booking/${clienteToDelete.id}`);
+      console.log('🗑️  Iniciando eliminación de cliente:', clienteToDelete);
+      const clientEmail = clienteToDelete.email;
+      const leadId = clienteToDelete.leadInfo?._id;
+      const bookingInfo = clienteToDelete.bookingInfo;
+      
+      console.log('📧 Email:', clientEmail);
+      console.log('👤 Lead ID:', leadId);
+      console.log('📋 Booking Info:', bookingInfo);
+      
+      // Primero, intentar eliminar el booking si existe
+      if (bookingInfo) {
+        try {
+          const bookingId = bookingInfo._id || bookingInfo.id;
+          console.log('🗑️  Eliminando booking con ID:', bookingId);
+          const deleteResponse = await axios.delete(`/api/booking/${bookingId}`);
+          console.log('✓ Booking eliminado:', deleteResponse.data?.message);
+        } catch (deleteErr) {
+          console.error('❌ Error al eliminar booking:', deleteErr.response?.data || deleteErr.message);
+        }
+      } else if (clientEmail) {
+        // Si no tenemos bookingInfo pero sí email, intentar buscar y eliminar por email
+        try {
+          console.log('🔍 Buscando booking por email:', clientEmail);
+          const bookingResponse = await axios.get(`/api/booking/by-email/${clientEmail}`);
+          
+          if (bookingResponse.data.success && bookingResponse.data.booking) {
+            const bookingId = bookingResponse.data.booking.id || bookingResponse.data.booking._id;
+            console.log('✓ Booking encontrado, ID:', bookingId);
+            
+            try {
+              console.log('🗑️  Eliminando booking...');
+              const deleteResponse = await axios.delete(`/api/booking/${bookingId}`);
+              console.log('✓ Booking eliminado:', deleteResponse.data?.message);
+            } catch (deleteErr) {
+              console.error('❌ Error al eliminar booking:', deleteErr.response?.data || deleteErr.message);
+            }
+          }
+        } catch (findErr) {
+          console.log('ℹ️  Booking no encontrado (es normal si no tiene booking)');
+        }
       }
 
-      // Eliminar el lead
-      if (clienteToDelete.leadInfo?._id) {
-        await axios.delete(`/api/leads/${clienteToDelete.leadInfo._id}`);
+      // Eliminar el lead si existe
+      if (leadId) {
+        try {
+          console.log('🗑️  Eliminando lead con ID:', leadId);
+          const deleteLeadResponse = await axios.delete(`/api/leads/${leadId}`);
+          console.log('✓ Lead eliminado:', deleteLeadResponse.data?.message);
+          console.log('✓ Datos del lead eliminado:', deleteLeadResponse.data?.deletedLead?.full_name);
+        } catch (leadErr) {
+          console.error('❌ Error CRÍTICO al eliminar lead:', leadErr.response?.data || leadErr.message);
+          alert('Error al eliminar: ' + (leadErr.response?.data?.message || leadErr.message));
+          return;
+        }
       }
 
+      console.log('✅ Eliminación completada, cerrando modal y recargando...');
       setShowDeleteModal(false);
       setClienteToDelete(null);
-      fetchClientes();
+      
+      // Esperar un momento antes de recargar
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Forcer reload completo
+      console.log('🔄 Vaciando caché y recargando lista...');
+      setClientes([]);
+      setClientesFiltrados([]);
+      
+      await fetchClientes();
+      
+      console.log('✅ Lista recargada, mostrando alerta');
       alert('Cliente eliminado exitosamente');
     } catch (err) {
-      console.error('Error deleting client:', err);
-      alert('Error al eliminar el cliente: ' + (err.response?.data?.message || err.message));
+      console.error('❌ Error en handleDeleteClient:', err);
+      alert('Error durante la eliminación: ' + (err.message || 'Error desconocido'));
+      setShowDeleteModal(false);
+      setClienteToDelete(null);
     }
   };
 
@@ -294,14 +382,14 @@ export default function ClientsList() {
           await axios.delete(`/api/calendar/${selectedClient.bookingInfo.googleCalendarEventId}`);
         }
 
-        // Actualizar el booking con nuevos datos
-        await axios.put(`/api/booking/${selectedClient.id}`, {
+        // Actualizar el booking con nuevos datos usando la ruta /reschedule
+        await axios.put(`/api/booking/${selectedClient.id}/reschedule`, {
           date: rescheduleData.date,
           time: rescheduleData.time
         });
       } else if (selectedClient.leadInfo) {
         // Si no tiene booking pero tiene lead, actualizar el lead
-        await axios.put(`/api/leads/update-schedule/${selectedClient.id}`, {
+        await axios.put(`/api/leads/update-schedule/${selectedClient.leadInfo._id}`, {
           scheduled_date: rescheduleData.date,
           scheduled_time: rescheduleData.time
         });

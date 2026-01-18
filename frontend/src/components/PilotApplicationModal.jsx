@@ -40,7 +40,7 @@ export default function PilotApplicationModal({ onClose }) {
       type: 'single',
       options: [
         { label: 'Sí', value: 'Sí' },
-        { label: 'Parcialmente', value: 'Parcialmente' },
+        { label: 'A veces', value: 'A veces' },
         { label: 'No', value: 'No' }
       ]
     },
@@ -545,7 +545,7 @@ export default function PilotApplicationModal({ onClose }) {
                   style={{ opacity: loading ? 0.7 : 1 }}
                   disabled={loading}
                 >
-                  {loading ? '...' : 'Confirmar Reunión'}
+                  {loading ? '⏳ Confirmando...' : 'Confirmar Reunión'}
                 </button>
               )}
               {qualificationResult === 'disqualified' && (
