@@ -1,0 +1,29 @@
+{
+  "name": "stivenads",
+  "version": "1.0.0",
+  "description": "Stivenads marketing scheduling platform",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
+    "build": "echo 'No build needed'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "mongoose": "^7.5.0",
+    "axios": "^1.5.0",
+    "google-auth-library": "^8.8.0",
+    "googleapis": "^118.0.0",
+    "nodemailer": "^6.9.6",
+    "uuid": "^9.0.0",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
