@@ -14,7 +14,7 @@ function AboutStiven({ onBookClick }) {
         <div className="about-image-wrapper">
           <div className="about-image-container">
             <img
-              src="/IMG_8666.jpg"
+              src="/IMG_8666.jpeg"
               alt="Stiven Alian - Especialista en operaciones legales"
               className="about-image"
             />
