@@ -63,8 +63,14 @@ function BookingModal({ onClose }) {
     try {
       // Llamar al backend para obtener horarios disponibles
       if (consultantId) {
+        // Convertir fecha a formato local (no UTC) YYYY-MM-DD
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const day = String(date.getDate()).padStart(2, '0')
+        const localDateString = `${year}-${month}-${day}`
+        
         const response = await axios.get(`/api/consultants/${consultantId}/available-times`, {
-          params: { date: date.toISOString().split('T')[0], duration: 60 }
+          params: { date: localDateString, duration: 60 }
         })
         
         // Obtener datos del response mejorado
@@ -118,9 +124,15 @@ function BookingModal({ onClose }) {
     
     setLoading(true)
     try {
+      // Convertir fecha a formato local (no UTC) YYYY-MM-DD
+      const year = selectedDate.getFullYear()
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
+      const day = String(selectedDate.getDate()).padStart(2, '0')
+      const localDateString = `${year}-${month}-${day}`
+      
       const response = await axios.post('/api/booking/create', {
         ...formData,
-        date: selectedDate.toISOString().split('T')[0],
+        date: localDateString,
         time: selectedTime,
         consultantId: consultantId // Agregar consultantId
       })
@@ -280,56 +292,32 @@ function BookingModal({ onClose }) {
                   </div>
 
                   {/* Si tenemos allSlots, mostrar vista completa. Si no, mostrar solo disponibles */}
-                  {allSlots && allSlots.length > 0 ? (
+                  {availableTimes && availableTimes.length > 0 ? (
                     <div className="slots-grid">
-                      {allSlots.map((slot, index) => {
-                        const isOccupied = !slot.available
-                        const isSelected = selectedTime === slot.startTime
+                      {availableTimes.map((slot, index) => {
+                        const time = typeof slot === 'string' ? slot : slot.startTime
+                        const isSelected = selectedTime === time
                         return (
                           <button
-                            key={`${slot.startTime}-${index}`}
-                            className={`time-slot ${isOccupied ? 'occupied-slot' : 'available-slot'} ${isSelected ? 'active' : ''}`}
-                            onClick={() => !isOccupied && handleTimeSelect(slot.startTime)}
-                            title={isOccupied ? 'Horario ocupado' : 'Horario disponible - Haz clic para seleccionar'}
-                            disabled={isOccupied}
+                            key={`${time}-${index}`}
+                            className={`time-slot available-slot ${isSelected ? 'active' : ''}`}
+                            onClick={() => handleTimeSelect(time)}
+                            title="Horario disponible - Haz clic para seleccionar"
                           >
                             <FiClock size={16} />
-                            <span>{slot.startTime}</span>
-                            <span className={`slot-status ${isOccupied ? 'occupied' : 'available'}`}>
-                              {isOccupied ? '✕' : '✓'}
-                            </span>
+                            <span>{time}</span>
+                            <span className="slot-status available">✓</span>
                           </button>
                         )
                       })}
                     </div>
+                  ) : loading ? (
+                    <p className="loading-times">Cargando horarios...</p>
                   ) : (
-                    <div className="slots-grid">
-                      {availableTimes && availableTimes.length > 0 ? (
-                        availableTimes.map((timeSlot, index) => {
-                          // Manejar tanto strings como objetos
-                          const time = typeof timeSlot === 'string' ? timeSlot : timeSlot.startTime
-                          return (
-                            <button
-                              key={`${time}-${index}`}
-                              className={`time-slot available-slot ${selectedTime === time ? 'active' : ''}`}
-                              onClick={() => handleTimeSelect(time)}
-                              title="Horario disponible - Haz clic para seleccionar"
-                            >
-                              <FiClock size={16} />
-                              <span>{time}</span>
-                              <span className="slot-status available">✓</span>
-                            </button>
-                          )
-                        })
-                      ) : loading ? (
-                        <p className="loading-times">Cargando horarios...</p>
-                      ) : (
-                        <p className="no-availability">
-                          ❌ No hay horarios disponibles para esta fecha
-                          {bookedSlots.length > 0 && ` (${bookedSlots.length} horarios ocupados)`}
-                        </p>
-                      )}
-                    </div>
+                    <p className="no-availability">
+                      ❌ No hay horarios disponibles para esta fecha
+                      {bookedSlots.length > 0 && ` (${bookedSlots.length} horarios ocupados)`}
+                    </p>
                   )}
 
                   {/* Mostrar horarios ocupados */}
