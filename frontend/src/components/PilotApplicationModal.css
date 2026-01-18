@@ -671,19 +671,6 @@
   }
 }
 
-@media (max-width: 360px) {
-  .modal-header h2 {
-    font-size: 1.1rem;
-  }
-
-  .question-title {
-    font-size: 1rem;
-  }
-
-  .options-container {
-    gap: 10px;
-  }
-
 /* Mobile Extra Small - 375px */
 @media (max-width: 375px) {
   .pilot-modal {
