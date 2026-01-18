@@ -35,7 +35,8 @@ function BookingModal({ onClose }) {
 
   const loadDefaultConsultant = async () => {
     try {
-      const response = await axios.get('/api/consultants')
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      const response = await axios.get(`${API_BASE_URL}/consultants`)
       if (response.data && response.data.length > 0) {
         setConsultantId(response.data[0]._id || response.data[0].id)
       }
@@ -69,7 +70,8 @@ function BookingModal({ onClose }) {
         const day = String(date.getDate()).padStart(2, '0')
         const localDateString = `${year}-${month}-${day}`
         
-        const response = await axios.get(`/api/consultants/${consultantId}/available-times`, {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+        const response = await axios.get(`${API_BASE_URL}/consultants/${consultantId}/available-times`, {
           params: { date: localDateString, duration: 60 }
         })
         
@@ -130,7 +132,8 @@ function BookingModal({ onClose }) {
       const day = String(selectedDate.getDate()).padStart(2, '0')
       const localDateString = `${year}-${month}-${day}`
       
-      const response = await axios.post('/api/booking/create', {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      const response = await axios.post(`${API_BASE_URL}/booking/create`, {
         ...formData,
         date: localDateString,
         time: selectedTime,

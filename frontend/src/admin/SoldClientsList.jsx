@@ -18,13 +18,14 @@ export default function SoldClientsList() {
       setLoading(true);
       
       // Fetch sold bookings
-      const bookingsResponse = await axios.get('/api/booking/list');
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      const bookingsResponse = await axios.get(`${API_BASE_URL}/booking/list`);
       const soldBookings = bookingsResponse.data.success 
         ? bookingsResponse.data.bookings.filter(b => b.status === 'sold')
         : [];
 
       // Fetch sold leads
-      const leadsResponse = await axios.get('/api/leads/admin/leads');
+      const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
       const soldLeads = leadsResponse.data.data.filter(lead => lead.status === 'sold');
 
       // Combinar ambos (bookings y leads vendidos)

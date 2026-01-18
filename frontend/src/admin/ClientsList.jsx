@@ -65,7 +65,8 @@ export default function ClientsList() {
       console.log('🔄 Recargando clientes desde la BD...');
       
       // Fetch leads primero para filtrar solo los calificados (Ideal o Scale)
-      const leadsResponse = await axios.get('/api/leads/admin/leads');
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
       const leadsData = leadsResponse.data.data || [];
       console.log('📋 Leads obtenidos:', leadsData.length);
       console.log('   Detalles leads:', leadsData.map(l => ({ email: l.email, type: l.lead_type })));
@@ -78,7 +79,8 @@ export default function ClientsList() {
       console.log('   Detalles calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id })));
 
       // Fetch bookings
-      const bookingsResponse = await axios.get('/api/booking/list');
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      const bookingsResponse = await axios.get(`${API_BASE_URL}/booking/list`);
       const allBookings = bookingsResponse.data.success ? bookingsResponse.data.bookings : [];
       console.log('📋 Bookings obtenidos:', allBookings.length);
       console.log('   Detalles bookings:', allBookings.map(b => ({ email: b.email, id: b.id || b._id, status: b.status })));

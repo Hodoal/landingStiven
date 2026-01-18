@@ -47,7 +47,8 @@ export default function ApplicationForm() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('/api/leads/submit-application', {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      const response = await axios.post(`${API_BASE_URL}/leads/submit-application`, {
         monthly_consultations: formData.monthly_consultations,
         is_labor_lawyer: formData.is_labor_lawyer,
         works_quota_litis: formData.works_quota_litis,
