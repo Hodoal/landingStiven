@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "env": {
-    "MONGODB_URI": "@mongodb_uri"
-  }
+  "buildCommand": "echo 'No build needed'",
+  "outputDirectory": "."
 }

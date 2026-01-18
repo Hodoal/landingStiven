@@ -1,0 +1,8 @@
+.git
+node_modules
+frontend
+backend/test_pilot.js
+backend/test_pilot.js
+backend/check-db.js
+backend/cleanup-states.js
+*.md
