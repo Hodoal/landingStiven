@@ -14,31 +14,30 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Conectar a MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/stivenads';
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => {
-    console.warn('MongoDB connection error:', err.message);
-  });
+if (!mongoose.connections[0].readyState) {
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log('✓ Connected to MongoDB'))
+    .catch(err => console.warn('⚠️ MongoDB connection error:', err.message));
+}
 
 // Rutas
-const bookingRoutes = require('../backend/routes/bookingRoutes');
-const calendarRoutes = require('../backend/routes/calendarRoutes');
-const leadsRoutes = require('../backend/routes/leadsRoutes');
-const consultantRoutes = require('../backend/routes/consultantRoutes');
-
-app.use('/api/booking', bookingRoutes);
-app.use('/api/calendar', calendarRoutes);
-app.use('/api/leads', leadsRoutes);
-app.use('/api/consultants', consultantRoutes);
+app.use('/api/booking', require('../backend/routes/bookingRoutes'));
+app.use('/api/calendar', require('../backend/routes/calendarRoutes'));
+app.use('/api/leads', require('../backend/routes/leadsRoutes'));
+app.use('/api/consultants', require('../backend/routes/consultantRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
+  res.json({ status: 'OK', message: 'Server is running', timestamp: new Date() });
+});
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Stivenads Backend is running' });
 });
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error('❌ Error:', err.message);
   res.status(500).json({ 
     success: false, 
     message: 'Internal server error',
@@ -46,4 +45,5 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Exportar para Vercel
 module.exports = app;
