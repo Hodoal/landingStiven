@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "scope": "javier-delaossa",
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": "backend/**/*"
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
