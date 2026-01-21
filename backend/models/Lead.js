@@ -47,6 +47,7 @@ const leadSchema = new mongoose.Schema(
     scheduled_date: String,
     scheduled_time: String,
     googleCalendarEventId: String,
+    googleMeetLink: String,
     sale_amount: Number,
     sold_at: Date,
     disqualified_reason: String,

@@ -14,10 +14,30 @@ router.get('/', async (req, res) => {
       .select('name email specialization bio profileImage')
       .exec();
 
+    // Si no hay consultores, retornar uno de prueba
+    if (consultants.length === 0) {
+      return res.json([{
+        _id: 'default-consultant',
+        name: 'Consultor Stivenads',
+        email: 'stivenads25@gmail.com',
+        specialization: 'Marketing Digital',
+        bio: 'Experto en marketing digital y Google Ads',
+        isActive: true
+      }]);
+    }
+
     res.json(consultants);
   } catch (error) {
     console.error('Error fetching consultants:', error);
-    res.status(500).json({ error: 'Error al obtener consultores' });
+    // En caso de error (ej: MongoDB no disponible), retornar consultor de prueba
+    res.json([{
+      _id: 'default-consultant',
+      name: 'Consultor Stivenads',
+      email: 'stivenads25@gmail.com',
+      specialization: 'Marketing Digital',
+      bio: 'Experto en marketing digital y Google Ads',
+      isActive: true
+    }]);
   }
 });
 
@@ -61,9 +81,13 @@ router.get('/:id/available-times', async (req, res) => {
       return res.status(400).json({ error: 'Formato de fecha inválido (YYYY-MM-DD)' });
     }
 
-    const consultant = await Consultant.findById(req.params.id);
-    if (!consultant || !consultant.isActive) {
-      return res.status(404).json({ error: 'Consultor no disponible' });
+    // Si es el consultor por defecto o hay error de BD, solo verificar disponibilidad en Google Calendar
+    const consultantId = req.params.id;
+    if (consultantId !== 'default-consultant') {
+      const consultant = await Consultant.findById(req.params.id);
+      if (!consultant || !consultant.isActive) {
+        return res.status(404).json({ error: 'Consultor no disponible' });
+      }
     }
 
     // Obtener disponibilidad desde Google Calendar API

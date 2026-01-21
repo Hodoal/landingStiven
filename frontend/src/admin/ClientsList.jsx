@@ -79,7 +79,6 @@ export default function ClientsList() {
       console.log('   Detalles calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id })));
 
       // Fetch bookings
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
       const bookingsResponse = await axios.get(`${API_BASE_URL}/booking/list`);
       const allBookings = bookingsResponse.data.success ? bookingsResponse.data.bookings : [];
       console.log('📋 Bookings obtenidos:', allBookings.length);

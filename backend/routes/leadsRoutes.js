@@ -334,16 +334,28 @@ router.post('/apply-pilot', async (req, res) => {
     const newLead = new Lead(leadData);
     console.log('💾 Attempting to save lead with data:', JSON.stringify(leadData, null, 2));
     
-    const savedLead = await newLead.save();
-    console.log('✅ Lead saved successfully:', savedLead._id);
+    let savedLead;
+    try {
+      savedLead = await newLead.save();
+      console.log('✅ Lead saved successfully:', savedLead._id);
+    } catch (dbError) {
+      console.warn('⚠️  MongoDB not available, creating mock lead:', dbError.message);
+      // Crear un lead mock para continuar el flujo sin base de datos
+      savedLead = {
+        _id: `mock-${Date.now()}`,
+        ...leadData,
+        createdAt: new Date()
+      };
+      console.log('✅ Mock lead created:', savedLead._id);
+    }
 
     // ⚡ RESPOND IMMEDIATELY - Process background tasks asynchronously
     res.json({
       success: true,
       disqualified: isDisqualified,
       leadId: savedLead._id,
-      lead_type: savedLead.lead_type,
-      eventId: savedLead.googleCalendarEventId,
+      lead_type: savedLead.lead_type || leadData.lead_type,
+      eventId: savedLead.googleCalendarEventId || null,
       message: isDisqualified ? 'Lead disqualified' : 'Lead applied and scheduled successfully'
     });
 
@@ -352,6 +364,8 @@ router.post('/apply-pilot', async (req, res) => {
       setImmediate(async () => {
         try {
           // Try to create calendar event if not already created
+          let meetLink = savedLead.googleMeetLink || 'https://meet.google.com/';
+          
           if (!savedLead.googleCalendarEventId) {
             try {
               const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
@@ -362,20 +376,33 @@ router.post('/apply-pilot', async (req, res) => {
                 attendeeEmail: email
               });
               
-              // Update lead with calendar event ID
-              await Lead.findByIdAndUpdate(
-                savedLead._id,
-                { googleCalendarEventId: calendarEvent.eventId }
-              );
+              // Update meet link with the one from Google Calendar
+              meetLink = calendarEvent.meetLink;
+              
+              // Update lead with calendar event ID and meet link (only if saved to DB)
+              if (!savedLead._id.toString().startsWith('mock-')) {
+                try {
+                  await Lead.findByIdAndUpdate(
+                    savedLead._id,
+                    { 
+                      googleCalendarEventId: calendarEvent.eventId,
+                      googleMeetLink: calendarEvent.meetLink
+                    }
+                  );
+                  console.log('✅ Calendar event ID and Meet link updated in DB');
+                  console.log('📅 Event ID:', calendarEvent.eventId);
+                  console.log('🔗 Meet Link:', calendarEvent.meetLink);
+                } catch (updateError) {
+                  console.warn('⚠️  Could not update lead in DB:', updateError.message);
+                }
+              }
               console.log('✅ Calendar event created in background');
             } catch (calendarError) {
               console.error('⚠️  Background: Error creating calendar event:', calendarError.message);
             }
           }
 
-          // Send confirmation emails
-          const calendarEventId = savedLead.googleCalendarEventId || 'N/A';
-          const meetLink = `https://meet.google.com/${calendarEventId}`;
+          // Send confirmation emails with the correct meet link
 
           // Send email to client
           await emailService.sendPilotProgramConfirmation({

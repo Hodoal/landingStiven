@@ -17,7 +17,8 @@ async function sendConfirmationEmail(options) {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'America/Bogota'
   });
 
   let htmlContent;
@@ -273,7 +274,8 @@ async function sendPilotProgramConfirmation(options) {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'America/Bogota'
   });
 
   const htmlContent = `
@@ -387,7 +389,8 @@ async function sendPilotProgramNotificationToAdmin(options) {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'America/Bogota'
   });
 
   const problemsList = Array.isArray(mainProblems) ? mainProblems.join(', ') : mainProblems;
