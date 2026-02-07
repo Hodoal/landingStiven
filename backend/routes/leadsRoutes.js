@@ -611,13 +611,54 @@ router.post('/apply-pilot', async (req, res) => {
         await client.close();
         
         // Responder con el lead existente
-        return res.json({
+        res.json({
           success: true,
           disqualified: isDisqualified,
           leadId: existingLead._id,
           lead_type: existingLead.lead_type,
           message: 'Lead already exists, updated with new scheduling info'
         });
+        
+        // Crear evento de calendario en background para lead duplicado con agendamiento
+        setImmediate(async () => {
+          try {
+            console.log('🔄 Background: Creating calendar event for duplicate lead');
+            const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
+            const calendarEvent = await calendarService.createGoogleCalendarEvent({
+              title: `Reunión Piloto - ${name}`,
+              description: `Reunión piloto 30 días con ${name}. Email: ${email}, Teléfono: ${phone}`,
+              startTime,
+              attendeeEmail: email
+            });
+            
+            console.log('✅ Background: Calendar event created for duplicate lead:', calendarEvent.eventId);
+            
+            // Actualizar el lead con el eventId
+            const { MongoClient } = require('mongodb');
+            const client2 = new MongoClient('mongodb://localhost:27017/stivenads-production', {
+              maxPoolSize: 10,
+              socketTimeoutMS: 120000
+            });
+            await client2.connect();
+            const db2 = client2.db('stivenads-production');
+            await db2.collection('leads').updateOne(
+              { email },
+              { 
+                $set: { 
+                  googleCalendarEventId: calendarEvent.eventId,
+                  googleMeetLink: calendarEvent.meetLink,
+                  updatedAt: new Date()
+                }
+              }
+            );
+            await client2.close();
+            console.log('✅ Background: Lead updated with calendar event ID');
+          } catch (calendarError) {
+            console.error('⚠️  Background: Error creating calendar event for duplicate lead:', calendarError.message);
+          }
+        });
+        
+        return;
       }
       
       // Create a lead document (solo si no existe)
