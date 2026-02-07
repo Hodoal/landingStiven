@@ -542,8 +542,85 @@ router.post('/apply-pilot', async (req, res) => {
       await client.connect();
       const db = client.db('stivenads-production');
       const leadsCollection = db.collection('leads');
+      const bookingsCollection = db.collection('bookings');
       
-      // Create a lead document
+      // Verificar si el lead ya existe
+      const existingLead = await leadsCollection.findOne({ email });
+      
+      if (existingLead) {
+        console.log('⚠️  Lead duplicado detectado para email:', email);
+        console.log('   Lead existente ID:', existingLead._id);
+        
+        // Si hay scheduled_date/time, actualizar el lead y crear/actualizar booking
+        if (!isDisqualified && scheduled_date && scheduled_time) {
+          try {
+            // Actualizar el lead con la nueva información de agendamiento
+            await leadsCollection.updateOne(
+              { email },
+              { 
+                $set: { 
+                  scheduled_date, 
+                  scheduled_time,
+                  status: 'scheduled',
+                  updatedAt: new Date()
+                }
+              }
+            );
+            console.log('✅ Lead actualizado con scheduled_date/time');
+            
+            // Verificar si ya existe un booking para este email
+            const existingBooking = await bookingsCollection.findOne({ email });
+            
+            if (existingBooking) {
+              // Actualizar el booking existente
+              await bookingsCollection.updateOne(
+                { email },
+                {
+                  $set: {
+                    date: scheduled_date,
+                    time: scheduled_time,
+                    status: 'scheduled',
+                    leadId: existingLead._id,
+                    updatedAt: new Date()
+                  }
+                }
+              );
+              console.log('✅ Booking existente actualizado');
+            } else {
+              // Crear nuevo booking
+              const bookingDoc = {
+                leadId: existingLead._id,
+                clientName: name,
+                email,
+                phone,
+                date: scheduled_date,
+                time: scheduled_time,
+                status: 'scheduled',
+                createdAt: new Date(),
+                updatedAt: new Date()
+              };
+              await bookingsCollection.insertOne(bookingDoc);
+              console.log('✅ Nuevo booking creado para lead existente');
+            }
+          } catch (updateError) {
+            console.error('⚠️  Error actualizando lead/booking existente:', updateError.message);
+          }
+        }
+        
+        savedLead = existingLead;
+        await client.close();
+        
+        // Responder con el lead existente
+        return res.json({
+          success: true,
+          disqualified: isDisqualified,
+          leadId: existingLead._id,
+          lead_type: existingLead.lead_type,
+          message: 'Lead already exists, updated with new scheduling info'
+        });
+      }
+      
+      // Create a lead document (solo si no existe)
       const leadDoc = {
         full_name: name,
         email,
@@ -577,7 +654,6 @@ router.post('/apply-pilot', async (req, res) => {
       // If the lead is not disqualified AND has scheduled_date/time, create a booking
       if (!isDisqualified && scheduled_date && scheduled_time) {
         try {
-          const bookingsCollection = db.collection('bookings');
           const bookingDoc = {
             leadId: result.insertedId,
             clientName: name,
