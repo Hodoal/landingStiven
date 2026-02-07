@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # Base de Datos
+  mongodb:
+    image: mongo:6-alpine
+    container_name: stivenads-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: stivenads_secure_password_change_me
+      MONGO_INITDB_DB: stivenads-production
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - stivenads-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: stivenads-backend
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MONGODB_URI: mongodb://root:stivenads_secure_password_change_me@mongodb:27017/stivenads-production
+      FRONTEND_URL: ${FRONTEND_URL:-https://stivenads.com}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      GOOGLE_REFRESH_TOKEN: ${GOOGLE_REFRESH_TOKEN}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - stivenads-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: stivenads-frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - stivenads-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Nginx (Reverse Proxy - Opcional)
+  nginx:
+    image: nginx:alpine
+    container_name: stivenads-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - stivenads-network
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  stivenads-network:
+    driver: bridge

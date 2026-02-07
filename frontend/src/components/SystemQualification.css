@@ -37,6 +37,7 @@
   padding: 2.5rem;
   transition: var(--transition);
   position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .for-card {
@@ -99,6 +100,8 @@
 
 .list-item span:last-child {
   color: #e2e8f0;
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .list-icon-check {
@@ -144,7 +147,7 @@
   }
 
   .qualification-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     margin-bottom: 2rem;
   }
 
@@ -158,12 +161,16 @@
   }
 
   .card-header h3 {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
   .list-item {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     gap: 0.75rem;
+  }
+
+  .list-item span:last-child {
+    font-size: 19px;
   }
 }
 
@@ -173,7 +180,7 @@
   }
 
   .qualification-title {
-    font-size: 1.5rem;
+    font-size: 1.7rem;
   }
 
   .qualification-grid {
@@ -186,16 +193,20 @@
   }
 
   .card-header h3 {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   .list-item {
-    font-size: 0.9rem;
+    font-size: 1rem;
+  }
+
+  .list-item span:last-child {
+    font-size: 20px;
   }
 
   .qualification-cta {
     padding: 0.8rem 1.5rem;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 }
 
@@ -205,7 +216,7 @@
   }
 
   .qualification-title {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 
   .qualification-card {
@@ -224,11 +235,15 @@
   }
 
   .card-header h3 {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
   }
 
   .list-item {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     gap: 0.5rem;
+  }
+
+  .list-item span:last-child {
+    font-size: 20px;
   }
 }

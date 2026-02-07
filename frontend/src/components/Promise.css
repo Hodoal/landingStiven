@@ -29,6 +29,7 @@
   padding: 30px;
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
   transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .why-card:hover {
@@ -54,6 +55,11 @@
   font-size: 1.1rem;
   font-weight: 600;
   justify-content: flex-start;
+}
+
+.why-item span {
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .check-icon {
@@ -152,6 +158,11 @@
   font-size: 0.95rem;
   font-weight: 600;
   justify-content: flex-start;
+}
+
+.pilot-item span {
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .pilot-check-icon {
@@ -303,7 +314,7 @@
   }
 
   .promise-title {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .promise-container {
@@ -314,20 +325,28 @@
     padding: 20px;
   }
 
+  .why-item {
+    font-size: 1.05rem;
+  }
+
+  .why-item span {
+    font-size: 19px;
+  }
+
   .promise-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.35rem;
   }
 
   .promise-message {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
   }
 
   .promise-conclusion {
-    font-size: 1rem;
+    font-size: 1.15rem;
   }
 
   .promise-guarantee-title {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
   }
 
   .guarantee-features {
@@ -335,7 +354,7 @@
   }
 
   .feature-text {
-    font-size: 1.2rem;
+    font-size: 1.35rem;
   }
 
   .guarantee-badge {
@@ -347,6 +366,16 @@
     width: 50px;
     height: 50px;
   }
+
+  .pilot-item,
+  .detail-item {
+    font-size: 1rem;
+  }
+
+  .pilot-item span,
+  .detail-item span {
+    font-size: 19px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -355,11 +384,11 @@
   }
 
   .promise-title {
-    font-size: 1.3rem;
+    font-size: 1.55rem;
   }
 
   .promise-guarantee-title {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
 
   .guarantee-features {
@@ -368,17 +397,22 @@
   }
 
   .feature-text {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   .why-item,
   .pilot-item {
-    font-size: 0.9rem;
+    font-size: 1rem;
+  }
+
+  .why-item span,
+  .pilot-item span {
+    font-size: 20px;
   }
 
   .promise-cta {
     padding: 14px 40px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     min-height: 44px;
   }
 
@@ -393,35 +427,48 @@
   }
 
   .pilot-label {
-    font-size: 1rem;
+    font-size: 1.15rem;
   }
 
   .promise-message {
-    font-size: 1rem;
+    font-size: 1.15rem;
+  }
+
+  .promise-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .promise-conclusion {
+    font-size: 1.05rem;
   }
 }
 
 @media (max-width: 375px) {
   .promise-guarantee-title {
-    font-size: 1.2rem;
+    font-size: 1.45rem;
   }
 
   .feature-text {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
 
   .promise-cta {
     padding: 14px 40px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     min-height: 44px;
   }
 
   .promise-subtitle {
-    font-size: 1rem;
+    font-size: 1.15rem;
   }
 
   .why-item,
   .pilot-item {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .why-item span,
+  .pilot-item span {
+    font-size: 20px;
   }
 }

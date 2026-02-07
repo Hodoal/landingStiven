@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './AdminPanel.css';
 import ClientsList from './ClientsList';
 import SoldClientsList from './SoldClientsList';
+import DisqualifiedClientsList from './DisqualifiedClientsList';
 import Estadisticas from './Estadisticas';
 
 export default function AdminPanel() {
@@ -17,6 +18,12 @@ export default function AdminPanel() {
             onClick={() => setActiveTab('potenciales')}
           >
             Clientes Potenciales
+          </button>
+          <button
+            className={activeTab === 'no-califican' ? 'active' : ''}
+            onClick={() => setActiveTab('no-califican')}
+          >
+            No Califican
           </button>
           <button
             className={activeTab === 'vendidos' ? 'active' : ''}
@@ -35,6 +42,7 @@ export default function AdminPanel() {
 
       <div className="admin-content">
         {activeTab === 'potenciales' && <ClientsList />}
+        {activeTab === 'no-califican' && <DisqualifiedClientsList />}
         {activeTab === 'vendidos' && <SoldClientsList />}
         {activeTab === 'estadisticas' && <Estadisticas />}
       </div>

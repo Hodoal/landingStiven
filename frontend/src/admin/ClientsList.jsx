@@ -50,7 +50,8 @@ export default function ClientsList() {
       'Reunión confirmada': { bg: '#d1fae5', text: '#065f46' },
       'Reunión no realizada': { bg: '#fecaca', text: '#991b1b' },
       'Cliente confirmado': { bg: '#c7d2fe', text: '#3730a3' },
-      'No Confirmado': { bg: '#fecaca', text: '#991b1b' }
+      'No Confirmado': { bg: '#fecaca', text: '#991b1b' },
+      'Pendiente de agendar': { bg: '#fef3c7', text: '#92400e' }
     };
     return colorMap[estado] || { bg: '#e5e7eb', text: '#374151' };
   };
@@ -73,7 +74,7 @@ export default function ClientsList() {
       
       const qualifiedLeads = (leadsResponse.data.data || [])
         .filter(lead => lead.lead_type === 'Ideal' || lead.lead_type === 'Scale')
-        .filter(lead => lead.status !== 'disqualified' && lead.status !== 'sold');
+        .filter(lead => lead.status !== 'No califica' && lead.status !== 'sold');
 
       console.log('✓ Leads calificados:', qualifiedLeads.length);
       console.log('   Detalles calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id })));
@@ -124,17 +125,24 @@ export default function ClientsList() {
         }
       });
 
-      // 2. Luego agregar leads sin booking pero con fecha/hora agendada
+      // 2. Luego agregar leads sin booking
       qualifiedLeads.forEach(lead => {
-        if (!leadsWithBookings.has(lead._id) && lead.scheduled_date && lead.scheduled_time) {
-          const computedStatus = getComputedStatus({ status: lead.status }, lead.scheduled_date, lead.scheduled_time);
+        // Solo mostrar leads que NO tienen booking asociado
+        // Los leads con booking ya fueron agregados en el paso anterior
+        if (!leadsWithBookings.has(lead._id)) {
+          // Mostrar todos los leads calificados, tengan o no fecha agendada
+          const hasSchedule = lead.scheduled_date && lead.scheduled_time;
+          const computedStatus = hasSchedule 
+            ? getComputedStatus({ status: lead.status }, lead.scheduled_date, lead.scheduled_time)
+            : 'Pendiente de agendar';
+          
           clientesData.push({
             id: lead._id,
             nombre: lead.full_name || 'N/A',
             email: lead.email || 'N/A',
             telefono: lead.phone || 'N/A',
-            fechaAgendamiento: lead.scheduled_date || 'N/A',
-            horaAgendamiento: lead.scheduled_time || 'N/A',
+            fechaAgendamiento: lead.scheduled_date || 'Sin agendar',
+            horaAgendamiento: lead.scheduled_time || 'Sin agendar',
             estado: computedStatus,
             status: lead.status,
             leadType: lead.lead_type || 'N/A',
@@ -144,9 +152,31 @@ export default function ClientsList() {
         }
       });
       
-      console.log('✓ Total de clientes:', clientesData.length);
-      setClientes(clientesData);
-      aplicarFiltro(clientesData, filtro);
+      // Filtrar duplicados por email - mostrar solo el más reciente o con fecha agendada
+      const clientesUnicos = {};
+      clientesData.forEach(cliente => {
+        const email = cliente.email.toLowerCase();
+        if (!clientesUnicos[email]) {
+          clientesUnicos[email] = cliente;
+        } else {
+          // Si el cliente duplicado tiene fecha agendada y el actual no, reemplazar
+          const current = clientesUnicos[email];
+          const hasScheduleNew = cliente.fechaAgendamiento !== 'Sin agendar' && cliente.fechaAgendamiento !== 'N/A';
+          const hasScheduleCurrent = current.fechaAgendamiento !== 'Sin agendar' && current.fechaAgendamiento !== 'N/A';
+          
+          // Preferir el que tiene fecha agendada
+          if (hasScheduleNew && !hasScheduleCurrent) {
+            clientesUnicos[email] = cliente;
+          }
+        }
+      });
+      
+      const clientesFiltrados = Object.values(clientesUnicos);
+      
+      console.log('✓ Total de clientes:', clientesFiltrados.length);
+      console.log('✅ Clientes procesados:', clientesFiltrados.map(c => ({ nombre: c.nombre, email: c.email, estado: c.estado })));
+      setClientes(clientesFiltrados);
+      aplicarFiltro(clientesFiltrados, filtro);
       setError(null);
     } catch (err) {
       console.error('❌ Error al cargar clientes:', err);
@@ -290,6 +320,7 @@ export default function ClientsList() {
 
     try {
       console.log('🗑️  Iniciando eliminación de cliente:', clienteToDelete);
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
       const clientEmail = clienteToDelete.email;
       const leadId = clienteToDelete.leadInfo?._id;
       const bookingInfo = clienteToDelete.bookingInfo;
@@ -303,7 +334,7 @@ export default function ClientsList() {
         try {
           const bookingId = bookingInfo._id || bookingInfo.id;
           console.log('🗑️  Eliminando booking con ID:', bookingId);
-          const deleteResponse = await axios.delete(`/api/booking/${bookingId}`);
+          const deleteResponse = await axios.delete(`${API_BASE_URL}/booking/${bookingId}`);
           console.log('✓ Booking eliminado:', deleteResponse.data?.message);
         } catch (deleteErr) {
           console.error('❌ Error al eliminar booking:', deleteErr.response?.data || deleteErr.message);
@@ -312,7 +343,7 @@ export default function ClientsList() {
         // Si no tenemos bookingInfo pero sí email, intentar buscar y eliminar por email
         try {
           console.log('🔍 Buscando booking por email:', clientEmail);
-          const bookingResponse = await axios.get(`/api/booking/by-email/${clientEmail}`);
+          const bookingResponse = await axios.get(`${API_BASE_URL}/booking/by-email/${clientEmail}`);
           
           if (bookingResponse.data.success && bookingResponse.data.booking) {
             const bookingId = bookingResponse.data.booking.id || bookingResponse.data.booking._id;
@@ -320,7 +351,7 @@ export default function ClientsList() {
             
             try {
               console.log('🗑️  Eliminando booking...');
-              const deleteResponse = await axios.delete(`/api/booking/${bookingId}`);
+              const deleteResponse = await axios.delete(`${API_BASE_URL}/booking/${bookingId}`);
               console.log('✓ Booking eliminado:', deleteResponse.data?.message);
             } catch (deleteErr) {
               console.error('❌ Error al eliminar booking:', deleteErr.response?.data || deleteErr.message);
@@ -335,7 +366,7 @@ export default function ClientsList() {
       if (leadId) {
         try {
           console.log('🗑️  Eliminando lead con ID:', leadId);
-          const deleteLeadResponse = await axios.delete(`/api/leads/${leadId}`);
+          const deleteLeadResponse = await axios.delete(`${API_BASE_URL}/leads/${leadId}`);
           console.log('✓ Lead eliminado:', deleteLeadResponse.data?.message);
           console.log('✓ Datos del lead eliminado:', deleteLeadResponse.data?.deletedLead?.full_name);
         } catch (leadErr) {
@@ -350,16 +381,13 @@ export default function ClientsList() {
       setClienteToDelete(null);
       
       // Esperar un momento antes de recargar
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Forcer reload completo
-      console.log('🔄 Vaciando caché y recargando lista...');
-      setClientes([]);
-      setClientesFiltrados([]);
-      
+      // Forzar reload completo
+      console.log('🔄 Recargando lista desde la base de datos...');
       await fetchClientes();
       
-      console.log('✅ Lista recargada, mostrando alerta');
+      console.log('✅ Lista recargada exitosamente');
       alert('Cliente eliminado exitosamente');
     } catch (err) {
       console.error('❌ Error en handleDeleteClient:', err);
@@ -500,6 +528,7 @@ export default function ClientsList() {
                         className="action-btn"
                         title="Ver información"
                         onClick={() => handleViewClient(c)}
+                        style={{ color: '#fbbf24' }}
                       >
                         <FiEye size={18} />
                       </button>
@@ -510,6 +539,7 @@ export default function ClientsList() {
                             className="action-btn"
                             title="Reagendar"
                             onClick={() => handleReschedule(c)}
+                            style={{ color: '#fbbf24' }}
                           >
                             <FiEdit3 size={18} />
                           </button>
@@ -526,6 +556,7 @@ export default function ClientsList() {
                                     handleConfirmMeeting(c, true);
                                   }
                                 }}
+                                style={{ color: '#fbbf24' }}
                               >
                                 <FiCheck size={18} />
                               </button>
@@ -534,6 +565,7 @@ export default function ClientsList() {
                                 className="action-btn"
                                 title="Marcar como no realizada"
                                 onClick={() => handleConfirmMeeting(c, false)}
+                                style={{ color: '#fbbf24' }}
                               >
                                 <FiX size={18} />
                               </button>
@@ -547,6 +579,7 @@ export default function ClientsList() {
                           className="action-btn"
                           title="Registrar pago"
                           onClick={() => handlePayment(c)}
+                          style={{ color: '#fbbf24' }}
                         >
                           <FiDollarSign size={18} />
                         </button>
@@ -559,6 +592,7 @@ export default function ClientsList() {
                           setClienteToDelete(c);
                           setShowDeleteModal(true);
                         }}
+                        style={{ color: '#fbbf24' }}
                       >
                         <FiTrash2 size={18} />
                       </button>

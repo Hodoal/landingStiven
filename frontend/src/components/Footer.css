@@ -22,7 +22,7 @@
 
 .footer-section p {
   color: var(--color-text-light);
-  font-size: 0.85rem;
+  font-size: 14px;
   margin-bottom: 0.25rem;
   line-height: 1.4;
 }
@@ -38,7 +38,7 @@
 .footer-section ul li a {
   color: var(--color-text-light);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 14px;
   transition: var(--transition);
 }
 
@@ -68,6 +68,19 @@
   .footer-content {
     gap: 1rem;
   }
+
+  .footer-section h4 {
+    font-size: 1.05rem;
+  }
+
+  .footer-section p,
+  .footer-section ul li a {
+    font-size: 16px;
+  }
+
+  .footer-bottom p {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -84,6 +97,19 @@
     text-align: center;
   }
 
+  .footer-section h4 {
+    font-size: 1rem;
+  }
+
+  .footer-section p,
+  .footer-section ul li a {
+    font-size: 17px;
+  }
+
+  .footer-bottom p {
+    font-size: 0.9rem;
+  }
+
   .footer-section ul li a:hover {
     padding-left: 0;
   }
@@ -95,18 +121,18 @@
   }
 
   .footer-section h4 {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 
   .footer-section p {
-    font-size: 0.75rem;
+    font-size: 16px;
   }
 
   .footer-section ul li a {
-    font-size: 0.75rem;
+    font-size: 16px;
   }
 
   .footer-bottom p {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
   }
 }

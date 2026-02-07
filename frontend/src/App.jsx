@@ -14,6 +14,7 @@ import FloatingButton from './components/FloatingButton'
 import PilotApplicationModal from './components/PilotApplicationModal'
 import BookingModal from './components/BookingModal'
 import AdminPage from './pages/AdminPage'
+import { useFacebookPixel } from './services/facebookPixel'
 import './index.css'
 
 function App() {
@@ -21,6 +22,33 @@ function App() {
   const [showBookingModal, setShowBookingModal] = useState(false)
   const [showFloatingButton, setShowFloatingButton] = useState(false)
   const [currentPage, setCurrentPage] = useState('home')
+
+  // Initialize Facebook Pixel
+  const { events: fbEvents } = useFacebookPixel();
+
+  // Track scroll depth for engagement
+  useEffect(() => {
+    const scrollDepthTracked = { 25: false, 50: false, 75: false, 100: false }
+    
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+      const scrollPercent = (scrollTop / docHeight) * 100
+
+      // Track scroll milestones
+      Object.keys(scrollDepthTracked).forEach(depth => {
+        if (scrollPercent >= parseInt(depth) && !scrollDepthTracked[depth]) {
+          scrollDepthTracked[depth] = true
+          fbEvents.SCROLL_DEPTH(depth, {
+            page: 'home'
+          })
+        }
+      })
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     // Check URL for admin page

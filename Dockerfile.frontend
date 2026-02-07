@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# ========================================
+# 🐳 DOCKERFILE - STIVENADS FRONTEND
+# ========================================
+
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+COPY frontend/package*.json ./
+
+RUN npm ci
+
+COPY frontend/ ./
+
+RUN npm run build
+
+# Runtime stage
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Instalar servidor estático
+RUN npm install -g serve
+
+# Copiar archivos compilados del builder
+COPY --from=builder /app/dist ./dist
+
+# Crear usuario no-root
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
+USER nodejs
+
+# Puerto
+EXPOSE 5173
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:5173/ || exit 1
+
+# Comando de inicio
+CMD ["serve", "-s", "dist", "-l", "5173"]

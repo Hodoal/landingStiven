@@ -48,6 +48,12 @@ const bookingSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'meeting-completed', 'sold', 'cancelled', 'No Confirmado'],
     default: 'pending'
   },
+  // Referencia al lead (relación con modelo Lead)
+  leadId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Lead',
+    default: null
+  },
   // Referencia al consultor asignado
   consultantId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -102,6 +108,8 @@ const bookingSchema = new mongoose.Schema({
 bookingSchema.index({ createdAt: -1 });
 bookingSchema.index({ clientName: 1 });
 bookingSchema.index({ email: 1 });
+// Add unique compound index to prevent duplicate bookings for same email at same date/time
+bookingSchema.index({ email: 1, date: 1, time: 1 }, { unique: true, sparse: true });
 
 // Add virtual id field for compatibility
 bookingSchema.virtual('id').get(function() {

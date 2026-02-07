@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiHeart, FiX } from 'react-icons/fi';
+import { FacebookPixelEvents, useFacebookPixel } from '../services/facebookPixel';
 import './DisqualifiedPage.css';
 
 export default function DisqualifiedPage({ onClose }) {
+  const { events: fbEvents } = useFacebookPixel();
+
+  useEffect(() => {
+    // Track when someone gets disqualified
+    FacebookPixelEvents.QUALIFIED_LEAD({
+      status: 'disqualified',
+      content_name: 'Lead Descalificado',
+      value: 0
+    });
+  }, []);
+
+  const handleReturnHome = () => {
+    fbEvents.CTA_CLICK('disqualified_page', {
+      action: 'return_home'
+    });
+    window.location.href = '/';
+  };
   return (
     <div className="disqualified-overlay" onClick={onClose}>
       <div className="disqualified-modal" onClick={(e) => e.stopPropagation()}>
@@ -22,7 +40,7 @@ export default function DisqualifiedPage({ onClose }) {
         </ul>
 
         <div className="action-buttons">
-          <button className="btn-primary" onClick={() => window.location.href = '/'}>
+          <button className="btn-primary" onClick={handleReturnHome}>
             Volver al inicio
           </button>
           <p className="contact-text">

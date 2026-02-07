@@ -5,6 +5,7 @@ import axios from 'axios'
 import GoogleCalendarScheduler from './GoogleCalendarScheduler'
 import MinimalCalendar from './MinimalCalendar'
 import SuccessConfetti from './SuccessConfetti'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './PilotApplicationModal.css'
 
 export default function PilotApplicationModal({ onClose }) {
@@ -19,6 +20,16 @@ export default function PilotApplicationModal({ onClose }) {
   const [availableTimes, setAvailableTimes] = useState([])
   const [consultantId, setConsultantId] = useState(null)
   const [timesLoading, setTimesLoading] = useState(false)
+
+  // Facebook Pixel integration
+  const { events: fbEvents } = useFacebookPixel()
+
+  useEffect(() => {
+    // Track modal opening
+    fbEvents.START_APPLICATION({
+      source: 'pilot_application_modal'
+    })
+  }, [])
 
   // 6 PREGUNTAS ORIGINALES
   const questions = [
@@ -161,6 +172,12 @@ export default function PilotApplicationModal({ onClose }) {
 
   const handleNext = () => {
     if (step < questions.length - 1) {
+      // Track progress through questions
+      fbEvents.VIEW_CONTENT(`Pregunta ${step + 2}`, {
+        step: step + 2,
+        form_type: 'pilot_application',
+        question_id: questions[step + 1]?.id
+      })
       setStep(step + 1)
     } else if (step === questions.length - 1) {
       setStep(questions.length)
@@ -180,11 +197,23 @@ export default function PilotApplicationModal({ onClose }) {
 
     for (const [key, disqualifyValue] of Object.entries(disqualifyingAnswers)) {
       if (responses[key] === disqualifyValue) {
+        // Track disqualification
+        fbEvents.VIEW_CONTENT('Lead Descalificado', {
+          form_type: 'pilot_application',
+          disqualification_reason: key,
+          disqualifying_answer: disqualifyValue
+        })
         setQualificationResult('disqualified')
         return
       }
     }
 
+    // Track qualification
+    fbEvents.QUALIFIED_LEAD({
+      form_type: 'pilot_application',
+      monthly_consultations: responses.monthly_consultations,
+      budget_range: responses.ads_budget_range
+    })
     setQualificationResult('qualified')
   }
 
@@ -215,16 +244,27 @@ export default function PilotApplicationModal({ onClose }) {
         ...formData
       }
 
+      console.log('📤 Payload to send:', JSON.stringify(payload, null, 2));
+
+      // Track form submission
+      fbEvents.LEAD_GENERATED({
+        lead_type: 'pilot_application_initial',
+        monthly_consultations: responses.monthly_consultations,
+        budget_range: responses.ads_budget_range
+      })
+
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
       const response = await axios.post(`${API_BASE_URL}/leads/apply-pilot`, payload)
+
+      console.log('✅ Response:', response.data);
 
       if (response.data.disqualified) {
         setQualificationResult('disqualified')
       } else {
-        setStep('success')
+        setQualificationResult('qualified')
       }
     } catch (err) {
-      console.error('Error:', err)
+      console.error('❌ Error:', err)
       setError('Hubo un error al enviar el formulario. Intenta de nuevo.')
     } finally {
       setLoading(false)
@@ -269,6 +309,21 @@ export default function PilotApplicationModal({ onClose }) {
       if (response.data.disqualified) {
         setQualificationResult('disqualified')
       } else {
+        // Track successful meeting confirmation
+        fbEvents.SCHEDULE_APPOINTMENT({
+          scheduled_date: selectedDate,
+          scheduled_time: selectedTime,
+          lead_source: 'pilot_application',
+          monthly_consultations: responses.monthly_consultations
+        })
+        
+        fbEvents.COMPLETE_APPOINTMENT({
+          scheduled_date: selectedDate,
+          scheduled_time: selectedTime,
+          client_name: formData.name,
+          client_email: formData.email
+        })
+        
         setStep('success')
       }
     } catch (err) {
@@ -531,7 +586,7 @@ export default function PilotApplicationModal({ onClose }) {
               </button>
               <button
                 className="btn-primary"
-                onClick={handleNext}
+                onClick={step === questions.length ? handleSubmit : handleNext}
                 disabled={!canGoNext && step < questions.length}
                 style={{ opacity: loading ? 0.7 : 1 }}
               >

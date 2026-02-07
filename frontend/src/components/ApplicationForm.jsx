@@ -3,6 +3,7 @@ import axios from 'axios';
 import GoogleCalendarScheduler from './GoogleCalendarScheduler';
 import SuccessPage from './SuccessPage';
 import DisqualifiedPage from './DisqualifiedPage';
+import { FacebookPixelEvents, useFacebookPixel } from '../services/facebookPixel';
 import './ApplicationForm.css';
 
 export default function ApplicationForm() {
@@ -24,8 +25,18 @@ export default function ApplicationForm() {
   const [submitted, setSubmitted] = useState(false);
   const [disqualified, setDisqualified] = useState(false);
 
+  // Facebook Pixel integration
+  const { events: fbEvents } = useFacebookPixel();
+
   const handleNext = () => {
-    if (step < 7) setStep(step + 1);
+    if (step < 7) {
+      // Track progress through form
+      fbEvents.VIEW_CONTENT(`Formulario Paso ${step + 1}`, {
+        step: step + 1,
+        form_type: 'pilot_application'
+      });
+      setStep(step + 1);
+    }
   };
 
   const handlePrev = () => {
@@ -46,6 +57,13 @@ export default function ApplicationForm() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    
+    // Track form submission start
+    fbEvents.VIEW_CONTENT('Formulario Enviado', {
+      form_type: 'pilot_application',
+      step: 'submission_started'
+    });
+    
     try {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
       const response = await axios.post(`${API_BASE_URL}/leads/submit-application`, {
@@ -63,8 +81,30 @@ export default function ApplicationForm() {
       });
 
       if (response.data.disqualified) {
+        // Track disqualification
+        fbEvents.VIEW_CONTENT('Lead Descalificado', {
+          form_type: 'pilot_application',
+          disqualification_reason: 'criteria_not_met'
+        });
         setDisqualified(true);
       } else {
+        // Track successful lead generation
+        fbEvents.LEAD_GENERATED();
+        fbEvents.QUALIFIED_LEAD({
+          lead_type: 'pilot_application',
+          monthly_consultations: formData.monthly_consultations,
+          budget_range: formData.ads_budget_range
+        });
+        
+        // Track appointment scheduling
+        if (formData.scheduled_date && formData.scheduled_time) {
+          fbEvents.SCHEDULE_APPOINTMENT({
+            scheduled_date: formData.scheduled_date,
+            scheduled_time: formData.scheduled_time,
+            lead_source: 'pilot_application'
+          });
+        }
+        
         setSubmitted(true);
       }
     } catch (error) {

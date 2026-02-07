@@ -98,6 +98,7 @@
   border-left: 4px solid #3b82f6;
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   border: 1px solid rgba(59, 130, 246, 0.1);
   transition: all 0.3s ease;
 }
@@ -123,7 +124,7 @@
 }
 
 .about-section p {
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1.7;
   color: #cbd5e1;
   margin: 12px 0;
@@ -145,7 +146,7 @@
 
 .highlight-box p {
   margin: 0;
-  font-size: 14px;
+  font-size: 18px;
   color: #cbd5e1;
   line-height: 1.6;
 }
@@ -165,10 +166,11 @@
 }
 
 .experience-list li {
-  font-size: 14px;
+  font-size: 18px;
   color: #cbd5e1;
   padding-left: 20px;
   position: relative;
+  line-height: 1.6;
 }
 
 .experience-list li::before {
@@ -183,8 +185,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: 18px;
   color: #cbd5e1;
+  line-height: 1.6;
 }
 
 .benefits-list svg {
@@ -195,10 +198,11 @@
 .skills-list li,
 .working-list li,
 .criteria-list li {
-  font-size: 14px;
+  font-size: 18px;
   color: #cbd5e1;
   padding-left: 20px;
   position: relative;
+  line-height: 1.6;
 }
 
 .skills-list li::before,
@@ -318,7 +322,24 @@
   }
 
   .about-section h3 {
-    font-size: 18px;
+    font-size: 20px;
+  }
+
+  .about-section p {
+    font-size: 16px;
+  }
+
+  .highlight-box p,
+  .impact-box p {
+    font-size: 16px;
+  }
+
+  .experience-list li,
+  .benefits-list li,
+  .skills-list li,
+  .working-list li,
+  .criteria-list li {
+    font-size: 16px;
   }
 }
 
@@ -328,7 +349,7 @@
   }
 
   .about-header h2 {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .about-section {
@@ -337,6 +358,23 @@
   }
 
   .about-section h3 {
+    font-size: 18px;
+  }
+
+  .about-section p {
+    font-size: 16px;
+  }
+
+  .highlight-box p,
+  .impact-box p {
+    font-size: 16px;
+  }
+
+  .experience-list li,
+  .benefits-list li,
+  .skills-list li,
+  .working-list li,
+  .criteria-list li {
     font-size: 16px;
   }
 

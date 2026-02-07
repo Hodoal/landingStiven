@@ -4,6 +4,7 @@ import { FiX, FiArrowLeft, FiArrowRight, FiClock, FiCalendar } from 'react-icons
 import Calendar from './Calendar'
 import './BookingModal.css'
 import axios from 'axios'
+import { useFacebookPixel } from '../services/facebookPixel'
 
 function BookingModal({ onClose }) {
   const [step, setStep] = useState('form') // form, calendar, confirmation
@@ -22,7 +23,15 @@ function BookingModal({ onClose }) {
   const [allSlots, setAllSlots] = useState([]) // Nuevo: todos los slots del día
   const [consultantId, setConsultantId] = useState(null)
 
+  // Facebook Pixel integration
+  const { events: fbEvents } = useFacebookPixel()
+
   useEffect(() => {
+    // Track modal opening
+    fbEvents.START_BOOKING({
+      source: 'booking_modal'
+    })
+    
     // Cargar primer consultor disponible
     loadDefaultConsultant()
     
@@ -53,6 +62,11 @@ function BookingModal({ onClose }) {
   const handleFormSubmit = (e) => {
     e.preventDefault()
     if (formData.name && formData.email && formData.phone) {
+      // Track form completion
+      fbEvents.COMPLETE_BOOKING_FORM({
+        has_company: !!formData.company,
+        has_message: !!formData.message
+      })
       setStep('calendar')
     }
   }
@@ -61,6 +75,12 @@ function BookingModal({ onClose }) {
     setSelectedDate(date)
     setSelectedTime(null)
     setLoading(true)
+    
+    // Track date selection
+    fbEvents.VIEW_CONTENT('Selección de Fecha', {
+      selected_date: date.toISOString().split('T')[0]
+    })
+    
     try {
       // Llamar al backend para obtener horarios disponibles
       if (consultantId) {
@@ -119,6 +139,12 @@ function BookingModal({ onClose }) {
 
   const handleTimeSelect = (time) => {
     setSelectedTime(time)
+    
+    // Track time selection
+    fbEvents.VIEW_CONTENT('Selección de Hora', {
+      selected_time: time,
+      selected_date: selectedDate?.toISOString().split('T')[0]
+    })
   }
 
   const handleBooking = async () => {
@@ -141,6 +167,22 @@ function BookingModal({ onClose }) {
       })
       
       if (response.data.success) {
+        // Track successful booking confirmation
+        fbEvents.CONFIRM_BOOKING({
+          booking_date: localDateString,
+          booking_time: selectedTime,
+          client_name: formData.name,
+          client_email: formData.email,
+          has_company: !!formData.company
+        })
+        
+        // Track as Lead event (standard Facebook event)
+        fbEvents.LEAD_GENERATED({
+          lead_type: 'booking',
+          booking_date: localDateString,
+          booking_time: selectedTime
+        })
+        
         setStep('confirmation')
       } else {
         alert('Error: ' + (response.data.message || 'No se pudo agendar'))

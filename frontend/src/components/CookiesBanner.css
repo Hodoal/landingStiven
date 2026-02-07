@@ -138,11 +138,15 @@
   }
 
   .cookies-banner h4 {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .cookies-banner p {
-    font-size: 0.9rem;
+    font-size: 1rem;
+  }
+
+  .cookies-link {
+    font-size: 0.95rem;
   }
 
   .cookies-buttons {
@@ -156,7 +160,7 @@
     flex: 1;
     min-width: 100px;
     padding: 12px 20px;
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 }
 
@@ -168,12 +172,16 @@
   }
 
   .cookies-banner h4 {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 
   .cookies-banner p {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     line-height: 1.4;
+  }
+
+  .cookies-link {
+    font-size: 0.9rem;
   }
 
   .cookies-buttons {
@@ -186,7 +194,7 @@
     flex: 1;
     min-height: 40px;
     padding: 10px 16px;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 
   .btn-close {
@@ -207,12 +215,12 @@
   }
 
   .cookies-banner h4 {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .cookies-banner p,
   .cookies-link {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .cookies-buttons {
@@ -224,5 +232,6 @@
   .btn-reject {
     width: 100%;
     padding: 10px 16px;
+    font-size: 0.95rem;
   }
 }

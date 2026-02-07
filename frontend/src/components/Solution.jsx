@@ -1,8 +1,17 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './Solution.css'
 
 function Solution({ onBookClick }) {
+  const { events: fbEvents } = useFacebookPixel();
+
+  const handleBookClick = () => {
+    fbEvents.VIEW_CONTENT('solution_section', {
+      section: 'mejor_filtros'
+    });
+    onBookClick();
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -33,14 +42,14 @@ function Solution({ onBookClick }) {
         viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div variants={itemVariants} className="solution-header">
-          <p className="solution-intro">Más leads no solucionan esto.</p>
+          <p className="solution-intro">Más clientes potenciales no solucionan esto.</p>
           <h2 className="solution-title">Mejores Filtros, sí.</h2>
         </motion.div>
 
         <motion.button
           variants={itemVariants}
           className="solution-cta-top"
-          onClick={onBookClick}
+          onClick={handleBookClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -48,7 +57,7 @@ function Solution({ onBookClick }) {
         </motion.button>
 
         <motion.div variants={itemVariants} className="solution-message">
-          <p className="no-leads">No vendemos leads.</p>
+          <p className="no-leads">No vendemos clientes potenciales.</p>
           <p className="solution-value">
             Vendemos evaluaciones de caso que valen la pena
           </p>

@@ -16,26 +16,59 @@ const classifyLead = (monthlyConsultations) => {
 
 // POST: Enviar aplicación
 router.post('/submit-application', async (req, res) => {
+  // Establecer timeout extendido para operaciones de calendario y email
+  req.setTimeout(90000); // 90 segundos
+  
   try {
-    const { full_name, email, phone, monthly_consultations, scheduled_date, scheduled_time, ...otherData } = req.body;
+    const { full_name, email, phone, monthly_consultations, scheduled_date, scheduled_time, is_labor_lawyer, willing_to_invest_ads, ads_budget_range, ...otherData } = req.body;
 
-    // Clasificar el lead
-    const lead_type = classifyLead(monthly_consultations);
+    // Validaciones de descarte automático (mismo criterio que /apply-pilot)
+    const disqualificationReasons = [];
+
+    // 1. Filtro duro: debe ser abogado laboral
+    if (is_labor_lawyer === 'No' || is_labor_lawyer === false) {
+      disqualificationReasons.push('No es abogado laboralista');
+    }
+
+    // 2. Volumen mensual crítico: 0-10 descarta
+    if (monthly_consultations === '0–10') {
+      disqualificationReasons.push('Consultas mensuales muy bajas (0-10)');
+    }
+
+    // 3. Disposición a invertir en publicidad
+    if (willing_to_invest_ads === 'No' || willing_to_invest_ads === false) {
+      disqualificationReasons.push('No dispuesto a invertir en publicidad');
+    }
+
+    // 4. Presupuesto de publicidad: < 1M descarta
+    if (ads_budget_range === 'Menos de $1.000.000') {
+      disqualificationReasons.push('Presupuesto de publicidad insuficiente');
+    }
+
+    // Clasificar lead basado en consultas mensuales
+    let lead_type = null;
+    if (monthly_consultations === '10–30' || monthly_consultations === '30–60') {
+      lead_type = 'Ideal';
+    } else if (monthly_consultations === '60+') {
+      lead_type = 'Scale';
+    }
     
     // Determinar si califica
-    const isDisqualified = lead_type === null;
-    const status = isDisqualified ? 'disqualified' : 'applied';
+    const isDisqualified = disqualificationReasons.length > 0;
 
     const newLead = new Lead({
       full_name,
       email,
       phone,
       monthly_consultations,
-      lead_type,
-      status,
-      scheduled_date,
-      scheduled_time,
-      disqualified_reason: isDisqualified ? 'Menos de 10 consultas mensuales' : null,
+      is_labor_lawyer: is_labor_lawyer === 'Sí' || is_labor_lawyer === true,
+      willing_to_invest_ads: willing_to_invest_ads === 'Sí' || willing_to_invest_ads === true,
+      ads_budget_range,
+      lead_type: isDisqualified ? null : lead_type,
+      status: isDisqualified ? 'No califica' : 'applied',
+      scheduled_date: !isDisqualified ? scheduled_date : null,
+      scheduled_time: !isDisqualified ? scheduled_time : null,
+      disqualified_reason: isDisqualified ? disqualificationReasons.join(', ') : null,
       disqualified_at: isDisqualified ? new Date() : null,
       ...otherData
     });
@@ -78,6 +111,16 @@ router.post('/submit-application', async (req, res) => {
 // GET: Obtener todos los leads para admin
 router.get('/admin/leads', async (req, res) => {
   try {
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient('mongodb://localhost:27017/stivenads-production', {
+      maxPoolSize: 10,
+      socketTimeoutMS: 120000
+    });
+    
+    await client.connect();
+    const db = client.db('stivenads-production');
+    const leadsCollection = db.collection('leads');
+    
     const { status } = req.query;
     let query = {};
     
@@ -85,7 +128,9 @@ router.get('/admin/leads', async (req, res) => {
       query.status = status;
     }
 
-    const leads = await Lead.find(query).sort({ createdAt: -1 });
+    const leads = await leadsCollection.find(query).sort({ createdAt: -1 }).toArray();
+    
+    await client.close();
     
     res.json({
       success: true,
@@ -103,24 +148,36 @@ router.get('/admin/leads', async (req, res) => {
 // GET: Estadísticas
 router.get('/admin/stats', async (req, res) => {
   try {
-    const totalLeads = await Lead.countDocuments();
-    const soldLeads = await Lead.countDocuments({ status: 'sold' });
-    const appliedLeads = await Lead.countDocuments({ status: 'applied' });
-    const disqualifiedLeads = await Lead.countDocuments({ status: 'disqualified' });
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient('mongodb://localhost:27017/stivenads-production', {
+      maxPoolSize: 10,
+      socketTimeoutMS: 120000
+    });
+    
+    await client.connect();
+    const db = client.db('stivenads-production');
+    const leadsCollection = db.collection('leads');
+    
+    const totalLeads = await leadsCollection.countDocuments();
+    const soldLeads = await leadsCollection.countDocuments({ status: 'sold' });
+    const appliedLeads = await leadsCollection.countDocuments({ status: 'applied' });
+    const disqualifiedLeads = await leadsCollection.countDocuments({ status: 'No califica' });
 
     // Calcular ingresos
-    const sales = await Lead.find({ status: 'sold' });
+    const sales = await leadsCollection.find({ status: 'sold' }).toArray();
     const totalIncome = sales.reduce((sum, lead) => sum + (lead.sale_amount || 0), 0);
     const averageIncome = soldLeads > 0 ? totalIncome / soldLeads : 0;
 
     // Ingresos este mes
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthSales = await Lead.find({
+    const monthSales = await leadsCollection.find({
       status: 'sold',
       sold_at: { $gte: monthStart }
-    });
+    }).toArray();
     const incomeThisMonth = monthSales.reduce((sum, lead) => sum + (lead.sale_amount || 0), 0);
+
+    await client.close();
 
     res.json({
       success: true,
@@ -246,6 +303,9 @@ router.delete('/:id', async (req, res) => {
 
 // POST: Aplicar a la prueba piloto (nueva lógica de validación)
 router.post('/apply-pilot', async (req, res) => {
+  // Establecer timeout extendido para operaciones de calendario y email
+  req.setTimeout(90000); // 90 segundos
+  
   try {
     console.log('📥 /apply-pilot received:', JSON.stringify(req.body, null, 2));
     
@@ -271,27 +331,31 @@ router.post('/apply-pilot', async (req, res) => {
       });
     }
 
+    // Convertir valores a booleanos/strings consistentes
+    const isLaborLawyer = is_labor_lawyer === 'Sí' || is_labor_lawyer === true;
+    const willingToInvest = willing_to_invest_ads === 'Sí' || willing_to_invest_ads === true;
+
     // Validaciones de descarte automático
     const disqualificationReasons = [];
 
     // 1. Filtro duro: debe ser abogado laboral
-    if (is_labor_lawyer === 'No' || is_labor_lawyer === false) {
-      disqualificationReasons.push('Not a labor lawyer');
+    if (!isLaborLawyer) {
+      disqualificationReasons.push('No es abogado laboralista');
     }
 
     // 2. Volumen mensual crítico: 0-10 descarta
     if (monthly_consultations === '0–10') {
-      disqualificationReasons.push('Monthly consultations too low');
+      disqualificationReasons.push('Consultas mensuales muy bajas (0-10)');
     }
 
     // 3. Disposición a invertir en publicidad
-    if (willing_to_invest_ads === 'No' || willing_to_invest_ads === false) {
-      disqualificationReasons.push('Not willing to invest in ads');
+    if (!willingToInvest) {
+      disqualificationReasons.push('No dispuesto a invertir en publicidad');
     }
 
     // 4. Presupuesto de publicidad: < 1M descarta
     if (ads_budget_range === 'Menos de $1.000.000') {
-      disqualificationReasons.push('Ads budget too low');
+      disqualificationReasons.push('Presupuesto de publicidad insuficiente');
     }
 
     // Clasificar lead según volumen mensual
@@ -309,14 +373,14 @@ router.post('/apply-pilot', async (req, res) => {
       full_name: name,
       email,
       phone,
-      is_labor_lawyer: is_labor_lawyer === 'Sí' || is_labor_lawyer === true,
+      is_labor_lawyer: isLaborLawyer,
       works_quota_litis,
       monthly_consultations,
-      willing_to_invest_ads: willing_to_invest_ads === 'Sí' || willing_to_invest_ads === true,
+      willing_to_invest_ads: willingToInvest,
       ads_budget_range,
       main_problem,
       lead_type: isDisqualified ? null : lead_type,
-      status: isDisqualified ? 'disqualified' : 'applied',
+      status: isDisqualified ? 'No califica' : 'applied',
       disqualified_reason: isDisqualified ? disqualificationReasons.join(', ') : null,
       disqualified_at: isDisqualified ? new Date() : null,
     };
@@ -331,13 +395,78 @@ router.post('/apply-pilot', async (req, res) => {
       // Calendar event creation happens in background
     }
 
-    const newLead = new Lead(leadData);
-    console.log('💾 Attempting to save lead with data:', JSON.stringify(leadData, null, 2));
-    
+    // Guardar o actualizar lead usando MongoClient nativo
     let savedLead;
     try {
-      savedLead = await newLead.save();
-      console.log('✅ Lead saved successfully:', savedLead._id);
+      console.log('💾 Usando MongoClient nativo para Lead...');
+      
+      // Get MongoDB client
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient('mongodb://localhost:27017/stivenads-production', {
+        maxPoolSize: 10,
+        socketTimeoutMS: 120000
+      });
+      
+      await client.connect();
+      const db = client.db('stivenads-production');
+      const leadsCollection = db.collection('leads');
+      
+      // Create a lead document
+      const leadDoc = {
+        full_name: name,
+        email,
+        phone,
+        is_labor_lawyer: isLaborLawyer,
+        works_quota_litis,
+        monthly_consultations,
+        willing_to_invest_ads: willingToInvest,
+        ads_budget_range,
+        main_problem,
+        lead_type: isDisqualified ? null : lead_type,
+        status: isDisqualified ? 'No califica' : 'applied',
+        scheduled_date: !isDisqualified ? scheduled_date : null,
+        scheduled_time: !isDisqualified ? scheduled_time : null,
+        disqualified_reason: isDisqualified ? disqualificationReasons.join(', ') : null,
+        disqualified_at: isDisqualified ? new Date() : null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      // Insert the lead
+      const result = await leadsCollection.insertOne(leadDoc);
+      console.log('✅ Lead created successfully:', result.insertedId);
+      
+      // Set savedLead with the MongoDB result
+      savedLead = {
+        _id: result.insertedId,
+        ...leadDoc
+      };
+
+      // If the lead is not disqualified, also create a booking
+      if (!isDisqualified) {
+        try {
+          const bookingsCollection = db.collection('bookings');
+          const bookingDoc = {
+            leadId: result.insertedId,
+            clientName: name,
+            email,
+            phone,
+            date: scheduled_date,
+            time: scheduled_time,
+            status: 'No Confirmado',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          await bookingsCollection.insertOne(bookingDoc);
+          console.log('✅ Booking created successfully for lead:', result.insertedId);
+        } catch (bookingError) {
+          console.error('⚠️  Error creating booking:', bookingError.message);
+        }
+      }
+      
+      await client.close();
+    
     } catch (dbError) {
       console.warn('⚠️  MongoDB not available, creating mock lead:', dbError.message);
       // Crear un lead mock para continuar el flujo sin base de datos
@@ -349,7 +478,8 @@ router.post('/apply-pilot', async (req, res) => {
       console.log('✅ Mock lead created:', savedLead._id);
     }
 
-    // ⚡ RESPOND IMMEDIATELY - Process background tasks asynchronously
+    // ⚡ RESPOND with results - Process background tasks asynchronously
+    console.log('📤 Respondiendo al cliente con resultado...');
     res.json({
       success: true,
       disqualified: isDisqualified,
@@ -360,81 +490,105 @@ router.post('/apply-pilot', async (req, res) => {
     });
 
     // 🔄 Process calendar and emails in background (don't await, don't block response)
-    if (scheduled_date && scheduled_time && !isDisqualified) {
-      setImmediate(async () => {
+    setImmediate(async () => {
+      try {
+        console.log('🔄 Background processing started for lead:', savedLead._id);
+        
+        // SIEMPRE enviar email de bienvenida
         try {
-          // Try to create calendar event if not already created
-          let meetLink = savedLead.googleMeetLink || 'https://meet.google.com/';
-          
-          if (!savedLead.googleCalendarEventId) {
-            try {
-              const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
-              const calendarEvent = await calendarService.createGoogleCalendarEvent({
-                title: `Reunión Piloto - ${name}`,
-                description: `Reunión piloto 30 días con ${name}. Email: ${email}, Teléfono: ${phone}`,
-                startTime,
-                attendeeEmail: email
-              });
-              
-              // Update meet link with the one from Google Calendar
-              meetLink = calendarEvent.meetLink;
-              
-              // Update lead with calendar event ID and meet link (only if saved to DB)
-              if (!savedLead._id.toString().startsWith('mock-')) {
-                try {
-                  await Lead.findByIdAndUpdate(
-                    savedLead._id,
-                    { 
-                      googleCalendarEventId: calendarEvent.eventId,
-                      googleMeetLink: calendarEvent.meetLink
-                    }
-                  );
-                  console.log('✅ Calendar event ID and Meet link updated in DB');
-                  console.log('📅 Event ID:', calendarEvent.eventId);
-                  console.log('🔗 Meet Link:', calendarEvent.meetLink);
-                } catch (updateError) {
-                  console.warn('⚠️  Could not update lead in DB:', updateError.message);
-                }
-              }
-              console.log('✅ Calendar event created in background');
-            } catch (calendarError) {
-              console.error('⚠️  Background: Error creating calendar event:', calendarError.message);
-            }
+          if (!isDisqualified) {
+            // Lead calificado - enviar email positivo
+            console.log('📧 Sending welcome email to qualified lead...');
+            await emailService.sendPilotProgramConfirmation({
+              clientName: name,
+              clientEmail: email,
+              clientPhone: phone,
+              scheduledDate: scheduled_date || null,
+              scheduledTime: scheduled_time || null,
+              meetLink: scheduled_date && scheduled_time ? 'https://meet.google.com/' : null
+            });
+            console.log('✅ Background: Welcome email sent to qualified lead');
+          } else {
+            // Lead disqualificado - enviar email explicando
+            console.log('📧 Sending disqualification email...');
+            await emailService.sendDisqualificationEmail({
+              clientName: name,
+              clientEmail: email,
+              disqualificationReasons
+            });
+            console.log('✅ Background: Disqualification email sent');
           }
-
-          // Send confirmation emails with the correct meet link
-
-          // Send email to client
-          await emailService.sendPilotProgramConfirmation({
-            clientName: name,
-            clientEmail: email,
-            clientPhone: phone,
-            scheduledDate: scheduled_date,
-            scheduledTime: scheduled_time,
-            meetLink: meetLink
-          });
-          console.log('✅ Background: Client confirmation email sent to:', email);
-
-          // Send email to admin
-          const adminEmail = process.env.EMAIL_USER || 'admin@stivenads.com';
-          await emailService.sendPilotProgramNotificationToAdmin({
-            clientName: name,
-            clientEmail: email,
-            clientPhone: phone,
-            scheduledDate: scheduled_date,
-            scheduledTime: scheduled_time,
-            meetLink: meetLink,
-            leadType: lead_type,
-            budgetRange: ads_budget_range,
-            mainProblems: main_problem,
-            adminEmail: adminEmail
-          });
-          console.log('✅ Background: Admin notification email sent to:', adminEmail);
-        } catch (error) {
-          console.error('⚠️  Error in background processing:', error.message);
+        } catch (emailError) {
+          console.error('⚠️ Error sending initial email:', emailError.message);
         }
-      });
-    }
+        
+        // Luego procesar calendario y emails si hay fecha programada
+        if (scheduled_date && scheduled_time && !isDisqualified) {
+          try {
+            let meetLink = savedLead.googleMeetLink || 'https://meet.google.com/';
+            
+            if (!savedLead.googleCalendarEventId) {
+              try {
+                const startTime = new Date(`${scheduled_date}T${scheduled_time}`);
+                const calendarEvent = await calendarService.createGoogleCalendarEvent({
+                  title: `Reunión Piloto - ${name}`,
+                  description: `Reunión piloto 30 días con ${name}. Email: ${email}, Teléfono: ${phone}`,
+                  startTime,
+                  attendeeEmail: email
+                });
+                
+                meetLink = calendarEvent.meetLink;
+                
+                // Update lead with calendar event ID if it was saved
+                if (!savedLead._id.toString().startsWith('temp-') && !savedLead._id.toString().startsWith('mock-')) {
+                  try {
+                    await Lead.findByIdAndUpdate(
+                      savedLead._id,
+                      { 
+                        googleCalendarEventId: calendarEvent.eventId,
+                        googleMeetLink: calendarEvent.meetLink
+                      }
+                    );
+                    console.log('✅ Background: Calendar event ID updated in DB');
+                  } catch (updateError) {
+                    console.warn('⚠️  Could not update lead in DB:', updateError.message);
+                  }
+                }
+                console.log('✅ Background: Calendar event created');
+              } catch (calendarError) {
+                console.error('⚠️  Background: Error creating calendar event:', calendarError.message);
+              }
+            }
+
+            // Send admin email about scheduled meeting
+            try {
+              const adminEmail = process.env.EMAIL_USER || 'admin@stivenads.com';
+              await emailService.sendPilotProgramNotificationToAdmin({
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                scheduledDate: scheduled_date,
+                scheduledTime: scheduled_time,
+                meetLink: meetLink,
+                leadType: lead_type,
+                budgetRange: ads_budget_range,
+                mainProblems: main_problem,
+                adminEmail: adminEmail
+              });
+              console.log('✅ Background: Admin email sent');
+            } catch (emailError) {
+              console.error('⚠️  Background: Error sending admin email:', emailError.message);
+            }
+          } catch (error) {
+            console.error('⚠️  Background: Error in calendar/email processing:', error.message);
+          }
+        }
+        
+        console.log('✅ Background processing completed for lead:', savedLead._id);
+      } catch (error) {
+        console.error('❌ Critical error in background processing:', error.message);
+      }
+    });
   } catch (error) {
     console.error('❌ Error in /apply-pilot:');
     console.error('Error name:', error.name);

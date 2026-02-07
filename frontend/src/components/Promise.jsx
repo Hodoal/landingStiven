@@ -2,10 +2,19 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { FiCheck, FiDollarSign, FiClipboard } from 'react-icons/fi'
 import { AiFillStar } from 'react-icons/ai'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './Promise.css'
 import Logo from './Logo'
 
 function Promise({ onBookClick }) {
+  const { events: fbEvents } = useFacebookPixel();
+
+  const handleBookClick = () => {
+    fbEvents.VIEW_CONTENT('promise_section', {
+      section: 'promise_and_pilot'
+    });
+    onBookClick();
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -83,7 +92,7 @@ function Promise({ onBookClick }) {
         <motion.button
           variants={itemVariants}
           className="promise-cta"
-          onClick={onBookClick}
+          onClick={handleBookClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -145,7 +154,7 @@ function Promise({ onBookClick }) {
           <motion.button
             variants={itemVariants}
             className="promise-cta"
-            onClick={onBookClick}
+            onClick={handleBookClick}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

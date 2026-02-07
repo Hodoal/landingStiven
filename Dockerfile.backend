@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# ========================================
+# 🐳 DOCKERFILE - STIVENADS BACKEND
+# ========================================
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copiar package.json y package-lock.json
+COPY backend/package*.json ./
+
+# Instalar dependencias
+RUN npm ci --only=production
+
+# Copiar código del backend
+COPY backend/ ./
+
+# Crear usuario no-root para seguridad
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
+USER nodejs
+
+# Puerto por defecto (se puede sobrescribir)
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Comando de inicio
+CMD ["npm", "start"]

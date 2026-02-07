@@ -1,16 +1,25 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiCalendar } from 'react-icons/fi'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './FloatingButton.css'
 
 function FloatingButton({ onClick }) {
   const [showTooltip, setShowTooltip] = useState(false)
+  const { events: fbEvents } = useFacebookPixel()
+
+  const handleClick = () => {
+    fbEvents.CTA_CLICK('floating_button', {
+      cta_text: 'Botón flotante de agendamiento'
+    })
+    onClick()
+  }
 
   return (
     <div className="floating-button-container">
       <motion.button
         className="floating-button"
-        onClick={onClick}
+        onClick={handleClick}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         whileHover={{ scale: 1.15 }}

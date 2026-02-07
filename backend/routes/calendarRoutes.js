@@ -2,19 +2,110 @@ const express = require('express');
 const router = express.Router();
 const { google } = require('googleapis');
 const calendarService = require('../services/calendarService');
+const { tokenManager } = require('../services/tokenManager');
+const { autoTokenRefresh } = require('../services/autoTokenRefresh');
+const { secureGoogleCalendar } = require('../services/secureGoogleCalendar');
+const { ensureValidToken, requireValidToken, logCalendarOperation } = require('../middleware/tokenMiddleware');
 
-// Placeholder for calendar routes - can be extended for additional calendar management
-router.get('/status', (req, res) => {
+// Calendar service status with token information
+router.get('/status', logCalendarOperation('STATUS_CHECK'), (req, res) => {
+  const tokenStatus = tokenManager.getTokenStatus();
+  
   res.json({ 
     status: 'Calendar service is running',
     integratedWith: 'Google Calendar',
-    hasRefreshToken: !!process.env.GOOGLE_REFRESH_TOKEN,
-    mode: process.env.NODE_ENV === 'development' ? 'mock' : 'production'
+    mode: process.env.NODE_ENV === 'development' ? 'mock' : 'production',
+    tokenInfo: {
+      hasRefreshToken: tokenStatus.hasRefreshToken,
+      hasAccessToken: tokenStatus.hasAccessToken,
+      isValid: tokenStatus.isValid,
+      expiryDate: tokenStatus.expiryDateLocal,
+      timeUntilExpiry: tokenStatus.timeUntilExpiry ? Math.round(tokenStatus.timeUntilExpiry / 1000 / 60) + ' minutes' : null,
+      refreshInProgress: tokenStatus.refreshInProgress
+    },
+    isConfigured: calendarService.isGoogleCalendarConfigured()
   });
 });
 
-// GET auth URL for OAuth
-router.get('/auth-url', (req, res) => {
+// Get detailed token status
+router.get('/token/status', logCalendarOperation('TOKEN_STATUS'), (req, res) => {
+  const tokenStatus = tokenManager.getTokenStatus();
+  
+  res.json({
+    success: true,
+    tokenStatus: {
+      ...tokenStatus,
+      timeUntilExpiryFormatted: tokenStatus.timeUntilExpiry ? {
+        total_minutes: Math.round(tokenStatus.timeUntilExpiry / 1000 / 60),
+        hours: Math.floor(tokenStatus.timeUntilExpiry / 1000 / 60 / 60),
+        minutes: Math.floor((tokenStatus.timeUntilExpiry / 1000 / 60) % 60)
+      } : null
+    },
+    isConfigured: calendarService.isGoogleCalendarConfigured()
+  });
+});
+
+// Force token refresh
+router.post('/token/refresh', logCalendarOperation('FORCE_REFRESH'), async (req, res) => {
+  try {
+    console.log('🔄 Manual token refresh requested');
+    
+    const success = await tokenManager.forceRefresh();
+    const tokenStatus = tokenManager.getTokenStatus();
+    
+    if (success) {
+      res.json({
+        success: true,
+        message: 'Token refreshed successfully',
+        tokenStatus
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'Token refresh failed',
+        tokenStatus
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error during token refresh',
+      error: error.message
+    });
+  }
+});
+
+// Test calendar connectivity with automatic token management
+router.get('/test', logCalendarOperation('CONNECTIVITY_TEST'), async (req, res) => {
+  try {
+    console.log('🧪 Testing calendar connectivity with automatic token management');
+    
+    // Test by listing today's events
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const events = await secureGoogleCalendar.listEvents(
+      today.toISOString(),
+      tomorrow.toISOString()
+    );
+    
+    res.json({
+      success: true,
+      message: 'Calendar connectivity test successful',
+      eventsFoundToday: events.length,
+      tokenStatus: tokenManager.getTokenStatus()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Calendar connectivity test failed',
+      error: error.message,
+      tokenStatus: tokenManager.getTokenStatus()
+    });
+  }
+});
+router.get('/auth-url', logCalendarOperation('AUTH_URL_REQUEST'), (req, res) => {
   try {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
@@ -49,7 +140,7 @@ router.get('/auth-url', (req, res) => {
 });
 
 // GET auth - Redirect to OAuth URL directly
-router.get('/auth', async (req, res) => {
+router.get('/auth', logCalendarOperation('AUTH_REDIRECT'), async (req, res) => {
   try {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
@@ -81,7 +172,7 @@ router.get('/auth', async (req, res) => {
 });
 
 // GET callback from Google OAuth
-router.get('/auth/callback', async (req, res) => {
+router.get('/auth/callback', logCalendarOperation('OAUTH_CALLBACK'), async (req, res) => {
   try {
     const { code } = req.query;
 
@@ -123,6 +214,11 @@ router.get('/auth/callback', async (req, res) => {
     fs.writeFileSync(envPath, envContent);
     process.env.GOOGLE_REFRESH_TOKEN = tokens.refresh_token;
 
+    // Initialize TokenManager with new credentials
+    const { tokenManager } = require('../services/tokenManager');
+    tokenManager.oauth2Client.setCredentials(tokens);
+    console.log('✓ TokenManager initialized with new credentials');
+
     // Send success response
     res.send(`
       <html>
@@ -161,6 +257,12 @@ router.get('/auth/callback', async (req, res) => {
 
   } catch (error) {
     console.error('Error in OAuth callback:', error);
+    if (error.response && error.response.data) {
+      console.error('OAuth provider response:', JSON.stringify(error.response.data));
+    }
+
+    const detailedMessage = error.response?.data?.error_description || error.response?.data?.error || error.message || 'Unknown error during OAuth callback';
+
     res.status(500).send(`
       <html>
         <head>
@@ -174,7 +276,7 @@ router.get('/auth/callback', async (req, res) => {
         <body>
           <div class="container">
             <h1>✗ Error de Autorización</h1>
-            <p>${error.message}</p>
+            <p>${detailedMessage}</p>
             <p><a href="http://localhost:5173">Volver a intentar</a></p>
           </div>
         </body>
@@ -272,4 +374,59 @@ router.get('/available-dates', async (req, res) => {
   }
 });
 
+// ============================================
+// AUTO TOKEN REFRESH ENDPOINTS
+// ============================================
+
+// Get auto token refresh service status
+router.get('/auto-refresh/status', logCalendarOperation('AUTO_REFRESH_STATUS'), (req, res) => {
+  const refreshStatus = autoTokenRefresh.getStatus();
+  const tokenStatus = tokenManager.getTokenStatus();
+  
+  res.json({
+    success: true,
+    autoRefreshService: {
+      ...refreshStatus,
+      tokenStatus
+    }
+  });
+});
+
+// Start auto token refresh service
+router.post('/auto-refresh/start', logCalendarOperation('AUTO_REFRESH_START'), (req, res) => {
+  try {
+    autoTokenRefresh.start();
+    res.json({
+      success: true,
+      message: 'Auto token refresh service started',
+      status: autoTokenRefresh.getStatus()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to start auto token refresh service',
+      error: error.message
+    });
+  }
+});
+
+// Stop auto token refresh service
+router.post('/auto-refresh/stop', logCalendarOperation('AUTO_REFRESH_STOP'), (req, res) => {
+  try {
+    autoTokenRefresh.stop();
+    res.json({
+      success: true,
+      message: 'Auto token refresh service stopped',
+      status: autoTokenRefresh.getStatus()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to stop auto token refresh service',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
+

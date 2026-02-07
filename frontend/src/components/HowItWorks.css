@@ -41,6 +41,7 @@
   cursor: pointer;
   box-sizing: border-box;
   min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .step-card:hover {
@@ -62,7 +63,7 @@
 
 .step-description {
   color: #e2e8f0;
-  font-size: 1.1rem;
+  font-size: 18px;
   line-height: 1.6;
   margin: 15px 0;
   font-weight: 600;
@@ -82,8 +83,13 @@
   align-items: center;
   gap: 12px;
   color: #e2e8f0;
-  font-size: 1.05rem;
+  font-size: 18px;
   font-weight: 600;
+}
+
+.step-item span {
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .step-check-icon {
@@ -93,7 +99,7 @@
 
 .step-subtitle {
   color: #a78bfa;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-style: italic;
   margin: 15px 0 0 0;
 }
@@ -108,7 +114,7 @@
 .condition {
   padding: 12px 16px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   text-align: center;
 }
@@ -131,7 +137,7 @@
   }
 
   .how-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .steps-container {
@@ -144,15 +150,27 @@
   }
 
   .step-title {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
   .step-description {
-    font-size: 0.9rem;
+    font-size: 19px;
   }
 
   .step-item {
-    font-size: 0.85rem;
+    font-size: 19px;
+  }
+
+  .step-item span {
+    font-size: 19px;
+  }
+
+  .step-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .condition {
+    font-size: 1rem;
   }
 
   .step-conditions {
@@ -166,7 +184,7 @@
   }
 
   .how-title {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .steps-container {
@@ -179,14 +197,26 @@
   }
 
   .step-title {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   .step-description {
-    font-size: 0.85rem;
+    font-size: 20px;
   }
 
   .step-item {
-    font-size: 0.8rem;
+    font-size: 20px;
+  }
+
+  .step-item span {
+    font-size: 20px;
+  }
+
+  .step-subtitle {
+    font-size: 1rem;
+  }
+
+  .condition {
+    font-size: 0.95rem;
   }
 }

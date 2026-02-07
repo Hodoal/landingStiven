@@ -16,6 +16,14 @@ export default function Estadisticas() {
     meetingCompletionRate: 0,
     averageTicket: 0
   });
+  const [changes, setChanges] = useState({
+    totalLeadsChange: 0,
+    qualifiedLeadsChange: 0,
+    scheduledMeetingsChange: 0,
+    completedMeetingsChange: 0,
+    missedMeetingsChange: 0,
+    soldClientsChange: 0
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -48,14 +56,49 @@ export default function Estadisticas() {
   };
 
   const calculateStats = (leads, bookings) => {
-    // Calculate statistics
-    const qualifiedLeads = leads.filter(l => l.lead_type === 'Ideal' || l.lead_type === 'Scale');
+    // Calculate statistics based on current data and states
+    // Primero separar por estado para evitar duplicados
+    const disqualifiedLeads = leads.filter(l => l.status === 'No califica');
     const soldLeads = leads.filter(l => l.status === 'sold');
+    
+    // Leads calificados: tienen tipo Ideal/Scale Y no están descalificados ni vendidos
+    const qualifiedLeads = leads.filter(l => 
+      (l.lead_type === 'Ideal' || l.lead_type === 'Scale') && 
+      l.status !== 'No califica' && 
+      l.status !== 'sold'
+    );
+    
+    // Total del sistema: mismo filtro que ClientsList para consistencia
+    // Contar SOLO los leads que aparecen en el panel de Clientes Potenciales
+    // Esto es: leads calificados (Ideal o Scale) que NO están descalificados
+    const totalSystemLeads = qualifiedLeads.length;
+    
     const totalRevenue = soldLeads.reduce((sum, lead) => sum + (lead.sale_amount || 0), 0);
     
     const scheduledBookings = bookings.filter(b => b.status === 'confirmed' || b.status === 'No Confirmado');
     const completedBookings = bookings.filter(b => b.status === 'meeting-completed');
     const missedBookings = bookings.filter(b => b.status === 'cancelled');
+
+    // Calculate percentages based on states and totals
+    const qualificationRate = totalSystemLeads > 0 
+      ? ((qualifiedLeads.length / totalSystemLeads) * 100).toFixed(1)
+      : 0;
+    
+    const disqualificationRate = totalSystemLeads > 0
+      ? ((disqualifiedLeads.length / totalSystemLeads) * 100).toFixed(1)
+      : 0;
+    
+    const scheduledRate = qualifiedLeads.length > 0
+      ? ((scheduledBookings.length / qualifiedLeads.length) * 100).toFixed(1)
+      : 0;
+    
+    const completionRate = scheduledBookings.length > 0
+      ? ((completedBookings.length / scheduledBookings.length) * 100).toFixed(1)
+      : 0;
+    
+    const missedRate = scheduledBookings.length > 0
+      ? ((missedBookings.length / scheduledBookings.length) * 100).toFixed(1)
+      : 0;
 
     const conversionRate = qualifiedLeads.length > 0 
       ? ((soldLeads.length / qualifiedLeads.length) * 100).toFixed(2)
@@ -70,7 +113,7 @@ export default function Estadisticas() {
       : 0;
 
     setStats({
-      totalLeads: leads.length,
+      totalLeads: totalSystemLeads,
       qualifiedLeads: qualifiedLeads.length,
       scheduledMeetings: scheduledBookings.length,
       completedMeetings: completedBookings.length,
@@ -80,6 +123,15 @@ export default function Estadisticas() {
       conversionRate,
       meetingCompletionRate,
       averageTicket
+    });
+
+    setChanges({
+      totalLeadsChange: totalSystemLeads, // Total count for display
+      qualifiedLeadsChange: qualificationRate, // % of qualified leads
+      scheduledMeetingsChange: scheduledRate, // % of qualified that scheduled
+      completedMeetingsChange: completionRate, // % of scheduled that completed
+      missedMeetingsChange: missedRate, // % of scheduled that missed
+      soldClientsChange: conversionRate // % of qualified that converted
     });
   };
 
@@ -121,22 +173,23 @@ export default function Estadisticas() {
         <div className="stat-card">
           <div className="stat-card-content">
             <div className="stat-card-header">
-              <span className="stat-label">Total de Leads</span>
-              <span className="stat-change positive">
-                <FiArrowUp size={14} /> 12%
+              <span className="stat-label">Total de Clientes Potenciales</span>
+              <span className="stat-change neutral">
+                Total en sistema
               </span>
             </div>
             <p className="stat-value">{stats.totalLeads}</p>
-            <p className="stat-description">Leads registrados</p>
+            <p className="stat-description">Clientes potenciales registrados</p>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="stat-card-content">
             <div className="stat-card-header">
-              <span className="stat-label">Leads Calificados</span>
-              <span className="stat-change positive">
-                <FiArrowUp size={14} /> 8%
+              <span className="stat-label">Clientes Potenciales Calificados</span>
+              <span className={`stat-change ${parseFloat(changes.qualifiedLeadsChange) >= 50 ? 'positive' : 'negative'}`}>
+                {parseFloat(changes.qualifiedLeadsChange) >= 50 ? <FiArrowUp size={14} /> : <FiArrowDown size={14} />}
+                {' '}{changes.qualifiedLeadsChange}% del total
               </span>
             </div>
             <p className="stat-value">{stats.qualifiedLeads}</p>
@@ -148,8 +201,9 @@ export default function Estadisticas() {
           <div className="stat-card-content">
             <div className="stat-card-header">
               <span className="stat-label">Reuniones Agendadas</span>
-              <span className="stat-change positive">
-                <FiArrowUp size={14} /> 5%
+              <span className={`stat-change ${parseFloat(changes.scheduledMeetingsChange) >= 70 ? 'positive' : 'negative'}`}>
+                {parseFloat(changes.scheduledMeetingsChange) >= 70 ? <FiArrowUp size={14} /> : <FiArrowDown size={14} />}
+                {' '}{changes.scheduledMeetingsChange}% agendó
               </span>
             </div>
             <p className="stat-value">{stats.scheduledMeetings}</p>
@@ -161,8 +215,9 @@ export default function Estadisticas() {
           <div className="stat-card-content">
             <div className="stat-card-header">
               <span className="stat-label">Reuniones Completadas</span>
-              <span className="stat-change negative">
-                <FiArrowDown size={14} /> 2%
+              <span className={`stat-change ${parseFloat(changes.completedMeetingsChange) >= 80 ? 'positive' : 'negative'}`}>
+                {parseFloat(changes.completedMeetingsChange) >= 80 ? <FiArrowUp size={14} /> : <FiArrowDown size={14} />}
+                {' '}{changes.completedMeetingsChange}% completó
               </span>
             </div>
             <p className="stat-value">{stats.completedMeetings}</p>
@@ -174,8 +229,9 @@ export default function Estadisticas() {
           <div className="stat-card-content">
             <div className="stat-card-header">
               <span className="stat-label">Reuniones No Realizadas</span>
-              <span className="stat-change negative">
-                <FiArrowDown size={14} /> 3%
+              <span className={`stat-change ${parseFloat(changes.missedMeetingsChange) <= 15 ? 'positive' : 'negative'}`}>
+                {parseFloat(changes.missedMeetingsChange) <= 15 ? <FiArrowDown size={14} /> : <FiArrowUp size={14} />}
+                {' '}{changes.missedMeetingsChange}% no asistió
               </span>
             </div>
             <p className="stat-value">{stats.missedMeetings}</p>
@@ -187,8 +243,9 @@ export default function Estadisticas() {
           <div className="stat-card-content">
             <div className="stat-card-header">
               <span className="stat-label">Clientes Confirmados</span>
-              <span className="stat-change positive">
-                <FiArrowUp size={14} /> 15%
+              <span className={`stat-change ${parseFloat(changes.soldClientsChange) >= 10 ? 'positive' : 'negative'}`}>
+                {parseFloat(changes.soldClientsChange) >= 10 ? <FiArrowUp size={14} /> : <FiArrowDown size={14} />}
+                {' '}{changes.soldClientsChange}% conversión
               </span>
             </div>
             <p className="stat-value">{stats.soldClients}</p>
@@ -212,7 +269,7 @@ export default function Estadisticas() {
             <span className="metric-title">Tasa de Conversión</span>
           </div>
           <p className="metric-value">{stats.conversionRate}%</p>
-          <p className="metric-description">Leads convertidos a clientes</p>
+          <p className="metric-description">Clientes potenciales convertidos a clientes</p>
         </div>
 
         <div className="metric-card">

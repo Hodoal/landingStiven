@@ -2,9 +2,18 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { MdCheckCircle, MdCancel } from 'react-icons/md'
 import { FiCheck, FiX } from 'react-icons/fi'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './SystemQualification.css'
 
 function SystemQualification({ onBookClick }) {
+  const { events: fbEvents } = useFacebookPixel();
+
+  const handleBookClick = () => {
+    fbEvents.START_APPLICATION({
+      source: 'system_qualification_section'
+    });
+    onBookClick();
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -94,7 +103,7 @@ function SystemQualification({ onBookClick }) {
         <motion.button
           variants={itemVariants}
           className="qualification-cta"
-          onClick={onBookClick}
+          onClick={handleBookClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

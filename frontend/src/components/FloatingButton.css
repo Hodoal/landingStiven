@@ -72,7 +72,7 @@
   }
 
   .floating-tooltip {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     padding: 0.65rem 1rem;
     right: 80px;
   }
@@ -90,7 +90,7 @@
   }
 
   .floating-tooltip {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     padding: 0.5rem 0.75rem;
     right: 75px;
   }
@@ -108,7 +108,7 @@
   }
 
   .floating-tooltip {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     padding: 0.5rem 0.65rem;
     right: 70px;
   }

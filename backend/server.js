@@ -7,6 +7,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
 const leadsRoutes = require('./routes/leadsRoutes');
 const consultantRoutes = require('./routes/consultantRoutes');
+const { autoTokenRefresh } = require('./services/autoTokenRefresh');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +33,9 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/leads', leadsRoutes);
 app.use('/api/consultants', consultantRoutes);
 
+// Iniciar servicio de renovación automática de tokens
+autoTokenRefresh.start();
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
@@ -47,12 +51,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Para desarrollo local
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+// Para desarrollo local y producción
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // Exportar para Vercel
 module.exports = app;

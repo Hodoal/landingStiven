@@ -4,8 +4,17 @@ import './Header.css'
 import Logo from './Logo'
 import { FiCalendar } from 'react-icons/fi'
 import { useState, useEffect } from 'react'
+import { useFacebookPixel } from '../services/facebookPixel'
 
 function Header({ onBookClick }) {
+  const { events: fbEvents } = useFacebookPixel()
+  
+  const handleClick = () => {
+    fbEvents.CTA_CLICK('header', {
+      cta_text: 'Aplicar a la prueba piloto'
+    })
+    onBookClick()
+  }
   const [show, setShow] = useState(true)
   useEffect(() => {
     let lastY = window.scrollY;
@@ -26,7 +35,7 @@ function Header({ onBookClick }) {
     >
       <div className="header-container">
         <Logo />
-        <button className="header-btn" onClick={onBookClick}>
+        <button className="header-btn" onClick={handleClick}>
           <FiCalendar size={18} />
           <span>Aplicar a la prueba piloto</span>
         </button>

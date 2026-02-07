@@ -1,8 +1,18 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './CTA.css'
 
 function CTA({ onBookClick }) {
+  const { events: fbEvents } = useFacebookPixel()
+  
+  const handleClick = () => {
+    fbEvents.CTA_CLICK('main_cta_section', {
+      cta_text: 'Aplicar a la prueba piloto'
+    })
+    onBookClick()
+  }
+  
   return (
     <section className="cta">
       <motion.div
@@ -30,7 +40,7 @@ function CTA({ onBookClick }) {
 
         <motion.button
           className="cta-button"
-          onClick={onBookClick}
+          onClick={handleClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           initial={{ opacity: 0, y: 20 }}

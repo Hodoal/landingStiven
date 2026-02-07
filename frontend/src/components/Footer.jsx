@@ -10,7 +10,7 @@ function Footer() {
       <div className="footer-content">
         <div className="footer-section">
           <h4>Stivenads</h4>
-          <p>Asesorías de marketing para transformar tu negocio</p>
+          <p>Implemento sistema de pre-calificación para abogados laborales en Colombia.</p>
         </div>
 
         <div className="footer-section">
@@ -25,7 +25,7 @@ function Footer() {
         <div className="footer-section">
           <h4>Contacto</h4>
           <p>Email: stivenads25@gmail.com</p>
-          <p>Teléfono: +57 300 8729696</p>
+          <p>Teléfono: +57 322 6164315</p>
         </div>
       </div>
 

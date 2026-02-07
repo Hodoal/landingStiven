@@ -1,8 +1,17 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useFacebookPixel } from '../services/facebookPixel'
 import './Hero.css'
 
 function Hero({ onBookClick }) {
+  const { events: fbEvents } = useFacebookPixel()
+  
+  const handleCTAClick = () => {
+    fbEvents.CTA_CLICK('hero_section', {
+      cta_text: 'Aplicar al piloto de 30 días'
+    })
+    onBookClick()
+  }
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -44,7 +53,7 @@ function Hero({ onBookClick }) {
         <motion.button 
           variants={itemVariants}
           className="hero-cta"
-          onClick={onBookClick}
+          onClick={handleCTAClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

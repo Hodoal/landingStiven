@@ -30,7 +30,7 @@ function AboutStiven({ onBookClick }) {
           <div className="about-section">
             <h3><FiUser size={20} /> ¿Quién soy?</h3>
             <p>
-              Soy <strong>Stiven Alian</strong>, especialista en operaciones, intake y selección de casos en firmas legales, con <strong>más de 5 años</strong> trabajando en despachos en Estados Unidos.
+              Soy <strong>Stiven Alian</strong>, especialista en operaciones, intake y selección de casos en firmas legales, con <strong>más de 5 años</strong> trabajando en bufetes de abogados en Estados Unidos.
             </p>
             <div className="highlight-box">
               <p>
@@ -50,13 +50,13 @@ function AboutStiven({ onBookClick }) {
               <li><strong>Uninhabitable Living Conditions</strong> - Condiciones de vida inhabitables</li>
             </ul>
             <p>Mi rol: <strong>recibir consultas, filtrar casos y preparar solo los viables.</strong></p>
-            <p className="current-role">Eso es exactamente lo que hoy implemento para despachos laborales en Colombia.</p>
+            <p className="current-role">Eso es exactamente lo que hoy implemento para abogados laborales en Colombia.</p>
           </div>
         </div>
 
         <div className="about-sections-grid">
           <div className="about-section">
-            <h3><FiSearch size={20} /> ¿Por qué importa para tu despacho?</h3>
+            <h3><FiSearch size={20} /> ¿Por qué importa para tu bufete?</h3>
             <p>El problema no es atraer más consultas, sino:</p>
             <ul className="benefits-list">
               <li><FiCheckCircle size={16} /> Evitar casos sin solvencia</li>
@@ -96,7 +96,7 @@ function AboutStiven({ onBookClick }) {
 
           <div className="about-section about-section-final">
             <h3>✋ Importante</h3>
-            <p><strong>No trabajo con cualquier despacho.</strong></p>
+            <p><strong>No trabajo con cualquier abogado.</strong></p>
             <p>Este sistema es solo para abogados laborales que:</p>
             <ul className="criteria-list">
               <li>Buscan casos rentables</li>

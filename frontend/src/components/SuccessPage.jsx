@@ -1,12 +1,20 @@
 import React, { useEffect } from 'react';
 import { FiHeart, FiX } from 'react-icons/fi';
+import { FacebookPixelEvents, useFacebookPixel } from '../services/facebookPixel';
 import './SuccessPage.css';
 import Fireworks from './Fireworks';
 
 export default function SuccessPage() {
   const [showFireworks, setShowFireworks] = React.useState(true);
+  const { events: fbEvents } = useFacebookPixel();
 
   useEffect(() => {
+    // Track successful application submission
+    FacebookPixelEvents.LEAD_GENERATED({
+      status: 'success',
+      source: 'application_form'
+    });
+
     const timer = setTimeout(() => {
       window.location.href = '/';
     }, 10000); // 10 segundos

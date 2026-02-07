@@ -9,7 +9,7 @@
  * - 'scheduled': Meeting is scheduled
  * - 'meeting-completed': Meeting has been completed
  * - 'sold': Client has been converted and paid
- * - 'disqualified': Lead doesn't meet requirements
+ * - 'No califica': Lead doesn't meet requirements
  * 
  * Usage: node cleanup-states.js
  */
@@ -20,7 +20,7 @@ const Booking = require('./models/Booking');
 
 const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/stivenads';
 
-const VALID_LEAD_STATES = ['applied', 'scheduled', 'meeting-completed', 'sold', 'disqualified'];
+const VALID_LEAD_STATES = ['applied', 'scheduled', 'meeting-completed', 'sold', 'No califica'];
 const VALID_BOOKING_STATES = ['pending', 'confirmed', 'meeting-completed', 'sold', 'cancelled', 'No Confirmado'];
 
 // Map old states to new states

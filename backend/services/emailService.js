@@ -309,14 +309,14 @@ async function sendPilotProgramConfirmation(options) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎉 ¡Bienvenido al Programa Piloto!</h1>
+            <h1>🎉 ¡Bienvenido a este piloto de 30 días!</h1>
             <p>Tu reunión ha sido confirmada</p>
           </div>
 
           <div class="content">
             <div class="welcome">
               <p>Hola <strong>${clientName}</strong>,</p>
-              <p>Nos complace informarte que has sido aceptado en nuestro <strong>Programa Piloto de 30 días</strong>. Esta es una oportunidad exclusiva para recibir asesorías personalizadas en marketing digital.</p>
+              <p>Nos complace informarte que has sido aceptado en nuestro <strong>Programa Piloto de 30 días</strong>. Esta es una oportunidad exclusiva donde con mi sistema de adquisición y pre-calificación de clientes potenciales, tendrás muchos más clientes <strong>PERO QUE SI CALIFICAN</strong></p>
             </div>
 
             <div class="details-box">
@@ -337,9 +337,9 @@ async function sendPilotProgramConfirmation(options) {
             <div class="highlight">
               <strong>¿Qué esperar en la primera reunión?</strong>
               <ul>
-                <li>Análisis de tu situación actual en marketing</li>
-                <li>Identificación de tus principales desafíos</li>
-                <li>Estrategia personalizada para tu negocio</li>
+                <li>Análisis de tu situación actual de tus servicios como abogado</li>
+                <li>Identificación de tus cuellos de botellas o dolores del servicio</li>
+                <li>Estrategia personalizada para tu servicio</li>
                 <li>Plan de acción concreto para los próximos 30 días</li>
               </ul>
             </div>
@@ -350,11 +350,11 @@ async function sendPilotProgramConfirmation(options) {
             </div>
 
             <p style="color: #666; font-size: 14px;">
-              <strong>Importante:</strong> Por favor, únete a la reunión 5-10 minutos antes de la hora programada. Prepara un espacio tranquilo y asegúrate de tener buena conexión a internet.
+              <strong>Importante:</strong> Por favor, únete a la reunión 5 minutos antes de la hora programada. Prepara un espacio tranquilo y asegúrate de tener buena conexión a internet.
             </p>
 
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
-              Si necesitas reprogramar o tienes preguntas, no dudes en contactarnos.
+              Si necesitas reprogramar o tienes preguntas, no dudes en contactarnos a la línea de WhatsApp donde confirmaremos la reunión 1 día antes.
             </p>
 
             <center>
@@ -364,8 +364,8 @@ async function sendPilotProgramConfirmation(options) {
 
           <div class="footer">
             <p class="footer-logo">Stivenads</p>
-            <p>Asesorías de Marketing Digital Personalizadas</p>
-            <p>${process.env.EMAIL_FROM}</p>
+            <p>Implemento sistema de pre-calificación para abogados laborales en Colombia.</p>
+            <p>noreply@stivenads.com</p>
             <p>Este es un correo automático. No respondas directamente a este mensaje.</p>
           </div>
         </div>
@@ -376,7 +376,7 @@ async function sendPilotProgramConfirmation(options) {
   return transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: clientEmail,
-    subject: `🎉 ¡Bienvenido al Programa Piloto Stivenads! - Reunión confirmada para ${formattedDate}`,
+    subject: `🎉 ¡Bienvenido al Programa Piloto Stiven Ads! - Reunión confirmada para ${formattedDate}`,
     html: htmlContent
   });
 }
@@ -502,10 +502,67 @@ async function sendPilotProgramNotificationToAdmin(options) {
   });
 }
 
+// Send disqualification email to client
+async function sendDisqualificationEmail(options) {
+  const { clientName, clientEmail, disqualificationReasons } = options;
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+          .container { max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; }
+          .header { background: #f9f9f9; color: #666; padding: 20px; border-radius: 8px; text-align: center; }
+          .content { margin: 20px 0; }
+          .reasons { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; border-radius: 4px; }
+          .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2>Gracias por tu interés en el Programa Piloto</h2>
+          </div>
+          
+          <div class="content">
+            <p>Hola <strong>${clientName}</strong>,</p>
+            
+            <p>Apreciamos mucho tu interés en nuestro Programa Piloto de 30 días. Sin embargo, en este momento no cumple con todos los requisitos necesarios.</p>
+            
+            <div class="reasons">
+              <p><strong>Razones:</strong></p>
+              <ul>
+                ${disqualificationReasons.map(reason => `<li>${reason}</li>`).join('')}
+              </ul>
+            </div>
+            
+            <p>Esto no significa que no sea un potencial cliente en el futuro. Si tu situación cambia o tienes preguntas, no dudes en contactarnos.</p>
+            
+            <p>¡Muchas gracias!</p>
+          </div>
+          
+          <div class="footer">
+            <p>Stivenads - Asesorías Especializadas</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: clientEmail,
+    subject: 'Estatus de tu Solicitud - Programa Piloto',
+    html: htmlContent
+  });
+}
+
 module.exports = {
   sendConfirmationEmail,
   sendRescheduleNotification,
   sendCancellationEmail,
   sendPilotProgramConfirmation,
-  sendPilotProgramNotificationToAdmin
+  sendPilotProgramNotificationToAdmin,
+  sendDisqualificationEmail
 };

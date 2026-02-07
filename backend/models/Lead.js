@@ -41,7 +41,7 @@ const leadSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['applied', 'scheduled', 'meeting-completed', 'sold', 'disqualified'],
+      enum: ['applied', 'scheduled', 'meeting-completed', 'sold', 'No califica'],
       default: 'applied'
     },
     scheduled_date: String,

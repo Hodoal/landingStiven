@@ -205,6 +205,18 @@
   .admin-section {
     margin-bottom: 2rem;
   }
+
+  .admin-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+  }
+
+  .stat-value {
+    font-size: 2.2rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -217,11 +229,11 @@
   }
 
   .admin-section h2 {
-    font-size: 1.2rem;
+    font-size: 1.35rem;
   }
 
   .clients-table {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
   }
 
   .clients-table th,
@@ -231,6 +243,10 @@
 
   .stat-card {
     text-align: center;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
   }
 
   .stat-value {

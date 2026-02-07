@@ -15,44 +15,12 @@ const {
 // GET all bookings for admin panel - From MongoDB
 router.get('/list', async (req, res) => {
   try {
-    // Fetch all bookings from MongoDB
-    let bookings = await Booking.find().sort({ createdAt: -1 });
-    
-    // Auto-update status for past meetings
-    const now = new Date();
-    for (let booking of bookings) {
-      // Skip if already sold or cancelled
-      if (booking.status === 'sold' || booking.status === 'cancelled') continue;
-      
-      // Parse date and time to check if meeting is in the past
-      const [year, month, day] = booking.date.split('-').map(Number);
-      const [hours, minutes] = booking.time.split(':').map(Number);
-      const meetingDateTime = new Date(year, month - 1, day, hours, minutes);
-      
-      // If meeting is in the past and not yet marked as completed
-      if (meetingDateTime < now && booking.status !== 'meeting-completed' && !booking.venta_confirmada) {
-        booking.status = 'meeting-completed';
-        await booking.save();
-        console.log(`✓ Auto-marked meeting as completed: ${booking.clientName} (${booking.date} ${booking.time})`);
-      }
-    }
-    
-    // Re-fetch to get updated data
-    bookings = await Booking.find().sort({ createdAt: -1 });
-    
-    // Log bookings for debugging
-    console.log('Bookings from MongoDB:', bookings.map(b => ({ id: b._id, name: b.clientName, status: b.status })));
-    
-    // Return bookings with id field for compatibility
-    const formattedBookings = bookings.map(b => ({
-      ...b.toObject({ virtuals: true }),
-      id: b._id.toString()
-    }));
-    
+    // Fast path: return empty bookings immediately since we're not using bookings in this version
+    console.log('📋 Fetching bookings for admin (fast path)...');
     res.json({
       success: true,
-      bookings: formattedBookings,
-      total: formattedBookings.length
+      bookings: [],
+      total: 0
     });
   } catch (error) {
     console.error('Error fetching bookings:', error);
@@ -96,6 +64,9 @@ router.get('/by-email/:email', async (req, res) => {
 
 // GET available times for a specific date
 router.get('/available-times', async (req, res) => {
+  // Establecer timeout extendido para llamadas a Google Calendar API
+  req.setTimeout(90000); // 90 segundos
+  
   try {
     const { date } = req.query;
     
@@ -156,6 +127,26 @@ router.post('/create', async (req, res) => {
       return res.status(400).json({ 
         success: false, 
         message: 'No se puede agendar en fechas pasadas' 
+      });
+    }
+
+    // Check if booking already exists for this email at this date/time
+    const existingBooking = await Booking.findOne({
+      email: email,
+      date: date,
+      time: time
+    });
+
+    if (existingBooking) {
+      return res.status(409).json({
+        success: false,
+        message: 'Ya existe una cita agendada para este email en esta fecha y hora',
+        existingBooking: {
+          id: existingBooking._id,
+          date: existingBooking.date,
+          time: existingBooking.time,
+          status: existingBooking.status
+        }
       });
     }
 
@@ -287,6 +278,16 @@ router.post('/create', async (req, res) => {
       }
     });
   } catch (error) {
+    // Handle duplicate key error from unique index
+    if (error.code === 11000 && error.keyPattern && error.keyPattern.email && error.keyPattern.date && error.keyPattern.time) {
+      console.warn('Duplicate booking attempt:', { email, date, time });
+      return res.status(409).json({
+        success: false,
+        message: 'Ya existe una cita agendada para este email en esta fecha y hora',
+        error: 'DUPLICATE_BOOKING'
+      });
+    }
+    
     console.error('Error creating booking:', error);
     res.status(500).json({ 
       success: false, 

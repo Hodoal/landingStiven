@@ -71,19 +71,33 @@ export default function SoldClientsList() {
     }
   };
 
-  const handleDelete = async (id, name) => {
+  const handleDelete = async (id, name, tipo) => {
     if (window.confirm(`¿Eliminar cliente ${name}?`)) {
       try {
-        const response = await fetch(`http://localhost:3001/api/booking/${id}`, {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+        
+        // Determinar el endpoint según el tipo de cliente
+        const endpoint = tipo === 'Lead' 
+          ? `${API_BASE_URL}/leads/${id}`
+          : `${API_BASE_URL}/booking/${id}`;
+        
+        console.log(`Eliminando ${tipo} con ID: ${id} desde ${endpoint}`);
+        
+        const response = await fetch(endpoint, {
           method: 'DELETE'
         });
         
-        if (response.ok) {
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          // Actualizar el estado removiendo el cliente eliminado
           setClientes(clientes.filter(c => c.id !== id));
+          console.log(`✓ ${tipo} eliminado exitosamente`);
         } else {
-          alert('Error al eliminar');
+          alert('Error al eliminar: ' + (data.message || 'Error desconocido'));
         }
       } catch (err) {
+        console.error('Error al eliminar:', err);
         alert('Error: ' + err.message);
       }
     }
@@ -182,7 +196,7 @@ export default function SoldClientsList() {
                   </td>
                   <td style={{ padding: '12px', textAlign: 'center' }}>
                     <button
-                      onClick={() => handleDelete(cliente.id, cliente.nombre)}
+                      onClick={() => handleDelete(cliente.id, cliente.nombre, cliente.tipo)}
                       style={{
                         background: 'none',
                         border: 'none',
