@@ -28,37 +28,44 @@ export default function SoldClientsList() {
       const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
       const soldLeads = leadsResponse.data.data.filter(lead => lead.status === 'sold');
 
-      // Combinar ambos (bookings y leads vendidos)
+      // Combinar ambos (bookings y leads vendidos), evitando duplicados por email
       const clientesData = [];
+      const emailsProcessed = new Set();
 
-      // Agregar bookings vendidos
+      // Primero agregar bookings vendidos
       soldBookings.forEach(booking => {
-        clientesData.push({
-          id: booking.id,
-          nombre: booking.clientName || 'N/A',
-          email: booking.email || 'N/A',
-          telefono: booking.phone || 'N/A',
-          fecha: booking.date || 'N/A',
-          hora: booking.time || 'N/A',
-          montoVenta: booking.monto_venta || 0,
-          fechaVenta: booking.fecha_venta || 'N/A',
-          tipo: 'Booking'
-        });
+        if (!emailsProcessed.has(booking.email)) {
+          clientesData.push({
+            id: booking.id,
+            nombre: booking.clientName || 'N/A',
+            email: booking.email || 'N/A',
+            telefono: booking.phone || 'N/A',
+            fecha: booking.date || 'N/A',
+            hora: booking.time || 'N/A',
+            montoVenta: booking.monto_venta || 0,
+            fechaVenta: booking.fecha_venta || 'N/A',
+            tipo: 'Booking'
+          });
+          emailsProcessed.add(booking.email);
+        }
       });
 
-      // Agregar leads vendidos
+      // Luego agregar leads vendidos solo si no tienen booking
       soldLeads.forEach(lead => {
-        clientesData.push({
-          id: lead._id,
-          nombre: lead.full_name || 'N/A',
-          email: lead.email || 'N/A',
-          telefono: lead.phone || 'N/A',
-          fecha: lead.scheduled_date || 'N/A',
-          hora: lead.scheduled_time || 'N/A',
-          montoVenta: lead.sale_amount || 0,
-          fechaVenta: lead.sold_at || 'N/A',
-          tipo: 'Lead'
-        });
+        if (!emailsProcessed.has(lead.email)) {
+          clientesData.push({
+            id: lead._id,
+            nombre: lead.full_name || 'N/A',
+            email: lead.email || 'N/A',
+            telefono: lead.phone || 'N/A',
+            fecha: lead.scheduled_date || 'N/A',
+            hora: lead.scheduled_time || 'N/A',
+            montoVenta: lead.sale_amount || 0,
+            fechaVenta: lead.sold_at || 'N/A',
+            tipo: 'Lead'
+          });
+          emailsProcessed.add(lead.email);
+        }
       });
 
       setClientes(clientesData);
