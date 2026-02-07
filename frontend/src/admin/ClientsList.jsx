@@ -89,40 +89,56 @@ export default function ClientsList() {
       // Combinar leads con bookings, pero también mostrar leads sin booking si tienen scheduled_date
       const clientesData = [];
 
-      // 1. Primero agregar TODOS los bookings (con o sin lead correspondiente)
+      // 1. Primero agregar bookings, pero solo el más reciente por email para evitar duplicados
       const leadsWithBookings = new Set();
+      const bookingsByEmail = {};
+      
       console.log('🔍 Procesando bookings...');
       console.log('   Bookings disponibles:', allBookings.map(b => ({ email: b.email, id: b.id || b._id, name: b.clientName })));
       console.log('   Leads calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id, name: l.full_name })));
       
+      // Agrupar bookings por email y mantener solo el más reciente
       allBookings.forEach(booking => {
+        if (booking.status !== 'sold') {
+          if (!bookingsByEmail[booking.email]) {
+            bookingsByEmail[booking.email] = booking;
+          } else {
+            // Comparar fechas de creación y mantener el más reciente
+            const existingDate = new Date(bookingsByEmail[booking.email].createdAt || 0);
+            const newDate = new Date(booking.createdAt || 0);
+            if (newDate > existingDate) {
+              bookingsByEmail[booking.email] = booking;
+            }
+          }
+        }
+      });
+      
+      // Ahora procesar los bookings únicos por email
+      Object.values(bookingsByEmail).forEach(booking => {
         const correspondingLead = qualifiedLeads.find(l => l.email === booking.email);
         console.log(`   Booking: ${booking.email} → Lead encontrado: ${correspondingLead ? 'SÍ' : 'NO'}`);
         
-        // Agregar el booking incluso si no hay lead correspondiente
-        if (booking.status !== 'sold') {
-          if (correspondingLead) {
-            leadsWithBookings.add(correspondingLead._id);
-          }
-          
-          const computedStatus = getComputedStatus(booking, booking.date, booking.time);
-          clientesData.push({
-            id: booking.id || booking._id,
-            nombre: booking.clientName || 'N/A',
-            email: booking.email || 'N/A',
-            telefono: booking.phone || 'N/A',
-            fechaAgendamiento: booking.date || 'N/A',
-            horaAgendamiento: booking.time || 'N/A',
-            estado: computedStatus,
-            status: booking.status,
-            leadType: correspondingLead?.lead_type || 'N/A',
-            leadInfo: correspondingLead || null,
-            bookingInfo: {
-              ...booking,
-              _id: booking.id || booking._id // Asegurar que _id sea igual a id
-            }
-          });
+        if (correspondingLead) {
+          leadsWithBookings.add(correspondingLead._id);
         }
+        
+        const computedStatus = getComputedStatus(booking, booking.date, booking.time);
+        clientesData.push({
+          id: booking.id || booking._id,
+          nombre: booking.clientName || 'N/A',
+          email: booking.email || 'N/A',
+          telefono: booking.phone || 'N/A',
+          fechaAgendamiento: booking.date || 'N/A',
+          horaAgendamiento: booking.time || 'N/A',
+          estado: computedStatus,
+          status: booking.status,
+          leadType: correspondingLead?.lead_type || 'N/A',
+          leadInfo: correspondingLead || null,
+          bookingInfo: {
+            ...booking,
+            _id: booking.id || booking._id // Asegurar que _id sea igual a id
+          }
+        });
       });
 
       // 2. Luego agregar leads sin booking
