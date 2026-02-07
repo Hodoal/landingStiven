@@ -124,8 +124,8 @@ export default function PilotApplicationModal({ onClose }) {
 
   const loadDefaultConsultant = async () => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const response = await axios.get(`${API_BASE_URL}/api/consultants`)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const response = await axios.get(`${API_BASE_URL}/consultants`)
       if (response.data && response.data.length > 0) {
         setConsultantId(response.data[0]._id || response.data[0].id)
       }
@@ -138,8 +138,8 @@ export default function PilotApplicationModal({ onClose }) {
     try {
       setTimesLoading(true)
       const dateString = typeof date === 'string' ? date : date.toISOString().split('T')[0]
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const response = await axios.get(`${API_BASE_URL}/api/consultants/${consultantId}/available-times`, {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const response = await axios.get(`${API_BASE_URL}/consultants/${consultantId}/available-times`, {
         params: { date: dateString, duration: 60 }
       })
       
@@ -253,8 +253,8 @@ export default function PilotApplicationModal({ onClose }) {
         budget_range: responses.ads_budget_range
       })
 
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const response = await axios.post(`${API_BASE_URL}/api/leads/apply-pilot`, payload)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const response = await axios.post(`${API_BASE_URL}/leads/apply-pilot`, payload)
 
       console.log('✅ Response:', response.data);
 
@@ -265,7 +265,31 @@ export default function PilotApplicationModal({ onClose }) {
       }
     } catch (err) {
       console.error('❌ Error:', err)
-      setError('Hubo un error al enviar el formulario. Intenta de nuevo.')
+
+      // Si retornó 404, intentar rutas alternas por compatibilidad con clientes cacheados
+      if (err.response && err.response.status === 404) {
+        console.warn('⚠️ Received 404, attempting fallback endpoints...')
+        const fallbackPaths = ['/api/leads/apply-pilot', '/leads/apply-pilot']
+        for (const p of fallbackPaths) {
+          try {
+            const fallbackResp = await axios.post(p, payload)
+            console.log('✅ Fallback succeeded for path', p, fallbackResp.data)
+            if (fallbackResp.data.disqualified) {
+              setQualificationResult('disqualified')
+            } else {
+              setQualificationResult('qualified')
+            }
+            setLoading(false)
+            return
+          } catch (fallbackErr) {
+            console.warn('Fallback failed for', p, fallbackErr.message)
+          }
+        }
+      }
+
+      // Mostrar mensaje de error al usuario con detalle si está disponible
+      const msg = err.response?.data?.message || err.message || 'Hubo un error al enviar el formulario. Intenta de nuevo.'
+      setError(msg)
     } finally {
       setLoading(false)
     }
@@ -302,8 +326,8 @@ export default function PilotApplicationModal({ onClose }) {
 
       console.log('📤 Payload being sent:', JSON.stringify(payload, null, 2));
       console.log('📤 Sending to /api/leads/apply-pilot with:', payload);
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const response = await axios.post(`${API_BASE_URL}/api/leads/apply-pilot`, payload)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const response = await axios.post(`${API_BASE_URL}/leads/apply-pilot`, payload)
       console.log('✅ Response received:', response.data);
 
       if (response.data.disqualified) {

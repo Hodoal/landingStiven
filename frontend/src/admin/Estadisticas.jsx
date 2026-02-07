@@ -36,12 +36,12 @@ export default function Estadisticas() {
       setLoading(true);
       
       // Fetch all leads
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const leadsResponse = await axios.get(`${API_BASE_URL}/api/leads/admin/leads`);
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
       const fetchedLeads = leadsResponse.data.data;
       
       // Fetch all bookings
-      const bookingsResponse = await axios.get(`${API_BASE_URL}/api/booking/list`);
+      const bookingsResponse = await axios.get(`${API_BASE_URL}/booking/list`);
       const fetchedBookings = bookingsResponse.data.success ? bookingsResponse.data.bookings : [];
 
       // Calculate statistics

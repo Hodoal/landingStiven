@@ -65,8 +65,8 @@ export default function ApplicationForm() {
     });
     
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const response = await axios.post(`${API_BASE_URL}/api/leads/submit-application`, {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const response = await axios.post(`${API_BASE_URL}/leads/submit-application`, {
         monthly_consultations: formData.monthly_consultations,
         is_labor_lawyer: formData.is_labor_lawyer,
         works_quota_litis: formData.works_quota_litis,
@@ -108,7 +108,35 @@ export default function ApplicationForm() {
         setSubmitted(true);
       }
     } catch (error) {
-      alert('Error al enviar formulario: ' + error.message);
+      console.error('Error submitting ApplicationForm:', error)
+      // Try fallback endpoints on 404
+      if (error.response?.status === 404) {
+        try {
+          const fallbackResp = await axios.post('/api/leads/submit-application', {
+            monthly_consultations: formData.monthly_consultations,
+            is_labor_lawyer: formData.is_labor_lawyer,
+            works_quota_litis: formData.works_quota_litis,
+            ads_budget_range: formData.ads_budget_range,
+            willing_to_invest_ads: formData.willing_to_invest_ads,
+            main_problem: formData.main_problem,
+            full_name: formData.full_name,
+            email: formData.email,
+            phone: formData.phone,
+            scheduled_date: formData.scheduled_date,
+            scheduled_time: formData.scheduled_time
+          })
+          if (fallbackResp.data.disqualified) {
+            setDisqualified(true)
+          } else {
+            setSubmitted(true)
+          }
+          return
+        } catch (fallbackErr) {
+          console.error('Fallback submit failed:', fallbackErr)
+        }
+      }
+
+      alert('Error al enviar formulario: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }

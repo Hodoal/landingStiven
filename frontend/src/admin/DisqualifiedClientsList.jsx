@@ -22,12 +22,12 @@ export default function DisqualifiedClientsList() {
     try {
       setLoading(true);
       setError(null);
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
       
-      console.log('📤 Fetching from:', `${API_BASE_URL}/api/leads/admin/leads`);
+      console.log('📤 Fetching from:', `${API_BASE_URL}/leads/admin/leads`);
       
       // Fetch all leads and filter for those with status 'No califica'
-      const leadsResponse = await axios.get(`${API_BASE_URL}/api/leads/admin/leads`);
+      const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
       
       console.log('✅ Response:', leadsResponse.data);
       
@@ -57,8 +57,8 @@ export default function DisqualifiedClientsList() {
 
   const handleDeleteClient = async (clientId) => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      await axios.delete(`${API_BASE_URL}/api/leads/${clientId}`);
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      await axios.delete(`${API_BASE_URL}/leads/${clientId}`);
       
       setClientes(clientes.filter(c => c._id !== clientId));
       setShowDeleteModal(false);

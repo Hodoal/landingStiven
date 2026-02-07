@@ -18,14 +18,14 @@ export default function SoldClientsList() {
       setLoading(true);
       
       // Fetch sold bookings
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
-      const bookingsResponse = await axios.get(`${API_BASE_URL}/api/booking/list`);
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      const bookingsResponse = await axios.get(`${API_BASE_URL}/booking/list`);
       const soldBookings = bookingsResponse.data.success 
         ? bookingsResponse.data.bookings.filter(b => b.status === 'sold')
         : [];
 
       // Fetch sold leads
-      const leadsResponse = await axios.get(`${API_BASE_URL}/api/leads/admin/leads`);
+      const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
       const soldLeads = leadsResponse.data.data.filter(lead => lead.status === 'sold');
 
       // Combinar ambos (bookings y leads vendidos)
@@ -74,12 +74,12 @@ export default function SoldClientsList() {
   const handleDelete = async (id, name, tipo) => {
     if (window.confirm(`¿Eliminar cliente ${name}?`)) {
       try {
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
         
         // Determinar el endpoint según el tipo de cliente
         const endpoint = tipo === 'Lead' 
-          ? `${API_BASE_URL}/api/leads/${id}`
-          : `${API_BASE_URL}/api/booking/${id}`;
+          ? `${API_BASE_URL}/leads/${id}`
+          : `${API_BASE_URL}/booking/${id}`;
         
         console.log(`Eliminando ${tipo} con ID: ${id} desde ${endpoint}`);
         
