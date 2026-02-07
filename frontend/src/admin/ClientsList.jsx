@@ -255,16 +255,17 @@ export default function ClientsList() {
 
   const handleConfirmMeeting = async (client, wasCompleted) => {
     try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
       const newStatus = wasCompleted ? 'meeting-completed' : 'cancelled';
       
       // Si tiene booking, actualizar el booking
       if (client.bookingInfo) {
-        await axios.put(`/api/booking/${client.id}`, { status: newStatus });
+        await axios.put(`${API_BASE_URL}/booking/${client.id}`, { status: newStatus });
       }
       
       // Siempre actualizar el lead también
       if (client.leadInfo?._id) {
-        await axios.put(`/api/leads/update-status/${client.leadInfo._id}`, { status: newStatus });
+        await axios.put(`${API_BASE_URL}/leads/update-status/${client.leadInfo._id}`, { status: newStatus });
       }
       
       fetchClientes();
@@ -277,14 +278,16 @@ export default function ClientsList() {
   const handleConfirmReunionOccurred = async (client) => {
     // Este botón solo aparece cuando el estado es "Confirmar reunión"
     try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      
       // Si tiene booking, actualizar el booking
       if (client.bookingInfo) {
-        await axios.put(`/api/booking/${client.id}`, { status: 'meeting-completed' });
+        await axios.put(`${API_BASE_URL}/booking/${client.id}`, { status: 'meeting-completed' });
       }
       
       // Siempre actualizar el lead también
       if (client.leadInfo?._id) {
-        await axios.put(`/api/leads/update-status/${client.leadInfo._id}`, { status: 'meeting-completed' });
+        await axios.put(`${API_BASE_URL}/leads/update-status/${client.leadInfo._id}`, { status: 'meeting-completed' });
       }
       
       fetchClientes();
@@ -308,11 +311,13 @@ export default function ClientsList() {
     }
 
     try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      
       // Si tiene booking, actualizar el booking a sold
       if (selectedClient.bookingInfo) {
         console.log('💰 Procesando pago para booking:', selectedClient.id);
         const bookingId = selectedClient.bookingInfo._id || selectedClient.bookingInfo.id || selectedClient.id;
-        await axios.put(`/api/booking/${bookingId}/confirm-sale`, {
+        await axios.put(`${API_BASE_URL}/booking/${bookingId}/confirm-sale`, {
           monto_venta: parseFloat(paymentAmount)
         });
       }
@@ -320,7 +325,7 @@ export default function ClientsList() {
       // Actualizar el lead como vendido
       if (selectedClient.leadInfo?._id) {
         console.log('💰 Marcando lead como sold:', selectedClient.leadInfo._id);
-        await axios.put(`/api/leads/mark-as-sold/${selectedClient.leadInfo._id}`, {
+        await axios.put(`${API_BASE_URL}/leads/mark-as-sold/${selectedClient.leadInfo._id}`, {
           sale_amount: parseFloat(paymentAmount)
         });
       }
@@ -425,21 +430,23 @@ export default function ClientsList() {
     }
 
     try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+      
       // Si tiene booking, actualizar el booking
       if (selectedClient.bookingInfo) {
         // Eliminar el evento anterior de Google Calendar si existe
         if (selectedClient.bookingInfo.googleCalendarEventId) {
-          await axios.delete(`/api/calendar/${selectedClient.bookingInfo.googleCalendarEventId}`);
+          await axios.delete(`${API_BASE_URL}/calendar/${selectedClient.bookingInfo.googleCalendarEventId}`);
         }
 
         // Actualizar el booking con nuevos datos usando la ruta /reschedule
-        await axios.put(`/api/booking/${selectedClient.id}/reschedule`, {
+        await axios.put(`${API_BASE_URL}/booking/${selectedClient.id}/reschedule`, {
           date: rescheduleData.date,
           time: rescheduleData.time
         });
       } else if (selectedClient.leadInfo) {
         // Si no tiene booking pero tiene lead, actualizar el lead
-        await axios.put(`/api/leads/update-schedule/${selectedClient.leadInfo._id}`, {
+        await axios.put(`${API_BASE_URL}/leads/update-schedule/${selectedClient.leadInfo._id}`, {
           scheduled_date: rescheduleData.date,
           scheduled_time: rescheduleData.time
         });
