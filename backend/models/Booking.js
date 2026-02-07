@@ -45,7 +45,7 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'meeting-completed', 'sold', 'cancelled', 'No Confirmado'],
+    enum: ['pending', 'scheduled', 'confirmed', 'meeting-completed', 'sold', 'cancelled', 'No Confirmado'],
     default: 'pending'
   },
   // Referencia al lead (relación con modelo Lead)

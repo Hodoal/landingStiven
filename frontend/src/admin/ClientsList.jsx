@@ -325,7 +325,7 @@ export default function ClientsList() {
 
     try {
       console.log('🗑️  Iniciando eliminación de cliente:', clienteToDelete);
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
       const clientEmail = clienteToDelete.email;
       const leadId = clienteToDelete.leadInfo?._id;
       const bookingInfo = clienteToDelete.bookingInfo;

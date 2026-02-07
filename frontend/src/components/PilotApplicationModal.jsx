@@ -124,8 +124,8 @@ export default function PilotApplicationModal({ onClose }) {
 
   const loadDefaultConsultant = async () => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
-      const response = await axios.get(`${API_BASE_URL}/consultants`)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+      const response = await axios.get(`${API_BASE_URL}/api/consultants`)
       if (response.data && response.data.length > 0) {
         setConsultantId(response.data[0]._id || response.data[0].id)
       }
@@ -138,8 +138,8 @@ export default function PilotApplicationModal({ onClose }) {
     try {
       setTimesLoading(true)
       const dateString = typeof date === 'string' ? date : date.toISOString().split('T')[0]
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
-      const response = await axios.get(`${API_BASE_URL}/consultants/${consultantId}/available-times`, {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+      const response = await axios.get(`${API_BASE_URL}/api/consultants/${consultantId}/available-times`, {
         params: { date: dateString, duration: 60 }
       })
       
@@ -253,8 +253,8 @@ export default function PilotApplicationModal({ onClose }) {
         budget_range: responses.ads_budget_range
       })
 
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
-      const response = await axios.post(`${API_BASE_URL}/leads/apply-pilot`, payload)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+      const response = await axios.post(`${API_BASE_URL}/api/leads/apply-pilot`, payload)
 
       console.log('✅ Response:', response.data);
 
@@ -302,8 +302,8 @@ export default function PilotApplicationModal({ onClose }) {
 
       console.log('📤 Payload being sent:', JSON.stringify(payload, null, 2));
       console.log('📤 Sending to /api/leads/apply-pilot with:', payload);
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
-      const response = await axios.post(`${API_BASE_URL}/leads/apply-pilot`, payload)
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+      const response = await axios.post(`${API_BASE_URL}/api/leads/apply-pilot`, payload)
       console.log('✅ Response received:', response.data);
 
       if (response.data.disqualified) {

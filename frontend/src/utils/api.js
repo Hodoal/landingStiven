@@ -1,9 +1,9 @@
 // API configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export const API_ENDPOINTS = {
-  APPLY_PILOT: `${API_BASE_URL}/leads/apply-pilot`,
-  TRACK_EVENT: `${API_BASE_URL}/leads/track-event`,
+  APPLY_PILOT: `${API_BASE_URL}/api/leads/apply-pilot`,
+  TRACK_EVENT: `${API_BASE_URL}/api/leads/track-event`,
 }
 
 export default API_BASE_URL
