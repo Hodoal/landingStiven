@@ -44,12 +44,13 @@ async function cleanupDuplicateLeads() {
 
     console.log(`\n📋 Found ${duplicates.length} emails with duplicate leads`);
 
+    // Totals for summary
+    let totalDeleted = 0;
+    let totalKept = 0;
+
     if (duplicates.length === 0) {
       console.log('✓ No duplicate leads found');
     } else {
-      let totalDeleted = 0;
-      let totalKept = 0;
-
       for (const duplicate of duplicates) {
         const email = duplicate._id;
         const leads = duplicate.leads;
