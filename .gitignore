@@ -2,6 +2,14 @@
 .env
 .env.local
 .env.*.local
+# Backend environment files and credentials
+/backend/.env
+/backend/.env.*
+# Refresh token and credential scripts
+refresh-token*.sh
+# Calendar credentials and deployment docs (sensitive)
+UPDATE_CALENDAR_CREDENTIALS.md
+DEPLOYMENT_VPS_PASO_A_PASO.md
 
 # Dependencies
 node_modules/
