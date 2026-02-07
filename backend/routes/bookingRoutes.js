@@ -613,6 +613,54 @@ router.put('/:id/reschedule', async (req, res) => {
   }
 });
 
+// PUT - Update booking status - Generic endpoint
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: 'Status is required'
+      });
+    }
+    
+    // Find and update booking in MongoDB
+    const booking = await Booking.findByIdAndUpdate(
+      id,
+      {
+        status,
+        updatedAt: new Date()
+      },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: 'Booking not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Booking updated successfully',
+      booking: {
+        ...booking.toObject({ virtuals: true }),
+        id: booking._id.toString()
+      }
+    });
+  } catch (error) {
+    console.error('Error updating booking:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating booking',
+      error: error.message
+    });
+  }
+});
+
 // PUT - Cancel a booking (change status to "No Confirmado") - From MongoDB
 router.put('/:id/cancel', async (req, res) => {
   try {
