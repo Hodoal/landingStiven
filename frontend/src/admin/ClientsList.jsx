@@ -66,8 +66,8 @@ export default function ClientsList() {
       console.log('🔄 Recargando clientes desde la BD...');
       
       // Fetch leads primero para filtrar solo los calificados (Ideal o Scale)
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
-      const leadsResponse = await axios.get(`${API_BASE_URL}/leads/admin/leads`);
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+      const leadsResponse = await axios.get(`${API_BASE_URL}/api/leads/admin/leads`);
       const leadsData = leadsResponse.data.data || [];
       console.log('📋 Leads obtenidos:', leadsData.length);
       console.log('   Detalles leads:', leadsData.map(l => ({ email: l.email, type: l.lead_type })));
@@ -80,7 +80,7 @@ export default function ClientsList() {
       console.log('   Detalles calificados:', qualifiedLeads.map(l => ({ email: l.email, id: l._id })));
 
       // Fetch bookings
-      const bookingsResponse = await axios.get(`${API_BASE_URL}/booking/list`);
+      const bookingsResponse = await axios.get(`${API_BASE_URL}/api/booking/list`);
       const allBookings = bookingsResponse.data.success ? bookingsResponse.data.bookings : [];
       console.log('📋 Bookings obtenidos:', allBookings.length);
       console.log('   Detalles bookings:', allBookings.map(b => ({ email: b.email, id: b.id || b._id, status: b.status })));
@@ -126,15 +126,23 @@ export default function ClientsList() {
       });
 
       // 2. Luego agregar leads sin booking
-      qualifiedLeads.forEach(lead => {
+      console.log('🔄 Procesando leads sin booking...');
+      qualifiedLeads.forEach((lead, index) => {
+        console.log(`   Lead ${index + 1}/${qualifiedLeads.length}: ${lead.full_name} (${lead.email}) ID: ${lead._id}`);
+        console.log(`     ¿Tiene booking asociado? ${leadsWithBookings.has(lead._id) ? 'SÍ' : 'NO'}`);
+        
         // Solo mostrar leads que NO tienen booking asociado
         // Los leads con booking ya fueron agregados en el paso anterior
         if (!leadsWithBookings.has(lead._id)) {
+          console.log(`     ✅ Agregando lead al listado: ${lead.full_name}`);
           // Mostrar todos los leads calificados, tengan o no fecha agendada
           const hasSchedule = lead.scheduled_date && lead.scheduled_time;
           const computedStatus = hasSchedule 
             ? getComputedStatus({ status: lead.status }, lead.scheduled_date, lead.scheduled_time)
             : 'Pendiente de agendar';
+          
+          console.log(`       Horario: ${hasSchedule ? `${lead.scheduled_date} ${lead.scheduled_time}` : 'Sin agendar'}`);
+          console.log(`       Estado: ${computedStatus}`);
           
           clientesData.push({
             id: lead._id,
@@ -149,32 +157,29 @@ export default function ClientsList() {
             leadInfo: lead,
             bookingInfo: null
           });
-        }
-      });
-      
-      // Filtrar duplicados por email - mostrar solo el más reciente o con fecha agendada
-      const clientesUnicos = {};
-      clientesData.forEach(cliente => {
-        const email = cliente.email.toLowerCase();
-        if (!clientesUnicos[email]) {
-          clientesUnicos[email] = cliente;
         } else {
-          // Si el cliente duplicado tiene fecha agendada y el actual no, reemplazar
-          const current = clientesUnicos[email];
-          const hasScheduleNew = cliente.fechaAgendamiento !== 'Sin agendar' && cliente.fechaAgendamiento !== 'N/A';
-          const hasScheduleCurrent = current.fechaAgendamiento !== 'Sin agendar' && current.fechaAgendamiento !== 'N/A';
-          
-          // Preferir el que tiene fecha agendada
-          if (hasScheduleNew && !hasScheduleCurrent) {
-            clientesUnicos[email] = cliente;
-          }
+          console.log(`     ❌ Omitiendo lead (ya tiene booking): ${lead.full_name}`);
         }
       });
       
-      const clientesFiltrados = Object.values(clientesUnicos);
+      // NO filtrar duplicados por email durante desarrollo/testing
+      // Si hay múltiples leads con el mismo email (testing), mostrar todos
+      const clientesFiltrados = clientesData;
       
-      console.log('✓ Total de clientes:', clientesFiltrados.length);
-      console.log('✅ Clientes procesados:', clientesFiltrados.map(c => ({ nombre: c.nombre, email: c.email, estado: c.estado })));
+      console.log('🚨 DEBUGGING CLIENTES:');
+      console.log('   📊 Leads calificados totales:', qualifiedLeads.length);
+      console.log('   📅 Bookings totales:', allBookings.length);
+      console.log('   🎯 clientesData length:', clientesData.length);
+      console.log('   ✅ clientesFiltrados length:', clientesFiltrados.length);
+      console.log('   📋 Detalle clientes:', clientesFiltrados.map((c, i) => ({ 
+        index: i, 
+        id: c.id, 
+        nombre: c.nombre, 
+        email: c.email, 
+        estado: c.estado,
+        source: c.leadInfo ? 'lead' : 'booking'
+      })));
+      console.log('🚨 FIN DEBUGGING CLIENTES');
       setClientes(clientesFiltrados);
       aplicarFiltro(clientesFiltrados, filtro);
       setError(null);
@@ -334,7 +339,7 @@ export default function ClientsList() {
         try {
           const bookingId = bookingInfo._id || bookingInfo.id;
           console.log('🗑️  Eliminando booking con ID:', bookingId);
-          const deleteResponse = await axios.delete(`${API_BASE_URL}/booking/${bookingId}`);
+          const deleteResponse = await axios.delete(`${API_BASE_URL}/api/booking/${bookingId}`);
           console.log('✓ Booking eliminado:', deleteResponse.data?.message);
         } catch (deleteErr) {
           console.error('❌ Error al eliminar booking:', deleteErr.response?.data || deleteErr.message);
@@ -343,7 +348,7 @@ export default function ClientsList() {
         // Si no tenemos bookingInfo pero sí email, intentar buscar y eliminar por email
         try {
           console.log('🔍 Buscando booking por email:', clientEmail);
-          const bookingResponse = await axios.get(`${API_BASE_URL}/booking/by-email/${clientEmail}`);
+          const bookingResponse = await axios.get(`${API_BASE_URL}/api/booking/by-email/${clientEmail}`);
           
           if (bookingResponse.data.success && bookingResponse.data.booking) {
             const bookingId = bookingResponse.data.booking.id || bookingResponse.data.booking._id;
@@ -351,7 +356,7 @@ export default function ClientsList() {
             
             try {
               console.log('🗑️  Eliminando booking...');
-              const deleteResponse = await axios.delete(`${API_BASE_URL}/booking/${bookingId}`);
+              const deleteResponse = await axios.delete(`${API_BASE_URL}/api/booking/${bookingId}`);
               console.log('✓ Booking eliminado:', deleteResponse.data?.message);
             } catch (deleteErr) {
               console.error('❌ Error al eliminar booking:', deleteErr.response?.data || deleteErr.message);
@@ -366,7 +371,7 @@ export default function ClientsList() {
       if (leadId) {
         try {
           console.log('🗑️  Eliminando lead con ID:', leadId);
-          const deleteLeadResponse = await axios.delete(`${API_BASE_URL}/leads/${leadId}`);
+          const deleteLeadResponse = await axios.delete(`${API_BASE_URL}/api/leads/${leadId}`);
           console.log('✓ Lead eliminado:', deleteLeadResponse.data?.message);
           console.log('✓ Datos del lead eliminado:', deleteLeadResponse.data?.deletedLead?.full_name);
         } catch (leadErr) {

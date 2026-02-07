@@ -64,4 +64,7 @@ const leadSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add unique index on email to prevent duplicates at database level
+leadSchema.index({ email: 1 }, { unique: true });
+
 module.exports = mongoose.model('Lead', leadSchema);

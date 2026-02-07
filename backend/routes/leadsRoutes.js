@@ -56,6 +56,58 @@ router.post('/submit-application', async (req, res) => {
     // Determinar si califica
     const isDisqualified = disqualificationReasons.length > 0;
 
+    // 🔒 VALIDACIÓN DE DUPLICADOS: Verificar si ya existe un lead con el mismo email
+    const existingLead = await Lead.findOne({ email });
+    
+    if (existingLead) {
+      console.log('⚠️  Lead duplicado detectado para email:', email);
+      console.log('   Lead existente ID:', existingLead._id);
+      console.log('   Lead existente creado:', existingLead.createdAt);
+      
+      // Si hay scheduled_date/time y el lead existente califica, intentar actualizar su booking
+      if (!isDisqualified && scheduled_date && scheduled_time && existingLead.lead_type) {
+        try {
+          const Booking = require('../models/Booking');
+          
+          const existingBooking = await Booking.findOne({
+            email,
+            date: scheduled_date,
+            time: scheduled_time
+          });
+          
+          if (existingBooking) {
+            console.log('✓ Booking ya existe, no se requiere acción');
+          } else {
+            // Crear nuevo booking para el lead existente
+            const newBooking = new Booking({
+              clientName: full_name,
+              email,
+              phone,
+              date: scheduled_date,
+              time: scheduled_time,
+              status: 'scheduled'
+            });
+            await newBooking.save();
+            console.log('✓ Nuevo booking creado para lead existente:', email);
+          }
+        } catch (bookingError) {
+          console.error('Error creating/updating booking for existing lead:', bookingError);
+        }
+      }
+      
+      return res.status(409).json({
+        success: false,
+        message: 'Ya existe un registro para este email',
+        existingLead: {
+          id: existingLead._id,
+          email: existingLead.email,
+          name: existingLead.full_name,
+          status: existingLead.status,
+          lead_type: existingLead.lead_type
+        }
+      });
+    }
+
     const newLead = new Lead({
       full_name,
       email,
@@ -75,22 +127,43 @@ router.post('/submit-application', async (req, res) => {
 
     const savedLead = await newLead.save();
 
-    // Si el lead califica, crear también un Booking
+    // Si el lead califica, crear también un Booking (o actualizar si existe)
     if (!isDisqualified && scheduled_date && scheduled_time) {
       try {
         const Booking = require('../models/Booking');
-        const newBooking = new Booking({
-          clientName: full_name,
+        
+        // Verificar si ya existe un booking para este email/fecha/hora
+        const existingBooking = await Booking.findOne({
           email,
-          phone,
           date: scheduled_date,
-          time: scheduled_time,
-          status: 'No Confirmado'
+          time: scheduled_time
         });
-        await newBooking.save();
+        
+        if (existingBooking) {
+          // Actualizar booking existente
+          await Booking.findByIdAndUpdate(existingBooking._id, {
+            clientName: full_name,
+            phone,
+            status: 'scheduled', // Cambiar a 'scheduled' ya que tiene fecha/hora
+            updatedAt: new Date()
+          });
+          console.log('✓ Booking actualizado para:', email);
+        } else {
+          // Crear nuevo booking solo si no existe
+          const newBooking = new Booking({
+            clientName: full_name,
+            email,
+            phone,
+            date: scheduled_date,
+            time: scheduled_time,
+            status: 'scheduled' // Cambiar a 'scheduled' ya que tiene fecha/hora
+          });
+          await newBooking.save();
+          console.log('✓ Nuevo booking creado para:', email);
+        }
       } catch (bookingError) {
-        console.error('Error creating booking:', bookingError);
-        // No fallar si no se puede crear el booking
+        console.error('Error creating/updating booking:', bookingError);
+        // No fallar si no se puede crear/actualizar el booking
       }
     }
 
@@ -100,6 +173,16 @@ router.post('/submit-application', async (req, res) => {
       disqualified: isDisqualified
     });
   } catch (error) {
+    // Handle duplicate key error from unique index
+    if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
+      console.warn('Duplicate lead attempt for email:', req.body.email);
+      return res.status(409).json({
+        success: false,
+        message: 'Ya existe un registro para este email',
+        error: 'DUPLICATE_LEAD'
+      });
+    }
+    
     console.error('Error:', error);
     res.status(500).json({ 
       success: false, 

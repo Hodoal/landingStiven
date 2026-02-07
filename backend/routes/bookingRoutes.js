@@ -15,12 +15,23 @@ const {
 // GET all bookings for admin panel - From MongoDB
 router.get('/list', async (req, res) => {
   try {
-    // Fast path: return empty bookings immediately since we're not using bookings in this version
-    console.log('📋 Fetching bookings for admin (fast path)...');
+    console.log('📋 Fetching bookings for admin...');
+    
+    // Fetch all bookings from MongoDB
+    const bookings = await Booking.find({}).lean();
+    
+    // Transform bookings to include both id and _id for frontend compatibility
+    const transformedBookings = bookings.map(booking => ({
+      ...booking,
+      id: booking._id.toString()
+    }));
+    
+    console.log(`✓ Found ${transformedBookings.length} bookings`);
+    
     res.json({
       success: true,
-      bookings: [],
-      total: 0
+      bookings: transformedBookings,
+      total: transformedBookings.length
     });
   } catch (error) {
     console.error('Error fetching bookings:', error);
@@ -117,8 +128,9 @@ router.post('/create', async (req, res) => {
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     
-    // Create date object (inicio del día)
+    // Create date object (inicio del día) and datetime for Google Calendar
     const bookingDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const dateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -138,16 +150,78 @@ router.post('/create', async (req, res) => {
     });
 
     if (existingBooking) {
-      return res.status(409).json({
-        success: false,
-        message: 'Ya existe una cita agendada para este email en esta fecha y hora',
-        existingBooking: {
-          id: existingBooking._id,
-          date: existingBooking.date,
-          time: existingBooking.time,
-          status: existingBooking.status
+      // Si el booking existe pero está solo 'scheduled' (creado desde Lead),
+      // actualizarlo a 'confirmed' en lugar de rechazarlo
+      if (existingBooking.status === 'scheduled' || existingBooking.status === 'No Confirmado') {
+        console.log('✓ Actualizando booking existente de scheduled a confirmed:', existingBooking._id);
+        
+        // Actualizar el booking existente con los nuevos datos
+        existingBooking.clientName = name;
+        existingBooking.phone = phone;
+        existingBooking.company = company || '';
+        existingBooking.message = message || '';
+        existingBooking.status = 'confirmed';
+        existingBooking.consultantId = consultantId || null;
+        existingBooking.durationMinutes = 60;
+        existingBooking.updatedAt = new Date();
+        
+        // Actualizar también los campos de Google Calendar si se crean
+        let meetLink = existingBooking.meetLink;
+        let googleCalendarEventId = existingBooking.googleCalendarEventId;
+        
+        // Solo crear evento de Google Calendar si no existe
+        if (!googleCalendarEventId) {
+          try {
+            const googleCalendarResponse = await createGoogleCalendarEvent({
+              title: `Asesoría de Marketing - ${name}`,
+              description: `Cliente: ${name}\nTeléfono: ${phone}\nEmpresa: ${company || 'No especificada'}\nMensaje: ${message || 'Sin comentarios'}`,
+              startTime: dateTime,
+              attendeeEmail: email
+            });
+            
+            meetLink = googleCalendarResponse.meetLink;
+            googleCalendarEventId = googleCalendarResponse.eventId;
+            existingBooking.meetLink = meetLink;
+            existingBooking.googleCalendarEventId = googleCalendarEventId;
+            
+            console.log('✓ Google Calendar event created for existing booking:', googleCalendarEventId);
+          } catch (error) {
+            console.error('Warning: Could not create Google Calendar event:', error.message);
+            // Fallback if calendar creation fails
+            if (!meetLink) {
+              meetLink = `https://meet.google.com/${uuidv4().replace(/-/g, '').substring(0, 21)}`;
+              existingBooking.meetLink = meetLink;
+            }
+          }
         }
-      });
+        
+        await existingBooking.save();
+        
+        // Responder con el booking actualizado
+        return res.json({ 
+          success: true, 
+          message: 'Booking confirmed successfully (updated existing)',
+          booking: {
+            id: existingBooking._id.toString(),
+            date: existingBooking.date,
+            time: existingBooking.time,
+            meetLink: existingBooking.meetLink,
+            status: existingBooking.status
+          }
+        });
+      } else {
+        // Si ya está confirmed u otro estado final, rechazar
+        return res.status(409).json({
+          success: false,
+          message: 'Ya existe una cita confirmada para este email en esta fecha y hora',
+          existingBooking: {
+            id: existingBooking._id,
+            date: existingBooking.date,
+            time: existingBooking.time,
+            status: existingBooking.status
+          }
+        });
+      }
     }
 
     // Si hay consultantId, validar disponibilidad
@@ -178,9 +252,6 @@ router.post('/create', async (req, res) => {
         });
       }
     }
-
-    // Create datetime for Google Calendar
-    const dateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
     let googleCalendarResponse = null;
     let meetLink = null;
@@ -655,6 +726,34 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error deleting booking: ' + error.message
+    });
+  }
+});
+
+// GET count bookings by email/date/time - For testing purposes
+router.get('/count', async (req, res) => {
+  try {
+    const { email, date, time } = req.query;
+    
+    if (!email || !date || !time) {
+      return res.status(400).json({
+        success: false,
+        message: 'email, date, and time parameters are required'
+      });
+    }
+    
+    const count = await Booking.countDocuments({ email, date, time });
+    
+    res.json({
+      success: true,
+      count,
+      query: { email, date, time }
+    });
+  } catch (error) {
+    console.error('❌ Error counting bookings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error counting bookings: ' + error.message
     });
   }
 });

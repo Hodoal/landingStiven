@@ -90,9 +90,10 @@ export default function SoldClientsList() {
         const data = await response.json();
         
         if (response.ok && data.success) {
-          // Actualizar el estado removiendo el cliente eliminado
-          setClientes(clientes.filter(c => c.id !== id));
           console.log(`✓ ${tipo} eliminado exitosamente`);
+          // Recargar datos desde el servidor en lugar de solo actualizar el estado local
+          await fetchClientes();
+          alert(`Cliente ${name} eliminado exitosamente`);
         } else {
           alert('Error al eliminar: ' + (data.message || 'Error desconocido'));
         }
