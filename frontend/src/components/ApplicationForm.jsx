@@ -56,6 +56,13 @@ export default function ApplicationForm() {
   };
 
   const handleSubmit = async () => {
+    // Validation: if a date is selected, require a time
+    if (formData.scheduled_date && !formData.scheduled_time) {
+      setLoading(false)
+      setError('Selecciona una hora para la fecha elegida antes de enviar')
+      return
+    }
+
     setLoading(true);
     
     // Track form submission start

@@ -56,6 +56,12 @@ router.post('/submit-application', async (req, res) => {
     // Determinar si califica
     const isDisqualified = disqualificationReasons.length > 0;
 
+    // Guardar nota: si se envía fecha SIN hora, registrar y rechazar por claridad
+    if (scheduled_date && !scheduled_time) {
+      console.warn('🚨 submit-application received scheduled_date without scheduled_time for email:', email);
+      return res.status(400).json({ success: false, message: 'scheduled_time is required when scheduled_date is provided' });
+    }
+
     // 🔒 VALIDACIÓN DE DUPLICADOS: Verificar si ya existe un lead con el mismo email
     const existingLead = await Lead.findOne({ email });
     
@@ -63,38 +69,75 @@ router.post('/submit-application', async (req, res) => {
       console.log('⚠️  Lead duplicado detectado para email:', email);
       console.log('   Lead existente ID:', existingLead._id);
       console.log('   Lead existente creado:', existingLead.createdAt);
-      
-      // Si hay scheduled_date/time y el lead existente califica, intentar actualizar su booking
+
+      // Si hay scheduled_date/time y el lead existente califica, intentar actualizar o crear booking asociado
       if (!isDisqualified && scheduled_date && scheduled_time && existingLead.lead_type) {
         try {
           const Booking = require('../models/Booking');
-          
-          const existingBooking = await Booking.findOne({
-            email,
-            date: scheduled_date,
-            time: scheduled_time
-          });
-          
-          if (existingBooking) {
-            console.log('✓ Booking ya existe, no se requiere acción');
-          } else {
-            // Crear nuevo booking para el lead existente
-            const newBooking = new Booking({
-              clientName: full_name,
-              email,
-              phone,
-              date: scheduled_date,
-              time: scheduled_time,
-              status: 'scheduled'
+
+          // Primero intentar actualizar un booking huérfano (sin fecha) para este email
+          let bookingToUpdate = await Booking.findOne({ email, $or: [{ date: null }, { date: '' }, { date: { $exists: false } }, { time: null }, { time: '' }, { time: { $exists: false } }] });
+
+          if (bookingToUpdate) {
+            bookingToUpdate.date = scheduled_date;
+            bookingToUpdate.time = scheduled_time;
+            bookingToUpdate.status = 'scheduled';
+            bookingToUpdate.leadId = existingLead._id;
+            bookingToUpdate.updatedAt = new Date();
+            await bookingToUpdate.save();
+
+            console.log('✓ Booking huérfano actualizado y asociado al lead existente:', bookingToUpdate._id);
+
+            return res.json({
+              success: true,
+              message: 'Booking actualizado y asociado al lead existente',
+              booking: {
+                id: bookingToUpdate._id.toString(),
+                date: bookingToUpdate.date,
+                time: bookingToUpdate.time
+              }
             });
-            await newBooking.save();
-            console.log('✓ Nuevo booking creado para lead existente:', email);
           }
+
+          // Si no hay booking huérfano, verificar si ya existe booking para esa fecha/hora
+          const sameSlot = await Booking.findOne({ email, date: scheduled_date, time: scheduled_time });
+          if (sameSlot) {
+            console.log('✓ Booking ya existe para ese slot, no se requiere acción');
+            return res.json({ success: true, message: 'Booking ya existe para ese slot', booking: { id: sameSlot._id.toString(), date: sameSlot.date, time: sameSlot.time } });
+          }
+
+          // Si no existe, crear y asociar
+          const newBooking = new Booking({
+            clientName: full_name,
+            email,
+            phone,
+            date: scheduled_date,
+            time: scheduled_time,
+            status: 'scheduled',
+            leadId: existingLead._id
+          });
+          await newBooking.save();
+          console.log('✓ Nuevo booking creado y asociado al lead existente:', email);
+
+          return res.json({ success: true, message: 'Booking creado y asociado al lead existente', booking: { id: newBooking._id.toString(), date: newBooking.date, time: newBooking.time } });
         } catch (bookingError) {
           console.error('Error creating/updating booking for existing lead:', bookingError);
+          // Fallamos silenciosamente y devolvemos el 409 original para compatibilidad
+          return res.status(409).json({
+            success: false,
+            message: 'Ya existe un registro para este email',
+            existingLead: {
+              id: existingLead._id,
+              email: existingLead.email,
+              name: existingLead.full_name,
+              status: existingLead.status,
+              lead_type: existingLead.lead_type
+            }
+          });
         }
       }
-      
+
+      // Si no hay fecha/hora programadas o el lead no califica, responder con 409 como antes
       return res.status(409).json({
         success: false,
         message: 'Ya existe un registro para este email',
