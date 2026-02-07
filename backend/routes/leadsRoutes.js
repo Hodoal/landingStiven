@@ -495,6 +495,12 @@ router.post('/apply-pilot', async (req, res) => {
     // Determinar si califica
     const isDisqualified = disqualificationReasons.length > 0;
 
+    // Validar scheduled_time cuando hay scheduled_date
+    if (scheduled_date && !scheduled_time) {
+      console.warn('🚨 apply-pilot received scheduled_date without scheduled_time for email:', email);
+      return res.status(400).json({ success: false, message: 'scheduled_time is required when scheduled_date is provided' });
+    }
+
     const leadData = {
       full_name: name,
       email,
@@ -568,8 +574,8 @@ router.post('/apply-pilot', async (req, res) => {
         ...leadDoc
       };
 
-      // If the lead is not disqualified, also create a booking
-      if (!isDisqualified) {
+      // If the lead is not disqualified AND has scheduled_date/time, create a booking
+      if (!isDisqualified && scheduled_date && scheduled_time) {
         try {
           const bookingsCollection = db.collection('bookings');
           const bookingDoc = {
@@ -579,7 +585,7 @@ router.post('/apply-pilot', async (req, res) => {
             phone,
             date: scheduled_date,
             time: scheduled_time,
-            status: 'No Confirmado',
+            status: 'scheduled',
             createdAt: new Date(),
             updatedAt: new Date()
           };
